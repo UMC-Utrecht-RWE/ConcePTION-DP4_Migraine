@@ -1,0 +1,31 @@
+file_name,indicator,no_records,total_records
+MEDICINES_2007_SPF.csv,Other medication than antidiabetic,2228,2250
+MEDICINES_2008_SPF.csv,Other medication than antidiabetic,2323,2357
+MEDICINES_2009_SPF.csv,Other medication than antidiabetic,2749,2791
+MEDICINES_2010_SPF.csv,Other medication than antidiabetic,2899,2945
+MEDICINES_2011_SPF.csv,Other medication than antidiabetic,3250,3310
+MEDICINES_2012_SPF.csv,Other medication than antidiabetic,3299,3359
+MEDICINES_2013_SPF.csv,Other medication than antidiabetic,3553,3615
+MEDICINES_2014_SPF.csv,Other medication than antidiabetic,3706,3771
+MEDICINES_2015_SPF.csv,Other medication than antidiabetic,3631,3693
+MEDICINES_2016_SPF.csv,Other medication than antidiabetic,3692,3758
+MEDICINES_2017_SPF.csv,Other medication than antidiabetic,3739,3835
+MEDICINES_2018_SPF.csv,Other medication than antidiabetic,3695,3785
+MEDICINES_2019_SPF.csv,Other medication than antidiabetic,3872,3952
+MEDICINES_FED.csv,Other medication than antidiabetic,7557,7864
+MEDICINES_FEDTEMP.csv,Other medication than antidiabetic,7557,7864
+MEDICINES_2007_SPF.csv,Both date dispensing and date prescription are empty,0,22
+MEDICINES_2008_SPF.csv,Both date dispensing and date prescription are empty,0,34
+MEDICINES_2009_SPF.csv,Both date dispensing and date prescription are empty,0,42
+MEDICINES_2010_SPF.csv,Both date dispensing and date prescription are empty,0,46
+MEDICINES_2011_SPF.csv,Both date dispensing and date prescription are empty,0,60
+MEDICINES_2012_SPF.csv,Both date dispensing and date prescription are empty,0,60
+MEDICINES_2013_SPF.csv,Both date dispensing and date prescription are empty,0,62
+MEDICINES_2014_SPF.csv,Both date dispensing and date prescription are empty,0,65
+MEDICINES_2015_SPF.csv,Both date dispensing and date prescription are empty,0,62
+MEDICINES_2016_SPF.csv,Both date dispensing and date prescription are empty,0,66
+MEDICINES_2017_SPF.csv,Both date dispensing and date prescription are empty,0,96
+MEDICINES_2018_SPF.csv,Both date dispensing and date prescription are empty,0,90
+MEDICINES_2019_SPF.csv,Both date dispensing and date prescription are empty,0,80
+MEDICINES_FED.csv,Both date dispensing and date prescription are empty,0,307
+MEDICINES_FEDTEMP.csv,Both date dispensing and date prescription are empty,0,307

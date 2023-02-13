@@ -1,0 +1,6 @@
+Indicator,no_records
+Records with sex other than female,39
+Records with missing start or end date of pregnancy or both,0
+Records with missing person id,0
+Records with missing pregnancy id,0
+Records where gestational age loger than 43 weeks(301 days),0
