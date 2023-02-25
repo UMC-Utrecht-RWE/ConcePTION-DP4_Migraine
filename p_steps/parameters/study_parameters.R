@@ -8,7 +8,12 @@ CDM_SOURCE<-fread(paste0(path_dir, list.files(path_dir,"^CDM_SOURCE")))
 
 #start study date
 start_study_date<-"20050101"
-start_study_date<-as.IDate(start_study_date,"%Y%m%d")
+start_study_date2<-"20100101"
+if(CDM_SOURCE[,data_access_provider_name] %in% c("FISABIO")){
+  start_study_date<-as.IDate(start_study_date2,"%Y%m%d")
+}else{
+  start_study_date<-as.IDate(start_study_date,"%Y%m%d")
+}
 #end study date: the min date between date creation and recommended end date or end study date
 #THL,GePaRD 31 Dec 2018
 end_date<-"20181231"
