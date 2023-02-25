@@ -2,7 +2,7 @@
 
 #Load CDM Source table
 if(length(list.files(path_dir,"^CDM_SOURCE"))>1){
-  print("More than one CDM SOURCE table is present in the working directory. Fix error and run the script again.")
+  stop("More than one CDM SOURCE table is present in the working directory. Fix error and run the script again.")
 }
 CDM_SOURCE<-fread(paste0(path_dir, list.files(path_dir,"^CDM_SOURCE")))
 
