@@ -612,7 +612,11 @@ if(sum(so_gdm_diagnoses,so_pe_diagnoses)>0){
 
 ####Create flowchart and export####
 flowchart<-merge.data.table(flowchart_events,flowchart_mo, by="Indicator")
+rm(flowchart_events,flowchart_mo)
 flowchart<-merge.data.table(flowchart,flowchart_so, by="Indicator")
+rm(flowchart_so)
+fwrite(flowchart, paste0(projectFolder, "g/output/PE and GDM algorithm/flowchart_diagnostic_tables.csv"))
+fwrite(flowchart, paste0(projectFolder, "g/output/Migraine algorithm/flowchart_diagnostic_tables.csv"))
 
 ####Combine results by year and event####
 ###GDM files####
