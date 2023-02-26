@@ -1,8 +1,0 @@
-Indicator,EVENTS
-Number of original rows,11323
-Number of records with missing event date,0
-Number of records with missing event code,2304
-Number of records with missing event vocabulary,0
-Number of records with missing event meaning,0
-Number of records with event date before start of study date,1540
-Number of records with event date after end of study date,188
