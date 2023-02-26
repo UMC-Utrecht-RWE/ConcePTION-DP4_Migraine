@@ -615,8 +615,8 @@ flowchart<-merge.data.table(flowchart_events,flowchart_mo, by="Indicator")
 rm(flowchart_events,flowchart_mo)
 flowchart<-merge.data.table(flowchart,flowchart_so, by="Indicator")
 rm(flowchart_so)
-fwrite(flowchart, paste0(projectFolder, "g/output/PE and GDM algorithm/flowchart_diagnostic_tables.csv"))
-fwrite(flowchart, paste0(projectFolder, "g/output/Migraine algorithm/flowchart_diagnostic_tables.csv"))
+fwrite(flowchart, paste0(projectFolder, "/g_output/PE and GDM algorithm/flowchart_diagnostic_tables.csv"))
+fwrite(flowchart, paste0(projectFolder, "/g_output/Migraine algorithm/flowchart_diagnostic_tables.csv"))
 
 ####Combine results by year and event####
 ###GDM files####
@@ -671,7 +671,7 @@ for (i in 1:length(gdm_files)){
 #Export duplicates
 duplicates_gdm<-sum(do.call(rbind,duplicates_gdm))
 dup<-data.table(Indicator="GDM Algorithm, Duplicated diagnostic records removed:", no_records=duplicates_gdm)
-fwrite(dup, paste0(projectFolder, "/g_output/PE and GDM algorithm/removed_diagostic_duplicates_gdm.csv"))
+fwrite(dup, paste0(projectFolder, "/g_output/PE and GDM algorithm/removed_diagostic_duplicates_gdm.csv"), row.names = F)
 rm(dup)
 } else {rm(gdm_files)}
 
@@ -728,7 +728,7 @@ if(length(pe_files)>0){
   #Export duplicates
   duplicates_pe<-sum(do.call(rbind,duplicates_pe))
   dup<-data.table(Indicator="PE Algorithm, Duplicated diagnostic records removed:", no_records=duplicates_pe)
-  fwrite(dup, paste0(projectFolder, "/g_output/PE and GDM algorithm/removed_diagostic_duplicates_pe.csv"))
+  fwrite(dup, paste0(projectFolder, "/g_output/PE and GDM algorithm/removed_diagostic_duplicates_pe.csv"), row.names = F)
   rm(dup)
 } else {rm(pe_files)}
 ###Migraine files####
@@ -783,7 +783,7 @@ if(length(migraine_files)>0){
   #Export duplicates
   duplicates_migraine<-sum(do.call(rbind,duplicates_migraine))
   dup<-data.table(Indicator="Migraine Algorithm, Duplicated diagnostic records removed:", no_records=duplicates_migraine)
-  fwrite(dup, paste0(projectFolder, "/g_output/Migraine algorithm/removed_diagostic_duplicates_migraine.csv"))
+  fwrite(dup, paste0(projectFolder, "/g_output/Migraine algorithm/removed_diagostic_duplicates_migraine.csv"), row.names = F)
   rm(dup)
 } else {rm(migraine_files)}
 
