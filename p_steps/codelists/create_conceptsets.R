@@ -47,3 +47,27 @@ for (i in 1:length(conditions_pe)){
 
 #remove empty vocabularies
 conditions_pe<-lapply(conditions_pe, function(x) Filter(length, x))
+
+####Migraine####
+#Migraine diagnoses
+codelist_migraine<-fread(paste0(pre_dir,"codelists/migraine_codelist.csv"), colClasses = "character")
+#select only necessary columns
+codelist_migraine<-codelist_migraine[,c("event_abbreviation", "coding_system", "code","tags")]
+codelist_migraine<-codelist_migraine[,coding_system:=gsub("/","",coding_system)]
+#Create variable code_no_dot by removing dot from all codes
+codelist_migraine[,code_no_dot:=gsub("\\.","",codelist_migraine[,code])]
+vocabularies_list_migraine<-codelist_migraine[!duplicated(coding_system), coding_system]
+conditions_migraine<-vector(mode="list", length=length(unique(na.omit(codelist_migraine[,event_abbreviation]))))
+names(conditions_migraine)<-unique(na.omit(codelist_migraine[,event_abbreviation]))
+for (i in 1:length(conditions_migraine)){
+  vocabularies<-vector(mode="list", length=length(unique(na.omit(codelist_migraine[,coding_system]))))
+  names(vocabularies)<-unique(na.omit(codelist_migraine[,coding_system]))
+  for (j in 1:length(vocabularies)){
+    vocabularies[[j]]<-codelist_migraine[event_abbreviation==names(conditions_migraine)[i] & coding_system==names(vocabularies)[j], code_no_dot]
+  }
+  conditions_migraine[[i]]<-list.append(conditions_migraine[[i]],vocabularies)
+  rm(vocabularies)
+}
+
+#remove empty vocabularies
+conditions_migraine<-lapply(conditions_migraine, function(x) Filter(length, x))
