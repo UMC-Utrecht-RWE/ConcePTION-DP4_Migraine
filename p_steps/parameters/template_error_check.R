@@ -67,3 +67,32 @@ if("Migraine_procedures" %in% additional_concepts[,StudyVar]){
   }
   rm(codesheet_not_procedures_migraine)
 }
+####EVENTS columns####
+if(sum(c("GDM_diagnoses","PE_diagnoses","Migraine_diagnoses") %in% additional_concepts[,StudyVar])>0){
+  codesheet_events<-additional_concepts[StudyVar %in% c("GDM_diagnoses","PE_diagnoses","Migraine_diagnoses") & table=="EVENTS", c("val_1","col_1", "val_2","col_2")]
+  #Check for different values in val_1
+  not_equal_val1<-codesheet_events[!duplicated(val_1),.N]
+  if(not_equal_val1>1){
+    stop("This is not a script error. The additional_concepts template has been filled out wrong. The columnn val_1 has different values between GDM_diagnoses, PE_diagnoses and Migarine_diagnoses for table set to EVENTS.") 
+  }
+  #Check for different values in col_1
+  not_equal_col1<-codesheet_events[!duplicated(col_1),.N]
+  if(not_equal_col1>1){
+    stop("This is not a script error. The additional_concepts template has been filled out wrong. The columnn col_1 has different values between GDM_diagnoses, PE_diagnoses and Migarine_diagnoses for table set to EVENTS.") 
+  }
+  
+  #Check for different values in val_2
+  not_equal_val2<-codesheet_events[!duplicated(val_2),.N]
+  if(not_equal_val2>1){
+    stop("This is not a script error. The additional_concepts template has been filled out wrong. The columnn val_2 has different values between GDM_diagnoses, PE_diagnoses and Migarine_diagnoses for table set to EVENTS.") 
+  }
+  
+  #Check for different values in col_2
+  not_equal_col2<-codesheet_events[!duplicated(col_2),.N]
+  if(not_equal_col2>1){
+    stop("This is not a script error. The additional_concepts template has been filled out wrong. The columnn col_2 has different values between GDM_diagnoses, PE_diagnoses and Migarine_diagnoses for table set to EVENTS.") 
+  }
+  
+  
+  rm(codesheet_events)
+}
