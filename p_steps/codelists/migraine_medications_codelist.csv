@@ -1,0 +1,19 @@
+medicinal_product_group,atc_code,mechanism
+Selective serotonin (5HT1) agonists,N02CC,start
+Botulinum toxin,M03AX01,exact
+"Antiinflamatory and Antirheumatic products, non-steroids",M01A,start
+Paracetamol,N02BE01,exact
+Prochlorperazine,N05AB04,exact
+Sumatriptan,N02CC01,exact
+Calcitonin gene-related peptide (CGRP) antagonists,N02CD,start
+Other antimigraine preparations,N02CX,start
+Beta blocking agents,C07A,start
+"ACE inhibitors, plain",C09A,start
+"ARBs, plain",C09C,start
+"Other muscle relaxants, peripherally acting agents",M03AX,start
+Antiepileptics,N03A,start
+Non-selective monoamine reuptake inhibitors,N06AA,start
+Venlafaxine,N06AX16,exact
+Flunarizine,N07CA03,exact
+Corticosteroid derivatives,N02CB,start
+Phenylalkylamine derivatives,C08DA,start
