@@ -54,12 +54,12 @@ for(diag_ind in 1:gdm_diag_cat[,.N]){
   values<-values[!is.na(values)]
   values_df<-data.table(col_names=values)
   setnames(values_df,"col_names",col_names)
-  data<-data.table(table=gdm_diag_cat[diag_ind,table],event_abbreviation=gdm_diag_cat[diag_ind,event_abbreviation],col_1=val_1, values_df,keep=gdm_diag_cat[diag_ind,keep],index=gdm_diag_cat[diag_ind,index])
+  data<-data.table(table=gdm_diag_cat[diag_ind,table],event_abbreviation=gdm_diag_cat[diag_ind,event_abbreviation],col_1=val_1, values_df,keep=gdm_diag_cat[diag_ind,keep],index=gdm_diag_cat[diag_ind,index],date_column=gdm_diag_cat[diag_ind,date_column])
   setnames(data,"col_1",col_1_name)
   } else{
     col_1_name<-gdm_diag_cat[diag_ind,col_1]
     val_1<-gdm_diag_cat[diag_ind,val_1]
-    data<-data.table(table=gdm_diag_cat[diag_ind,table],event_abbreviation=gdm_diag_cat[diag_ind,event_abbreviation],col_1=val_1,index=gdm_diag_cat[diag_ind,index])
+    data<-data.table(table=gdm_diag_cat[diag_ind,table],event_abbreviation=gdm_diag_cat[diag_ind,event_abbreviation],col_1=val_1,index=gdm_diag_cat[diag_ind,index],date_column=gdm_diag_cat[diag_ind,date_column])
     setnames(data,"col_1",col_1_name)
 }
   diag_cat_gdm[[ind]]<-data
@@ -84,12 +84,12 @@ for(diag_ind in 1:pe_diag_cat[,.N]){
     values<-values[!is.na(values)]
     values_df<-data.table(col_names=values)
     setnames(values_df,"col_names",col_names)
-    data<-data.table(table=pe_diag_cat[diag_ind,table],event_abbreviation=pe_diag_cat[diag_ind,event_abbreviation],col_1=val_1, values_df,keep=pe_diag_cat[diag_ind,keep],index=pe_diag_cat[diag_ind,index])
+    data<-data.table(table=pe_diag_cat[diag_ind,table],event_abbreviation=pe_diag_cat[diag_ind,event_abbreviation],col_1=val_1, values_df,keep=pe_diag_cat[diag_ind,keep],index=pe_diag_cat[diag_ind,index],date_column=pe_diag_cat[diag_ind,date_column])
     setnames(data,"col_1",col_1_name)
   } else{
     col_1_name<-pe_diag_cat[diag_ind,col_1]
     val_1<-pe_diag_cat[diag_ind,val_1]
-    data<-data.table(table=pe_diag_cat[diag_ind,table],event_abbreviation=pe_diag_cat[diag_ind,event_abbreviation],col_1=val_1,keep=pe_diag_cat[diag_ind,keep],index=pe_diag_cat[diag_ind,index])
+    data<-data.table(table=pe_diag_cat[diag_ind,table],event_abbreviation=pe_diag_cat[diag_ind,event_abbreviation],col_1=val_1,keep=pe_diag_cat[diag_ind,keep],index=pe_diag_cat[diag_ind,index],date_column=pe_diag_cat[diag_ind,date_column])
     setnames(data,"col_1",col_1_name)
   }
   diag_cat_pe[[ind]]<-data
@@ -114,12 +114,12 @@ if(migraine_diag_cat[,.N]>0){
       values<-values[!is.na(values)]
       values_df<-data.table(col_names=values)
       setnames(values_df,"col_names",col_names)
-      data<-data.table(table=migraine_diag_cat[diag_ind,table],event_abbreviation=migraine_diag_cat[diag_ind,event_abbreviation],col_1=val_1, values_df,keep=migraine_diag_cat[diag_ind,keep],index=migraine_diag_cat[diag_ind,index])
+      data<-data.table(table=migraine_diag_cat[diag_ind,table],event_abbreviation=migraine_diag_cat[diag_ind,event_abbreviation],col_1=val_1, values_df,keep=migraine_diag_cat[diag_ind,keep],index=migraine_diag_cat[diag_ind,index],date_column=migraine_diag_cat[diag_ind,date_column])
       setnames(data,"col_1",col_1_name)
     } else{
       col_1_name<-migraine_diag_cat[diag_ind,col_1]
       val_1<-migraine_diag_cat[diag_ind,val_1]
-      data<-data.table(table=migraine_diag_cat[diag_ind,table],event_abbreviation=migraine_diag_cat[diag_ind,event_abbreviation],col_1=val_1,keep=migraine_diag_cat[diag_ind,keep],index=migraine_diag_cat[diag_ind,index])
+      data<-data.table(table=migraine_diag_cat[diag_ind,table],event_abbreviation=migraine_diag_cat[diag_ind,event_abbreviation],col_1=val_1,keep=migraine_diag_cat[diag_ind,keep],index=migraine_diag_cat[diag_ind,index],date_column=migraine_diag_cat[diag_ind,date_column])
       setnames(data,"col_1",col_1_name)
     }
     diag_cat_migraine[[ind]]<-data
@@ -129,3 +129,76 @@ if(migraine_diag_cat[,.N]>0){
   }
   diag_cat_migraine<-rbindlist(diag_cat_migraine,fill=T)
 }else{diag_cat_migraine<-NULL}
+
+#Gather information about checkbox
+#GDM
+if(not_fixed_gdm_checkbox[,.N]>0){
+  not_fixed_gdm_checkbox[,index:=1:not_fixed_gdm_checkbox[,.N]]
+  diag_checkbox_gdm<-list()
+  ind<-1
+  for(diag_ind in 1:not_fixed_gdm_checkbox[,.N]){
+    if(not_fixed_gdm_checkbox[diag_ind,][!is.na(val_1) & !is.na(val_2),.N]>0){
+      col_1_name<-not_fixed_gdm_checkbox[diag_ind,col_1]
+      val_1<-not_fixed_gdm_checkbox[diag_ind,val_1]
+      col_names<-not_fixed_gdm_checkbox[diag_ind,col_2]
+      values<-c(not_fixed_gdm_checkbox[diag_ind,val_2], not_fixed_gdm_checkbox[diag_ind,val_3], not_fixed_gdm_checkbox[diag_ind,val_4], not_fixed_gdm_checkbox[diag_ind,val_5])
+      values<-values[!is.na(values)]
+      values_df<-data.table(col_names=values)
+      setnames(values_df,"col_names",col_names)
+      checkbox_date_col<-not_fixed_gdm_checkbox[diag_ind,date_column]
+      data<-data.table(table=not_fixed_gdm_checkbox[diag_ind,table],event_abbreviation=not_fixed_gdm_checkbox[diag_ind,event_abbreviation],col_1=val_1, values_df,keep=not_fixed_gdm_checkbox[diag_ind,keep],index=not_fixed_gdm_checkbox[diag_ind,index], checkbox_date=not_fixed_gdm_checkbox[diag_ind,date_column])
+      setnames(data,"col_1",col_1_name)
+    } else{
+      col_1_name<-not_fixed_gdm_checkbox[diag_ind,col_1]
+      val_1<-not_fixed_gdm_checkbox[diag_ind,val_1]
+      data<-data.table(table=not_fixed_gdm_checkbox[diag_ind,table],event_abbreviation=not_fixed_gdm_checkbox[diag_ind,event_abbreviation],col_1=val_1,keep=not_fixed_gdm_checkbox[diag_ind,keep],index=not_fixed_gdm_checkbox[diag_ind,index], checkbox_date=not_fixed_gdm_checkbox[diag_ind,date_column])
+      setnames(data,"col_1",col_1_name)
+    }
+    diag_checkbox_gdm[[ind]]<-data
+    rm(data)
+    
+    ind<-ind+1
+  }
+  diag_checkbox_gdm<-rbindlist(diag_checkbox_gdm,fill=T)
+  diag_checkbox_gdm_mo<-diag_checkbox_gdm[table=="MEDICAL_OBSERVATIONS"]
+  diag_checkbox_gdm_so<-diag_checkbox_gdm[table=="SURVEY_OBSERVATIONS"]
+  
+}else{
+  diag_checkbox_gdm_mo<-NULL
+  diag_checkbox_gdm_so<-NULL}
+
+#PE
+if(not_fixed_pe_checkbox[,.N]>0){
+  not_fixed_pe_checkbox[,index:=1:not_fixed_pe_checkbox[,.N]]
+  diag_checkbox_pe<-list()
+  ind<-1
+  for(diag_ind in 1:not_fixed_pe_checkbox[,.N]){
+    if(not_fixed_pe_checkbox[diag_ind,][!is.na(val_1) & !is.na(val_2),.N]>0){
+      col_1_name<-not_fixed_pe_checkbox[diag_ind,col_1]
+      val_1<-not_fixed_pe_checkbox[diag_ind,val_1]
+      col_names<-not_fixed_pe_checkbox[diag_ind,col_2]
+      values<-c(not_fixed_pe_checkbox[diag_ind,val_2], not_fixed_pe_checkbox[diag_ind,val_3], not_fixed_pe_checkbox[diag_ind,val_4], not_fixed_pe_checkbox[diag_ind,val_5])
+      values<-values[!is.na(values)]
+      values_df<-data.table(col_names=values)
+      setnames(values_df,"col_names",col_names)
+      data<-data.table(table=not_fixed_pe_checkbox[diag_ind,table],event_abbreviation=not_fixed_pe_checkbox[diag_ind,event_abbreviation],col_1=val_1, values_df,keep=not_fixed_pe_checkbox[diag_ind,keep],index=not_fixed_pe_checkbox[diag_ind,index],checkbox_date=not_fixed_pe_checkbox[diag_ind,date_column])
+      setnames(data,"col_1",col_1_name)
+    } else{
+      col_1_name<-not_fixed_pe_checkbox[diag_ind,col_1]
+      val_1<-not_fixed_pe_checkbox[diag_ind,val_1]
+      data<-data.table(table=not_fixed_pe_checkbox[diag_ind,table],event_abbreviation=not_fixed_pe_checkbox[diag_ind,event_abbreviation],col_1=val_1,keep=not_fixed_pe_checkbox[diag_ind,keep],index=not_fixed_pe_checkbox[diag_ind,index],checkbox_date=not_fixed_pe_checkbox[diag_ind,date_column])
+      setnames(data,"col_1",col_1_name)
+    }
+    diag_checkbox_pe[[ind]]<-data
+    rm(data)
+    
+    ind<-ind+1
+  }
+  diag_checkbox_pe<-rbindlist(diag_checkbox_pe,fill=T)
+  diag_checkbox_pe_mo<-diag_checkbox_pe[table=="MEDICAL_OBSERVATIONS"]
+  diag_checkbox_pe_so<-diag_checkbox_pe[table=="SURVEY_OBSERVATIONS"]
+  
+  
+}else{
+  diag_checkbox_pe_mo<-NULL
+  diag_checkbox_pe_so<-NULL}
