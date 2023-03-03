@@ -307,7 +307,8 @@ if(sum(events_gdm_diagnoses,events_pe_diagnoses,events_migraine_diagnoses)>0){
   }
 ####MEDICAL_OBSERVATIONS####
 #Load MEDICAL_OBERVATIONS table and apply filter to select PE diagoses/GDM diagnoses/Migraine diagnoses
-if(sum(mo_gdm_diagnoses,mo_pe_diagnoses,mo_migraine_diagnoses)>0){
+if(sum(sum(mo_gdm_diagnoses,mo_pe_diagnoses,mo_migraine_diagnoses)>0,
+   sum(!is.null(diag_cat_gdm),!is.null(diag_cat_pe),!is.null(diag_cat_migraine),!is.null(diag_checkbox_gdm),!is.null(diag_checkbox_pe_mo)))>0){
   if(codesheet_diagnoses_gdm[table=="MEDICAL_OBSERVATIONS",.N]>0){
   if("code" %in% codesheet_diagnoses_gdm[table=="MEDICAL_OBSERVATIONS",val_1]){
     code_var<-codesheet_diagnoses_gdm[table=="MEDICAL_OBSERVATIONS",col_1]
@@ -402,7 +403,7 @@ if(sum(mo_gdm_diagnoses,mo_pe_diagnoses,mo_migraine_diagnoses)>0){
       df[,code_no_dot:=gsub("\\.","",df[,event_code])]
       included_records_filtering[[w]] <-df[,.N]
       if(df[,.N]>0){
-        
+        #data filtering based on codelists
         if(events_gdm_diagnoses>0){
           print(paste0("Filtering data for GDM diagnoses:", actual_tables$MEDICAL_OBSERVATIONS[y]))
           years_study_events<-sort(df[!duplicated(year), year])#years present in this table
@@ -672,6 +673,87 @@ if(sum(mo_gdm_diagnoses,mo_pe_diagnoses,mo_migraine_diagnoses)>0){
         }
       }
       }
+        
+      #Checkbox information
+        #GDM
+        if(!is.null(diag_checkbox_gdm)){
+          gdm_diag_checkbox_mo<-diag_checkbox_gdm[table=="MEDICAL_OBSERVATIONS"]
+          if(gdm_diag_checkbox_mo[,.N]>0){
+            names_df<-names(df)
+            same_names<-intersect(names_df,names(gdm_diag_checkbox_mo))
+            df<-merge.data.table(df,gdm_diag_checkbox_mo,by=same_names,all.x=T)
+            if(df[!is.na(event_abbreviation),.N]>0){
+              for(cat_ind in 1:gdm_diag_checkbox_mo[,.N]){
+                cols_to_keep<-c(gdm_diag_checkbox_mo[cat_ind==index,checkbox_date],gdm_diag_checkbox_mo[cat_ind==index,keep])
+                #rename columns
+                setnames(df,gdm_diag_checkbox_mo[cat_ind==index,checkbox_date], "event_date")
+                setnames(df,gdm_diag_checkbox_mo[cat_ind==index,keep], "event_code")
+                setnames(df, "so_meaning", "meaning")
+                setnames(df, "event_abbreviation", "condition")
+                
+                #date variable
+                df[,event_date:=as.IDate(event_date, "%Y%m%d")]
+                if(!"year" %in% names(df)){df[,year:=year(event_date)]}
+                
+                cols_to_keep<-c("event_date","event_code", "person_id","meaning","condition","year")
+                years_cat<-sort(df[!is.na(condition) & index==cat_ind][!duplicated(year),year])
+                for(year_ind in 1:length(years_cat)){
+                  saveRDS(df[!is.na(condition)][year==years_cat[year_ind] & index==cat_ind, cols_to_keep, with=F], paste0(projectFolder,"/g_intermediate/tmp/", years_cat[year_ind],"_", "GDM_diagnoses_checkbox_mo",cat_ind,".rds"))
+                }# new 01.06.2022
+                
+                rm(years_cat,year_ind)
+                
+                #rename columns
+                setnames(df, "event_date", gdm_diag_checkbox_mo[cat_ind==index,checkbox_date])
+                setnames(df,"event_code", gdm_diag_checkbox_mo[cat_ind==index,keep])
+                setnames(df, "meaning", "so_meaning")
+                setnames(df, "condition", "event_abbreviation")
+                
+              }
+              df[,table:=NULL][,event_abbreviation:=NULL][,keep:=NULL][,index:=NULL]
+            }
+          }
+        }
+        
+        #PE
+        if(!is.null(diag_checkbox_pe_mo)){
+          pe_diag_checkbox_mo<-diag_checkbox_pe_mo[table=="MEDICAL_OBSERVATIONS"]
+          if(pe_diag_checkbox_mo[,.N]>0){
+            names_df<-names(df)
+            same_names<-intersect(names_df,names(pe_diag_checkbox_mo))
+            df<-merge.data.table(df,pe_diag_checkbox_mo,by=same_names,all.x=T)
+            if(df[!is.na(event_abbreviation),.N]>0){
+              for(cat_ind in 1:pe_diag_checkbox_mo[,.N]){
+                cols_to_keep<-c(pe_diag_checkbox_mo[cat_ind==index,checkbox_date],pe_diag_checkbox_mo[cat_ind==index,keep])
+                #rename columns
+                setnames(df,pe_diag_checkbox_mo[cat_ind==index,checkbox_date], "event_date")
+                setnames(df,pe_diag_checkbox_mo[cat_ind==index,keep], "event_code")
+                setnames(df, "so_meaning", "meaning")
+                setnames(df, "event_abbreviation", "condition")
+                
+                #date variable
+                df[,event_date:=as.IDate(event_date, "%Y%m%d")]
+                if(!"year" %in% names(df)){df[,year:=year(event_date)]}
+                
+                cols_to_keep<-c("event_date","event_code", "person_id","meaning","condition","year")
+                years_cat<-sort(df[!is.na(condition) & index==cat_ind][!duplicated(year),year])
+                for(year_ind in 1:length(years_cat)){
+                  saveRDS(df[!is.na(condition)][year==years_cat[year_ind] & index==cat_ind, cols_to_keep, with=F], paste0(projectFolder,"/g_intermediate/tmp/", years_cat[year_ind],"_", "PE_diagnoses_checkbox_mo",cat_ind,".rds"))
+                }# new 01.06.2022
+                
+                rm(years_cat,year_ind)
+                
+                #rename columns
+                setnames(df, "event_date", pe_diag_checkbox_mo[cat_ind==index,checkbox_date])
+                setnames(df,"event_code", pe_diag_checkbox_mo[cat_ind==index,keep])
+                setnames(df, "meaning", "so_meaning")
+                setnames(df, "condition", "event_abbreviation")
+                
+              }
+              df[,table:=NULL][,event_abbreviation:=NULL][,keep:=NULL][,index:=NULL]
+            }
+          }
+        }
     }
       w<-w+1
       rm(df)
@@ -707,7 +789,7 @@ if(sum(mo_gdm_diagnoses,mo_pe_diagnoses,mo_migraine_diagnoses)>0){
     #fwrite(flowchart_events, paste0(output_dir, "PE and GDM algorithm/flowchart_events.csv"), row.names = F)
     rm(original_rows,empty_event_date,empty_event_code,empty_event_vocabulary,empty_event_meaning,prior_diagnoses_rec,after_diagnoses_rec,included_records_filtering)
     
-  } else {
+  }else{
     flowchart_mo<-data.table(Indicator=c("Number of original rows",
                                          "Number of records with missing event date",
                                          "Number of records with missing event code",
@@ -725,7 +807,7 @@ if(sum(mo_gdm_diagnoses,mo_pe_diagnoses,mo_migraine_diagnoses)>0){
                                                     0,
                                                     0))
   }
-}else{
+  }else{
   flowchart_mo<-data.table(Indicator=c("Number of original rows",
                                        "Number of records with missing event date",
                                        "Number of records with missing event code",
@@ -746,7 +828,8 @@ if(sum(mo_gdm_diagnoses,mo_pe_diagnoses,mo_migraine_diagnoses)>0){
 }
 ####SURVEY_OBSERVATIONS####
 #Load SURVEY_OBERVATIONS table and apply filter to select PE diagoses/GDM diagnoses/Migraine diagnoses
-if(sum(so_gdm_diagnoses,so_pe_diagnoses,so_migraine_diagnoses)>0){
+if(sum(sum(so_gdm_diagnoses,so_pe_diagnoses,so_migraine_diagnoses)>0,
+       sum(!is.null(diag_cat_gdm),!is.null(diag_cat_pe),!is.null(diag_cat_migraine),!is.null(diag_checkbox_gdm),!is.null(diag_checkbox_pe_so)))>0){
   if(codesheet_diagnoses_gdm[table=="SURVEY_OBSERVATIONS",.N]>0){
   if("code" %in% codesheet_diagnoses_gdm[table=="SURVEY_OBSERVATIONS",val_1]){
     code_var<-codesheet_diagnoses_gdm[table=="SURVEY_OBSERVATIONS",col_1]
@@ -1112,6 +1195,86 @@ if(sum(so_gdm_diagnoses,so_pe_diagnoses,so_migraine_diagnoses)>0){
       }
       }
         
+      #Check box info
+        #GDM
+        if(!is.null(diag_checkbox_gdm)){
+          gdm_diag_checkbox_so<-diag_checkbox_gdm[table=="SURVEY_OBSERVATIONS"]
+          if(gdm_diag_checkbox_so[,.N]>0){
+            names_df<-names(df)
+            same_names<-intersect(names_df,names(gdm_diag_checkbox_so))
+            df<-merge.data.table(df,gdm_diag_checkbox_so,by=same_names,all.x=T)
+            if(df[!is.na(event_abbreviation),.N]>0){
+              for(cat_ind in 1:gdm_diag_checkbox_so[,.N]){
+                cols_to_keep<-c(gdm_diag_checkbox_so[cat_ind==index,checkbox_date],gdm_diag_checkbox_so[cat_ind==index,keep])
+                #rename columns
+                setnames(df,gdm_diag_checkbox_so[cat_ind==index,checkbox_date], "event_date")
+                setnames(df,gdm_diag_checkbox_so[cat_ind==index,keep], "event_code")
+                setnames(df, "so_meaning", "meaning")
+                setnames(df, "event_abbreviation", "condition")
+                
+                #date variable
+                df[,event_date:=as.IDate(event_date, "%Y%m%d")]
+                if(!"year" %in% names(df)){df[,year:=year(event_date)]}
+                
+                cols_to_keep<-c("event_date","event_code", "person_id","meaning","condition","year")
+                years_cat<-sort(df[!is.na(condition) & index==cat_ind][!duplicated(year),year])
+                for(year_ind in 1:length(years_cat)){
+                  saveRDS(df[!is.na(condition)][year==years_cat[year_ind] & index==cat_ind, cols_to_keep, with=F], paste0(projectFolder,"/g_intermediate/tmp/", years_cat[year_ind],"_", "GDM_diagnoses_checkbox_so",cat_ind,".rds"))
+                }# new 01.06.2022
+                
+                rm(years_cat,year_ind)
+                
+                #rename columns
+                setnames(df, "event_date", gdm_diag_checkbox_so[cat_ind==index,checkbox_date])
+                setnames(df,"event_code", gdm_diag_checkbox_so[cat_ind==index,keep])
+                setnames(df, "meaning", "so_meaning")
+                setnames(df, "condition", "event_abbreviation")
+                
+              }
+              df[,table:=NULL][,event_abbreviation:=NULL][,keep:=NULL][,index:=NULL]
+            }
+          }
+        }
+        
+        #PE
+        if(!is.null(diag_checkbox_pe_so)){
+          pe_diag_checkbox_so<-diag_checkbox_pe_so[table=="SURVEY_OBSERVATIONS"]
+          if(pe_diag_checkbox_so[,.N]>0){
+            names_df<-names(df)
+            same_names<-intersect(names_df,names(pe_diag_checkbox_so))
+            df<-merge.data.table(df,pe_diag_checkbox_so,by=same_names,all.x=T)
+            if(df[!is.na(event_abbreviation),.N]>0){
+              for(cat_ind in 1:pe_diag_checkbox_so[,.N]){
+                cols_to_keep<-c(pe_diag_checkbox_so[cat_ind==index,checkbox_date],pe_diag_checkbox_so[cat_ind==index,keep])
+                #rename columns
+                setnames(df,pe_diag_checkbox_so[cat_ind==index,checkbox_date], "event_date")
+                setnames(df,pe_diag_checkbox_so[cat_ind==index,keep], "event_code")
+                setnames(df, "so_meaning", "meaning")
+                setnames(df, "event_abbreviation", "condition")
+                
+                #date variable
+                df[,event_date:=as.IDate(event_date, "%Y%m%d")]
+                if(!"year" %in% names(df)){df[,year:=year(event_date)]}
+                
+                cols_to_keep<-c("event_date","event_code", "person_id","meaning","condition","year")
+                years_cat<-sort(df[!is.na(condition) & index==cat_ind][!duplicated(year),year])
+                for(year_ind in 1:length(years_cat)){
+                  saveRDS(df[!is.na(condition)][year==years_cat[year_ind] & index==cat_ind, cols_to_keep, with=F], paste0(projectFolder,"/g_intermediate/tmp/", years_cat[year_ind],"_", "PE_diagnoses_checkbox_so",cat_ind,".rds"))
+                }# new 01.06.2022
+                
+                rm(years_cat,year_ind)
+                
+                #rename columns
+                setnames(df, "event_date", pe_diag_checkbox_so[cat_ind==index,checkbox_date])
+                setnames(df,"event_code", pe_diag_checkbox_so[cat_ind==index,keep])
+                setnames(df, "meaning", "so_meaning")
+                setnames(df, "condition", "event_abbreviation")
+                
+              }
+              df[,table:=NULL][,event_abbreviation:=NULL][,keep:=NULL][,index:=NULL]
+            }
+          }
+        }
       }
       w<-w+1
       rm(df)
@@ -1147,7 +1310,7 @@ if(sum(so_gdm_diagnoses,so_pe_diagnoses,so_migraine_diagnoses)>0){
     #fwrite(flowchart_events, paste0(output_dir, "PE and GDM algorithm/flowchart_events.csv"), row.names = F)
     rm(original_rows,empty_event_date,empty_event_code,empty_event_vocabulary,empty_event_meaning,prior_diagnoses_rec,after_diagnoses_rec,included_records_filtering)
     
-  } else {
+    }else{
     flowchart_so<-data.table(Indicator=c("Number of original rows",
                                          "Number of records with missing event date",
                                          "Number of records with missing event code",
@@ -1165,7 +1328,7 @@ if(sum(so_gdm_diagnoses,so_pe_diagnoses,so_migraine_diagnoses)>0){
                                                    0,
                                                    0))
   }
-}else{
+  }else{
   flowchart_so<-data.table(Indicator=c("Number of original rows",
                                        "Number of records with missing event date",
                                        "Number of records with missing event code",
@@ -1195,6 +1358,62 @@ fwrite(flowchart, paste0(projectFolder, "/g_output/Migraine algorithm/flowchart_
 
 ####Combine results by year and event####
 ###GDM files####
+#GDM checkbox files
+gdm_checkbox_files<-list.files(tmp, "GDM_diagnoses_checkbox")
+if(length(gdm_checkbox_files)>0){
+  #Combine files by type of event
+  files<-list()
+  for (i in 1: length(gdm_checkbox_files)){
+    files<-append(files,substr(gdm_checkbox_files[i],1,4))
+  }
+  files<-do.call(c,files)
+  #remove duplicates 
+  files<-files[!duplicated(files)]
+  #create list with names year_condition
+  gdm_list<-vector(mode="list", length=length(files))
+  names(gdm_list)<-files
+  rm(files)
+  #separate all files into the right category
+  for (i in 1:length(gdm_list)){
+    gdm_list[[i]]<-gdm_checkbox_files[startsWith(gdm_checkbox_files,names(gdm_list)[i])]
+  }
+  rm(gdm_checkbox_files)
+  gdm_checkbox_files<-gdm_list
+  rm(gdm_list)
+  
+  #Load all files, combine by year, clean up by removing duplicated diagnoses
+  duplicates_gdm_checkbox<-list()
+  index_gdm<-1
+  for (gdm_fl in 1:length(gdm_checkbox_files)){
+    event_df<-lapply(paste0(tmp, gdm_checkbox_files[[gdm_fl]]), readRDS)
+    event_df<-rbindlist(event_df,fill = T)
+    #create variable person_id_^_event date
+    event_df[,comb:=paste0(person_id, "_", event_date, "_", condition)]
+    dup<-event_df[duplicated(comb),.N]
+    duplicates_gdm_checkbox[[index_gdm]]<-dup
+    rm(dup)
+    event_df<-event_df[!duplicated(comb)]
+    event_df[,comb:=NULL]
+    #write the new files to g_intermediate
+    saveRDS(event_df,paste0(projectFolder, "/g_intermediate/gdm_algorithm/", names(gdm_checkbox_files)[gdm_fl], "_GDM_checkbox.rds"))
+    rm(event_df)
+    index_gdm<-index_gdm+1
+  }
+  rm(index_gdm)
+  
+  #remove all gdm files from tmp
+  for (i in 1:length(gdm_checkbox_files)){
+    file.remove(paste0(tmp,gdm_checkbox_files[[i]]))
+  }
+  
+  #Export duplicates
+  duplicates_gdm_checkbox<-sum(do.call(rbind,duplicates_gdm_checkbox))
+  dup<-data.table(Indicator="GDM Algorithm, Duplicated diagnostic checkbox records removed:", no_records=duplicates_gdm_checkbox)
+  fwrite(dup, paste0(projectFolder, "/g_output/PE and GDM algorithm/removed_diagostic_checkbox_gdm.csv"), row.names = F)
+  rm(dup)
+} else {rm(gdm_checkbox_files)}
+
+#Diagnostic files
 gdm_events<-paste0("_GDM_", names(conditions_gdm))
 gdm_events_sentence<-paste(gdm_events, collapse = "|")
 gdm_events_cat<-list.files(tmp, "GDM_diagnoses_cat")
@@ -1254,6 +1473,62 @@ rm(dup)
 
 
 ###PE files####
+#PE checkbox files
+pe_checkbox_files<-list.files(tmp, "PE_diagnoses_checkbox")
+if(length(pe_checkbox_files)>0){
+  #Combine files by type of event
+  files<-list()
+  for (i in 1: length(pe_checkbox_files)){
+    files<-append(files,substr(pe_checkbox_files[i],1,4))
+  }
+  files<-do.call(c,files)
+  #remove duplicates 
+  files<-files[!duplicated(files)]
+  #create list with names year_condition
+  pe_list<-vector(mode="list", length=length(files))
+  names(pe_list)<-files
+  rm(files)
+  #separate all files into the right category
+  for (i in 1:length(pe_list)){
+    pe_list[[i]]<-pe_checkbox_files[startsWith(pe_checkbox_files,names(pe_list)[i])]
+  }
+  rm(pe_checkbox_files)
+  pe_checkbox_files<-pe_list
+  rm(pe_list)
+  
+  #Load all files, combine by year, clean up by removing duplicated diagnoses
+  duplicates_pe_checkbox<-list()
+  index_pe<-1
+  for (pe_fl in 1:length(pe_checkbox_files)){
+    event_df<-lapply(paste0(tmp, pe_checkbox_files[[pe_fl]]), readRDS)
+    event_df<-rbindlist(event_df,fill = T)
+    #create variable person_id_^_event date
+    event_df[,comb:=paste0(person_id, "_", event_date, "_", condition)]
+    dup<-event_df[duplicated(comb),.N]
+    duplicates_pe_checkbox[[index_pe]]<-dup
+    rm(dup)
+    event_df<-event_df[!duplicated(comb)]
+    event_df[,comb:=NULL]
+    #write the new files to g_intermediate
+    saveRDS(event_df,paste0(projectFolder, "/g_intermediate/pe_algorithm/", names(pe_checkbox_files)[pe_fl], "_PE_checkbox.rds"))
+    rm(event_df)
+    index_pe<-index_pe+1
+  }
+  rm(index_pe)
+  
+  #remove all gdm files from tmp
+  for (i in 1:length(pe_checkbox_files)){
+    file.remove(paste0(tmp,pe_checkbox_files[[i]]))
+  }
+  
+  #Export duplicates
+  duplicates_pe_checkbox<-sum(do.call(rbind,duplicates_pe_checkbox))
+  dup<-data.table(Indicator="PE Algorithm, Duplicated diagnostic checkbox records removed:", no_records=duplicates_pe_checkbox)
+  fwrite(dup, paste0(projectFolder, "/g_output/PE and PE algorithm/removed_diagostic_checkbox_pe.csv"), row.names = F)
+  rm(dup)
+} else {rm(pe_checkbox_files)}
+
+#Diagnostic files
 pe_events<-paste0("_PE_", names(conditions_pe))
 pe_events_sentence<-paste(pe_events, collapse = "|")
 pe_events_cat<-list.files(tmp, "PE_diagnoses_cat")
