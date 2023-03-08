@@ -127,13 +127,13 @@ before_min_date_mig<-pregnancy_D3[dif>0,.N]
 pregnancy_D3[dif<=0,filter_1:=1]
 pregnancy_D3[,min_preg_date:=NULL][,dif:=NULL]
 
-pregnancy_D3[,max_preg_date_lb:=max_lb_preg_date_mig]
-pregnancy_D3[,max_preg_date_sb:=max_sb_preg_date_mig]
-pregnancy_D3[type_of_pregnancy_end=="LB",dif:=max_preg_date_lb - pregnancy_start_date]
-pregnancy_D3[type_of_pregnancy_end=="SB",dif:=max_preg_date_sb - pregnancy_start_date]
+pregnancy_D3[,filter_2:=as.character(NA)]
+pregnancy_D3[,max_preg_date:=max_preg_date_mig]
+pregnancy_D3[,dif:=max_preg_date - pregnancy_start_date]
 after_max_date_mig<-pregnancy_D3[dif<0,.N]
 pregnancy_D3[dif>=0,filter_2:=1]
-pregnancy_D3[,max_preg_date_lb:=NULL][,max_preg_date_sb:=NULL][,dif:=NULL]
+pregnancy_D3[,max_preg_date:=NULL][,dif:=NULL]
+
 pregnancy_D3[filter_1==1 & filter_2==1,mig_filter:=1]
 pregnancy_D3[,filter_1:=NULL][,filter_2:=NULL]
 
@@ -146,7 +146,7 @@ pregnancy_D3[,keep_outcome:=NULL]
 included_mig<-pregnancy_D3[mig_filter==1,.N]
 
 issues_mig<-data.table(Indicator=c(paste0("Records with start date before: ", min_preg_date_mig),
-                                      paste0("Records with end date after LB/SB: ", paste0( max_lb_preg_date_mig,"/",max_sb_preg_date_mig)),
+                                      paste0("Records with end date after: ", max_preg_date_mig),
 #                                   "Records with GA> 20 weeks(140 days)",
                                       "Records with pregnancy outcome other than LB/SB",
                                    "Records left after removing all issues above"),
