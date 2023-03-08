@@ -15,12 +15,13 @@ study_dates<-study_dates[DAP==data_access_provider_name]
 if(study_dates[,.N]==0){
   stop("This is not a script issue. There is no data for your data source in study_dates. Fix the issue and then rerun the script.")
 }
-
+study_dates[,optional_lookback:=as.numeric(optional_lookback)]
 #source(paste0(pre_dir,"parameters/template_error_check.R"))
 #Split the information into medicines or diagnoses codesheet(where the codelists will be used) and not fixed
 
 ####Start dates end End dates for all projects####
 ####GDM & PE####
+if(study_dates[Study=="GDM_and_PE" & DAP==data_access_provider_name,.N]>0){
 #start study date
 gdm_pe_start_study_date<-as.IDate(study_dates[Study=="GDM_and_PE",start_coverage],"%Y%m%d")
 #Will be used in observation periods
@@ -40,8 +41,10 @@ if(opt_lookback==0){
 min_preg_date_gdm_pe<-as.IDate(as.character(study_dates[Study=="GDM_and_PE",min_preg_date]),"%Y%m%d")
 #max_preg_date_gdm_pe
 max_preg_date_gdm_pe<-as.IDate(as.character(study_dates[Study=="GDM_and_PE",max_preg_date]),"%Y%m%d")
-
+if(exists("opt_lookback")){rm(opt_lookback)}
+}
 ####Migraine####
+if(study_dates[Study=="Migraine" & DAP==data_access_provider_name,.N]>0){
 #start study date
 mig_start_study_date<-unique(as.IDate(study_dates[Study=="Migraine",start_coverage],"%Y%m%d"))
 #end study date: the min date between date creation and recommended end date or end study date
@@ -50,10 +53,8 @@ mig_end_study_date<-min(as.IDate(as.character(CDM_SOURCE[,date_creation]),"%Y%m%
                            as.IDate(study_dates[Study=="Migraine",end_coverage],"%Y%m%d"), na.rm = T)
 #min_preg_date_mig
 min_preg_date_mig<-unique(as.IDate(study_dates[Study=="Migraine",min_preg_date],"%Y%m%d"))
-
 #max_preg_date_gdm_pe
-max_lb_preg_date_mig<-as.IDate(study_dates[Study=="Migraine" & type_birth=="LB",max_preg_date],"%Y%m%d")
-max_sb_preg_date_mig<-as.IDate(study_dates[Study=="Migraine" & type_birth=="SB",max_preg_date],"%Y%m%d")
+max_preg_date_mig<-as.IDate(as.character(study_dates[Study=="Migraine",max_preg_date]),"%Y%m%d")
 
 #optional_lookback: will be used for pregnancy start date
 opt_lookback<-unique(study_dates[Study=="Migraine",optional_lookback])
@@ -62,11 +63,13 @@ if(opt_lookback==0){
 }else{
   mig_start_preg_lookback<- min_preg_date_mig + as.numeric(opt_lookback)
 }
-
+if(exists("opt_lookback")){rm(opt_lookback)}
+}
 #min age pregnancy
 min_age_preg<-15
 max_age_preg<-55
 ####Drug utilisation####
+if(study_dates[Study=="Drug_utilisation" & DAP==data_access_provider_name,.N]>0){
 #start study date
 du_start_study_date<-as.IDate(study_dates[Study=="Drug_utilisation",start_coverage],"%Y%m%d")
 #Will be used in observation periods
@@ -86,8 +89,10 @@ du_end_study_date<-min(as.IDate(as.character(CDM_SOURCE[,date_creation]),"%Y%m%d
 min_preg_date_du<-as.IDate(study_dates[Study=="Drug_utilisation",min_preg_date],"%Y%m%d")
 #max_preg_date_du
 max_preg_date_du<-as.IDate(study_dates[Study=="Drug_utilisation",max_preg_date],"%Y%m%d")
-
+if(exists("opt_lookback")){rm(opt_lookback)}
+}
 ####Safety####
+if(study_dates[Study=="Safety" & DAP==data_access_provider_name,.N]>0){
 #start study date
 saf_start_study_date<-as.IDate(study_dates[Study=="Safety",start_coverage],"%Y%m%d")
 #Will be used in observation periods
@@ -110,3 +115,5 @@ if(opt_lookback==0){
 min_preg_date_saf<-as.IDate(study_dates[Study=="Safety",min_preg_date],"%Y%m%d")
 #max_preg_date_saf
 max_preg_date_saf<-as.IDate(study_dates[Study=="Safety",max_preg_date],"%Y%m%d")
+if(exists("opt_lookback")){rm(opt_lookback)}
+}
