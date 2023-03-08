@@ -106,7 +106,7 @@ included_gdm_pe<-pregnancy_D3[gdm_pe_filter==1,.N]
 
 issues_gdm_pe<-data.table(Indicator=c(paste0("Records with start date before: ",min_preg_date_gdm_pe),
                           paste0("Records with end date after: ", max_preg_date_gdm_pe),
-                          "Records with GA> 20 weeks(140 days)",
+                          "Records with GA<20 weeks(140 days)",
 #                          "Records with pregnancy outcome other than LB/SB",
                           "Records left after removing all issues above"),
                           GDM_and_PE=c(before_min_date_gdm_pe,
