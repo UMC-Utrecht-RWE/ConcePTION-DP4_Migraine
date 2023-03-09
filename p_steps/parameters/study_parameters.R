@@ -65,9 +65,6 @@ if(opt_lookback==0){
 }
 if(exists("opt_lookback")){rm(opt_lookback)}
 }
-#min age pregnancy
-min_age_preg<-15
-max_age_preg<-55
 ####Drug utilisation####
 if(study_dates[Study=="Drug_utilisation" & DAP==data_access_provider_name,.N]>0){
 #start study date
@@ -117,3 +114,7 @@ min_preg_date_saf<-as.IDate(study_dates[Study=="Safety",min_preg_date],"%Y%m%d")
 max_preg_date_saf<-as.IDate(study_dates[Study=="Safety",max_preg_date],"%Y%m%d")
 if(exists("opt_lookback")){rm(opt_lookback)}
 }
+####Age pregnancy at start pregnancy####
+#min age pregnancy
+min_age_preg<-15
+max_age_preg<-49
