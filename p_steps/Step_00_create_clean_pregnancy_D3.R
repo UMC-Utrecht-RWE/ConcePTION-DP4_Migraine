@@ -1,6 +1,6 @@
 #Run pregnancy algorithm and save results to g_intermediate/pregnancy after clean up
 
-source(paste0(pre_dir,"Pregnancy algorithm/to_run.R"))
+#source(paste0(pre_dir,"Pregnancy algorithm/to_run.R"))
 
 #Load the final pregnancy D3
 rm(list=setdiff(ls(), "projectFolder"))
