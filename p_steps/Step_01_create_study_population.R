@@ -418,5 +418,5 @@ rm(flowchart_max_age)
 
 
 
-fwrite(flowchart_separate, paste0(output_dir,"Pregnancy study population/flowchart_specific_criteria_study_population"), row.names = F)
+fwrite(flowchart_separate, paste0(output_dir,"Pregnancy study population/flowchart_specific_criteria_study_population.csv"), row.names = F)
 rm(flowchart_separate)
