@@ -58,18 +58,19 @@ pregnancy_D3[,diff:=pregnancy_end_date- pregnancy_start_date]
 issues_preg_alg_ga<-pregnancy_D3[diff>=301,.N]
 pregnancy_D3<-pregnancy_D3[diff<301]
 pregnancy_D3[,diff:=NULL]
-
+incl_rec<-pregnancy_D3[,.N]
 Indicator<-c("Number of original records from the pregnancy algorithm",
              "Number of records with quality other than green",
              "Records with sex other than female", 
              "Records with missing start or end date of pregnancy or both",
              "Records with missing person id",
              "Records with missing pregnancy id",
-             "Records where gestational age is longer than 43 weeks(301 days)")
-placeholder<-c(original_rows,not_green_rec,issues_preg_alg_sex,issues_preg_alg_date,issues_preg_alg_pid,issues_preg_alg_prid,issues_preg_alg_ga)
+             "Records where gestational age is longer than 43 weeks(301 days)",
+             "Records left after exclusions")
+placeholder<-c(original_rows,not_green_rec,issues_preg_alg_sex,issues_preg_alg_date,issues_preg_alg_pid,issues_preg_alg_prid,issues_preg_alg_ga,incl_rec)
 issues<-data.table(Indicator=Indicator, Count=placeholder)
 rm(Indicator,placeholder)
-rm(issues_preg_alg_sex,not_green_rec,issues_preg_alg_date,issues_preg_alg_pid,issues_preg_alg_prid,issues_preg_alg_ga)
+rm(issues_preg_alg_sex,not_green_rec,issues_preg_alg_date,issues_preg_alg_pid,issues_preg_alg_prid,issues_preg_alg_ga,incl_rec)
 
 fwrite(issues,paste0(output_dir, "Pregnancy algorithm/issues_flowchart_pregnancy_D3.csv"), row.names = F)
 rm(issues)
@@ -86,8 +87,8 @@ pregnancy_D3[,min_preg_date:=NULL][,dif:=NULL]
 pregnancy_D3[,filter_2:=as.character(NA)]
 pregnancy_D3[,max_preg_date:=max_preg_date_gdm_pe]
 pregnancy_D3[,dif:=max_preg_date - pregnancy_start_date]
-after_max_date_gdm_pe<-pregnancy_D3[dif<0,.N]
-pregnancy_D3[dif>=0,filter_2:=1]
+after_max_date_gdm_pe<-pregnancy_D3[dif<0 & filter_1==1,.N]
+pregnancy_D3[dif>=0 & filter_1==1,filter_2:=1]
 pregnancy_D3[,max_preg_date:=NULL][,dif:=NULL]
 
 pregnancy_D3[filter_1==1 & filter_2==1,gdm_pe_filter:=1]
@@ -97,7 +98,7 @@ pregnancy_D3[,filter_1:=NULL][,filter_2:=NULL]
 #pregnancies with ga>20 weeks(140 days) only
 pregnancy_D3[,GA:=pregnancy_end_date - pregnancy_start_date]
 pregnancy_D3[GA>140, include_ga:=1]
-not_incl_ga<-pregnancy_D3[GA<=140,.N]
+not_incl_ga<-pregnancy_D3[GA<=140 & gdm_pe_filter==1,.N]
 #update gdm_pe_filter
 pregnancy_D3[GA<=140, gdm_pe_filter:=NA]
 pregnancy_D3[,GA:=NULL]
@@ -130,8 +131,8 @@ pregnancy_D3[,min_preg_date:=NULL][,dif:=NULL]
 pregnancy_D3[,filter_2:=as.character(NA)]
 pregnancy_D3[,max_preg_date:=max_preg_date_mig]
 pregnancy_D3[,dif:=max_preg_date - pregnancy_start_date]
-after_max_date_mig<-pregnancy_D3[dif<0,.N]
-pregnancy_D3[dif>=0,filter_2:=1]
+after_max_date_mig<-pregnancy_D3[dif<0 & filter_1==1,.N]
+pregnancy_D3[dif>=0 & filter_1==1,filter_2:=1]
 pregnancy_D3[,max_preg_date:=NULL][,dif:=NULL]
 
 pregnancy_D3[filter_1==1 & filter_2==1,mig_filter:=1]
@@ -139,7 +140,7 @@ pregnancy_D3[,filter_1:=NULL][,filter_2:=NULL]
 
 #Calculate number of pregnancy records with outcome LB/SB
 pregnancy_D3[type_of_pregnancy_end=="LB" | type_of_pregnancy_end=="SB", keep_outcome:=1]
-other_outcome_mig<-pregnancy_D3[is.na(keep_outcome),.N]
+other_outcome_mig<-pregnancy_D3[is.na(keep_outcome) & mig_filter==1,.N]
 #Update filter_mig based on the type of outcome
 pregnancy_D3[is.na(keep_outcome), mig_filter:=NA]
 pregnancy_D3[,keep_outcome:=NULL]
@@ -172,8 +173,8 @@ pregnancy_D3[,min_preg_date:=NULL][,dif:=NULL]
 pregnancy_D3[,filter_2:=as.character(NA)]
 pregnancy_D3[,max_preg_date:=max_preg_date_du]
 pregnancy_D3[,dif:=max_preg_date - pregnancy_start_date]
-after_max_date_du<-pregnancy_D3[dif<0,.N]
-pregnancy_D3[dif>=0,filter_2:=1]
+after_max_date_du<-pregnancy_D3[dif<0 & filter_1==1,.N]
+pregnancy_D3[dif>=0 & filter_1==1,filter_2:=1]
 pregnancy_D3[,max_preg_date:=NULL][,dif:=NULL]
 
 pregnancy_D3[filter_1==1 & filter_2==1,du_filter:=1]
@@ -181,7 +182,7 @@ pregnancy_D3[,filter_1:=NULL][,filter_2:=NULL]
 
 #Calculate number of pregnancy records with outcome LB/SB
 pregnancy_D3[type_of_pregnancy_end=="LB" | type_of_pregnancy_end=="SB", keep_outcome:=1]
-other_outcome_du<-pregnancy_D3[is.na(keep_outcome),.N]
+other_outcome_du<-pregnancy_D3[is.na(keep_outcome) & du_filter==1,.N]
 #Update filter_mig based on the type of outcome
 pregnancy_D3[is.na(keep_outcome), du_filter:=NA]
 pregnancy_D3[,keep_outcome:=NULL]
@@ -214,8 +215,8 @@ pregnancy_D3[,min_preg_date:=NULL][,dif:=NULL]
 pregnancy_D3[,filter_2:=as.character(NA)]
 pregnancy_D3[,max_preg_date:=max_preg_date_saf]
 pregnancy_D3[,dif:=max_preg_date - pregnancy_start_date]
-after_max_date_saf<-pregnancy_D3[dif<0,.N]
-pregnancy_D3[dif>=0,filter_2:=1]
+after_max_date_saf<-pregnancy_D3[dif<0 & filter_1==1,.N]
+pregnancy_D3[dif>=0 & filter_1==1,filter_2:=1]
 pregnancy_D3[,max_preg_date:=NULL][,dif:=NULL]
 
 pregnancy_D3[filter_1==1 & filter_2==1,saf_filter:=1]
@@ -223,7 +224,7 @@ pregnancy_D3[,filter_1:=NULL][,filter_2:=NULL]
 
 #Calculate number of pregnancy records with outcome LB/SB
 pregnancy_D3[type_of_pregnancy_end=="LB" | type_of_pregnancy_end=="SB", keep_outcome:=1]
-other_outcome_saf<-pregnancy_D3[is.na(keep_outcome),.N]
+other_outcome_saf<-pregnancy_D3[is.na(keep_outcome) & saf_filter==1,.N]
 #Update filter_mig based on the type of outcome
 pregnancy_D3[is.na(keep_outcome), saf_filter:=NA]
 pregnancy_D3[,keep_outcome:=NULL]
