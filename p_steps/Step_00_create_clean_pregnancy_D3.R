@@ -7,7 +7,7 @@ rm(list=setdiff(ls(), "projectFolder"))
 setwd(projectFolder)
 source("99_path.R")
 setwd(projectFolder)
-
+initial_time<-Sys.time()
 #Load study parameters
 source(paste0(projectFolder,"/p_steps/info/DAP_info.R"))
 source(paste0(projectFolder,"/p_steps/parameters/study_parameters.R"))
@@ -250,7 +250,7 @@ rm(issues_saf)
 ####remove uneccessary columns####
 pregnancy_D3<-pregnancy_D3[,c("person_id","pregnancy_id","pregnancy_start_date","pregnancy_end_date","gdm_pe_filter","mig_filter","du_filter","saf_filter")]
 
-####Create summary of included records by year of start pregnancy
+####Create summary of included records by year of start pregnancy####
 pregnancy_D3[,year:=year(pregnancy_start_date)]
 summary_gdm<-as.data.table(pregnancy_D3[gdm_pe_filter==1,.N,by="year"])
 setnames(summary_gdm,"N","GDM_and_PE")
@@ -277,3 +277,7 @@ rm(summary)
 #save pregnancy population to g_intermediate
 saveRDS(pregnancy_D3,paste0(g_intermediate,"pregnancy_algorithm/pregnancy_D3.rds"))
 rm(pregnancy_D3)
+
+end_time<-Sys.time()
+time_log<-data.table(DAP=data_access_provider_name, Script="Step_00_create_clean_pregnancy_D3.R", Date=Sys.Date(), Time_elapsed=round(as.numeric(end_time-initial_time),2))
+fwrite(time_log, paste0(output_dir,"Time log/Step_00_time_log.csv"),row.names = F)
