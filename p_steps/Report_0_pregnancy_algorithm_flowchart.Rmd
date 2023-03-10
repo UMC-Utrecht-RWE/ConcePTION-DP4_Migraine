@@ -33,7 +33,27 @@ Sys.setlocale("LC_ALL", "C")
 `%!in%` = Negate(`%in%`)
 ```
 
+```{r time_log, echo=F}
+time_log_0<-fread(paste0(projectFolder,"/g_output/Time log/Step_00_time_log.csv"))
+time_log_0<-time_log_0[,Time_elapsed]
+```
+
 <div class = 'box1'>
+
+General information:
+
+ - **Script directory:** `r projectFolder`
+ - **Date/time:** `r Sys.time()`
+ - **DAP:** `r data_access_provider_name`
+ - **Data source:** `r data_source_name`
+ - **Time log:** `r time_log_0`
+
+</div>
+
+<br>
+
+<div class = 'box2'>
+
 
 Minimum and maximum dates of start date of pregnancy records for all projects by DAP
 
@@ -45,7 +65,7 @@ Minimum and maximum dates of start date of pregnancy records for all projects by
 
 <br>
 
-<div class = 'box2'>
+<div class = 'box3'>
 
 ## 1. Application of pregnancy algorithm and records quality
 
@@ -68,7 +88,7 @@ datatable(removed_rec, options = list(scrollX=T))
 
 <br>
 
-<div class = 'box3'>
+<div class = 'box4'>
 
 ## 2. Application of the same exclusion criteria to pregnancy D3  
 
@@ -87,7 +107,7 @@ datatable(excl_criteria_same, options = list(scrollX=T))
 
 <br>
 
-<div class = 'box4'>
+<div class = 'box5'>
 
 ## 3. Application of the specific exclusion criteria to pregnancy D3 for GDM and PE algorithm
 
@@ -105,7 +125,7 @@ datatable(excl_criteria_gdm_pe, options = list(scrollX=T))
 
 <br>
 
-<div class = 'box5'>
+<div class = 'box6'>
 
 ## 4. Application of the specific exclusion criteria to pregnancy D3 for Migraine algorithm
 
@@ -122,7 +142,7 @@ datatable(excl_criteria_mig, options = list(scrollX=T))
 
 <br>
 
-<div class = 'box6'>
+<div class = 'box7'>
 
 ## 5. Application of the specific exclusion criteria to pregnancy D3 for the Drug utilization study
 
@@ -139,7 +159,7 @@ datatable(excl_criteria_du, options = list(scrollX=T))
 
 <br>
 
-<div class = 'box7'>
+<div class = 'box8'>
 
 ## 6. Application of the specific exclusion criteria to pregnancy D3 for the Safety study
 
@@ -156,7 +176,7 @@ datatable(excl_criteria_saf, options = list(scrollX=T))
 
 <br>
 
-<div class = 'box8'>
+<div class = 'box9'>
 
 ## 7. Summary of included records for all projects by year of start pregnancy date
 
