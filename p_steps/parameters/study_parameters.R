@@ -32,9 +32,9 @@ gdm_pe_end_study_date<-min(as.IDate(as.character(CDM_SOURCE[,date_creation]),"%Y
 #optional_lookback: will be used for diagnoses, medication and other data related to the event
 opt_lookback<-study_dates[Study=="GDM_and_PE",optional_lookback]
 if(opt_lookback==0){
-  gmd_pe_start_coverage_lookback<-NULL
+  gdm_pe_start_preg_lookback<-NULL
 }else{
-  gdm_pe_start_coverage_lookback<- gdm_pe_start_study_date - as.numeric(opt_lookback)
+  gdm_pe_start_preg_lookback<- min_preg_date_gdm_pe + as.numeric(opt_lookback)
 }
 
 #min_preg_date_gdm_pe
