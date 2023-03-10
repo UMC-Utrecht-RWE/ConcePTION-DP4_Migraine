@@ -1,5 +1,7 @@
-#Load the Observation periods table
 
+initial_time<-Sys.time()
+
+#Load the Observation periods table
 ####load info, parameters, conceptsets####
 source(paste0(pre_dir,"info/directory_info.R"))
 source(paste0(pre_dir,"functions/CreateSpells_v15.R"))
@@ -415,8 +417,189 @@ flowchart_separate<-rbind(flowchart_separate,flowchart_max_age)
 rm(flowchart_max_age)
 
 ####Apply specific criteria to each project####
+#Check if the records have at least 3 months of lookback
+lookback_3_months<-3*30
+lookback_12_months<-12*30
+#GDM_and_PE
+pregnancy_D3[gdm_pe_filter==1,dif:=pregnancy_start_date-op_start_date_gdm_pe]
+less_than_3_month_gdm_pe<-pregnancy_D3[gdm_pe_filter==1 & dif<lookback_3_months,.N]
+pregnancy_D3[gdm_pe_filter==1 & dif<lookback_3_months,gdm_pe_filter:=NA]
+pregnancy_D3[,dif:=NULL]
+included_rec_gdm_pe<-pregnancy_D3[gdm_pe_filter==1,.N]
+pregnancy_D3[gdm_pe_filter==1,dif:=pregnancy_start_date-op_start_date_gdm_pe]
+lookback_12_month_gdm_pe<-pregnancy_D3[gdm_pe_filter==1 & dif>=lookback_12_months,.N]
+pregnancy_D3[,dif:=NULL]
+#Migraine
+pregnancy_D3[mig_filter==1,dif:=pregnancy_start_date-op_start_date_mig]
+less_than_3_month_mig<-pregnancy_D3[mig_filter==1 & dif<lookback_3_months,.N]
+pregnancy_D3[mig_filter==1 & dif<lookback_3_months,mig_filter:=NA]
+pregnancy_D3[,dif:=NULL]
+included_rec_mig<-pregnancy_D3[mig_filter==1,.N]
+pregnancy_D3[mig_filter==1,dif:=pregnancy_start_date-op_start_date_mig]
+lookback_12_month_mig<-pregnancy_D3[mig_filter==1 & dif>=lookback_12_months,.N]
+pregnancy_D3[,dif:=NULL]
+#Check number of records to be included when the lookback is 5 years
+#mig_start_preg_lookback
+#calculate all pregnancy records that start after mig_start_preg_lookback
+mig_start_preg_lookback<-as.IDate(mig_start_preg_lookback)
+incl_5_years<-pregnancy_D3[mig_filter==1 & pregnancy_start_date>=mig_start_preg_lookback,.N]
+#Drug utilisation
+pregnancy_D3[du_filter==1,dif:=pregnancy_start_date-op_start_date_du]
+less_than_3_month_du<-pregnancy_D3[du_filter==1 & dif<lookback_3_months,.N]
+pregnancy_D3[du_filter==1 & dif<lookback_3_months,du_filter:=NA]
+pregnancy_D3[,dif:=NULL]
+included_rec_du<-pregnancy_D3[du_filter==1,.N]
+pregnancy_D3[du_filter==1,dif:=pregnancy_start_date-op_start_date_du]
+lookback_12_month_du<-pregnancy_D3[du_filter==1 & dif>=lookback_12_months,.N]
+pregnancy_D3[,dif:=NULL]
+
+#Safety
+pregnancy_D3[saf_filter==1,dif:=pregnancy_start_date-op_start_date_saf]
+less_than_3_month_saf<-pregnancy_D3[saf_filter==1 & dif<lookback_3_months,.N]
+pregnancy_D3[saf_filter==1 & dif<lookback_3_months,saf_filter:=NA]
+pregnancy_D3[,dif:=NULL]
+included_rec_saf<-pregnancy_D3[saf_filter==1,.N]
+pregnancy_D3[saf_filter==1,dif:=pregnancy_start_date-op_start_date_saf]
+lookback_12_month_saf<-pregnancy_D3[saf_filter==1 & dif>=lookback_12_months,.N]
+pregnancy_D3[,dif:=NULL]
 
 
+#follow up 42 weeks
+#GDM and PE
+pregnancy_D3[gdm_pe_filter==1,new_date:=pregnancy_start_date+42*7]
+no_fup_42_weeks<-pregnancy_D3[gdm_pe_filter==1 & new_date>op_end_date_gdm_pe,.N]
+pregnancy_D3[gdm_pe_filter==1 & new_date>op_end_date_gdm_pe, gdm_pe_filter:=NA]
+pregnancy_D3[,new_date:=NULL]
+#7 days after delivery
+no_7_days<-pregnancy_D3[gdm_pe_filter==1 & op_end_date_gdm_pe<pregnancy_end_date+7,.N]
+pregnancy_D3[gdm_pe_filter==1 & op_end_date_gdm_pe<pregnancy_end_date+7,gdm_pe_filter:=NA]
+#Safety
+pregnancy_D3[saf_filter==1,new_date:=pregnancy_start_date+42*7]
+no_fup_42_weeks_saf<-pregnancy_D3[saf_filter==1 & new_date>op_end_date_saf,.N]
+pregnancy_D3[saf_filter==1 & new_date>op_end_date_saf, saf_filter:=NA]
+pregnancy_D3[,new_date:=NULL]
+
+#Check if its multiple or single pregnancy record
+pregnancy_D3[saf_filter==1, rowid:=rowid(person_id,pregnancy_start_date)]
+multiple_preg_records<-pregnancy_D3[!duplicated(person_id) & rowid>=2,.N]
+pregnancy_D3<-pregnancy_D3[rowid==1] 
+pregnancy_D3[,rowid:=NULL]
+#Create flowchart
+Indicator<-c("Number of records with lookback period less than 3 months")
+flowchart_3_months<-data.table(Indicator,GDM_and_PE=less_than_3_month_gdm_pe,Migraine=less_than_3_month_mig,Drug_utilisation=less_than_3_month_du,Safety=less_than_3_month_saf)
+rm(less_than_3_month_gdm_pe,less_than_3_month_mig,less_than_3_month_du,less_than_3_month_saf)
+rm(Indicator)
+
+flowchart_separate<-rbind(flowchart_separate,flowchart_3_months)
+rm(flowchart_3_months)
+
+Indicator<-c("Number of included records up to now")
+flowchart_incl<-data.table(Indicator,GDM_and_PE=included_rec_gdm_pe,Migraine=included_rec_mig,Drug_utilisation=included_rec_du,Safety=included_rec_saf)
+rm(included_rec_gdm_pe,included_rec_mig,included_rec_du,included_rec_saf)
+rm(Indicator)
+
+flowchart_separate<-rbind(flowchart_separate,flowchart_incl)
+rm(flowchart_incl)
+
+Indicator<-c("Number of records with 12 months lookback")
+flowchart_12<-data.table(Indicator,GDM_and_PE=lookback_12_month_gdm_pe,Migraine=lookback_12_month_mig,Drug_utilisation=lookback_12_month_du,Safety=lookback_12_month_saf)
+rm(lookback_12_month_gdm_pe,lookback_12_month_mig,lookback_12_month_du,lookback_12_month_saf)
+rm(Indicator)
+
+flowchart_separate<-rbind(flowchart_separate,flowchart_12)
+rm(flowchart_12)
+
+Indicator<-c("Number of records with less than 42 weeks of follow up")
+flowchart_42_fup<-data.table(Indicator,GDM_and_PE=no_fup_42_weeks,Migraine="N/A",Drug_utilisation="N/A",Safety=no_fup_42_weeks_saf)
+rm(no_fup_42_weeks,no_fup_42_weeks_saf)
+rm(Indicator)
+
+flowchart_separate<-rbind(flowchart_separate,flowchart_42_fup)
+rm(flowchart_42_fup)
+
+Indicator<-c("Number of records with less than 7 days after pregnancy end date")
+flowchart_7_fup<-data.table(Indicator,GDM_and_PE=no_7_days,Migraine="N/A",Drug_utilisation="N/A",Safety="N/A")
+rm(no_7_days)
+rm(Indicator)
+
+flowchart_separate<-rbind(flowchart_separate,flowchart_7_fup)
+rm(flowchart_7_fup)
+
+Indicator<-c("Number of records with 5 years lookback")
+flowchart_5<-data.table(Indicator,GDM_and_PE="N/A",Migraine=incl_5_years,Drug_utilisation="N/A",Safety="N/A")
+rm(incl_5_years)
+rm(Indicator)
+
+flowchart_separate<-rbind(flowchart_separate,flowchart_5)
+rm(flowchart_5)
+
+Indicator<-c("Number of multiple pregnancies")
+flowchart_mult<-data.table(Indicator,GDM_and_PE="N/A",Migraine="N/A",Drug_utilisation="N/A",Safety=multiple_preg_records)
+rm(multiple_preg_records)
+rm(Indicator)
+
+flowchart_separate<-rbind(flowchart_separate,flowchart_mult)
+rm(flowchart_mult)
+
+#Included records
+incl_gdm_pe<-pregnancy_D3[gdm_pe_filter==1,.N]
+incl_mig<-pregnancy_D3[mig_filter==1,.N]
+incl_du<-pregnancy_D3[du_filter==1,.N]
+incl_saf<-pregnancy_D3[saf_filter==1,.N]
+
+Indicator<-c("Number of included records")
+flowchart_final<-data.table(Indicator,GDM_and_PE=incl_gdm_pe,Migraine=incl_mig,Drug_utilisation=incl_du,Safety=incl_saf)
+rm(incl_gdm_pe,incl_mig,incl_du,incl_saf)
+rm(Indicator)
+
+flowchart_separate<-rbind(flowchart_separate,flowchart_final)
+rm(flowchart_final)
 
 fwrite(flowchart_separate, paste0(output_dir,"Pregnancy study population/flowchart_specific_criteria_study_population.csv"), row.names = F)
 rm(flowchart_separate)
+
+#Export the D3_PREGNANCY by specific project
+cols<-c("person_id","pregnancy_id","pregnancy_start_date","pregnancy_end_date","year","sex_at_instance_creation","birth_date","death_date","op_start_date_gdm_pe","op_end_date_gdm_pe")
+saveRDS(pregnancy_D3[gdm_pe_filter==1][,cols,with=F], paste0(projectFolder,"/g_intermediate/pregnancy_d3/GDM_PE_Pregnancy_D3.rds"))
+rm(cols)
+
+cols<-c("person_id","pregnancy_id","pregnancy_start_date","pregnancy_end_date","year","sex_at_instance_creation","birth_date","death_date","op_start_date_mig","op_end_date_mig")
+saveRDS(pregnancy_D3[mig_filter==1], paste0(projectFolder,"/g_intermediate/pregnancy_d3/MIG_Pregnancy_D3.rds"))
+rm(cols)
+
+cols<-c("person_id","pregnancy_id","pregnancy_start_date","pregnancy_end_date","year","sex_at_instance_creation","birth_date","death_date","op_start_date_du","op_end_date_du")
+saveRDS(pregnancy_D3[du_filter==1], paste0(projectFolder,"/g_intermediate/pregnancy_d3/DU_Pregnancy_D3.rds"))
+rm(cols)
+
+cols<-c("person_id","pregnancy_id","pregnancy_start_date","pregnancy_end_date","year","sex_at_instance_creation","birth_date","death_date","op_start_date_saf","op_end_date_saf")
+saveRDS(pregnancy_D3[saf_filter==1], paste0(projectFolder,"/g_intermediate/pregnancy_d3/SAF_Pregnancy_D3.rds"))
+rm(cols)
+
+summary_gdm<-as.data.table(pregnancy_D3[gdm_pe_filter==1,.N,by="year"])
+setnames(summary_gdm,"N","GDM_and_PE")
+summary_mig<-as.data.table(pregnancy_D3[mig_filter==1,.N,by="year"])
+setnames(summary_mig,"N","Migraine")
+summary_du<-as.data.table(pregnancy_D3[du_filter==1,.N,by="year"])
+setnames(summary_du,"N","Drug_utilization")
+summary_saf<-as.data.table(pregnancy_D3[saf_filter==1,.N,by="year"])
+setnames(summary_saf,"N","Safety")
+summary<-merge.data.table(summary_gdm,summary_mig,by="year",all=T)
+rm(summary_gdm,summary_mig)
+summary<-merge.data.table(summary,summary_du,by="year",all=T)
+rm(summary_du)
+summary<-merge.data.table(summary,summary_saf,by="year",all=T)
+rm(summary_saf)
+summary[is.na(GDM_and_PE),GDM_and_PE:=0]
+summary[is.na(Migraine),Migraine:=0]
+summary[is.na(Drug_utilization),Drug_utilization:=0]
+summary[is.na(Safety),Safety:=0]
+
+fwrite(summary,paste0(output_dir, "Pregnancy study population/included_records_study_pop_pregnancy_D3.csv"), row.names = F)
+rm(summary)
+
+rm(pregnancy_D3,persons_table_files,obs_table_files,lookback_3_months,lookback_12_months,incl_rec)
+
+end_time<-Sys.time()
+time_log<-data.table(DAP=data_access_provider_name, Script="Step_01_create_study_population.R", Date=Sys.Date(), Time_elapsed=round(as.numeric(end_time-initial_time),2))
+fwrite(time_log, paste0(output_dir,"Time log/Step_01_time_log.csv"),row.names = F)
+
