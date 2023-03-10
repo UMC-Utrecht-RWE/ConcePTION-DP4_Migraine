@@ -1,0 +1,142 @@
+---
+title: "CONCEPTION - Demonstration project 4: Migraine"
+subtitle: "Creation of the pregnancy study population"
+output: 
+  html_document:
+    theme: spacelab
+    output_dir: output_dir
+---
+
+```{css,  echo = F}
+/*-- Specify div's for 'boxes', change color of TOC and center align titles: --*/
+div.box1 {background-color: #f5f5f0; border-radius: 5px; padding: 30px; margin-right: 0px}
+div.box2 {border-style: solid; border-color: #f5f5f0; border-width: medium; border-radius: 30px; padding: 5px; margin-right: 0px}
+div.box3 {border-style: solid; border-color: #f5f5f0; border-width: medium; border-radius: 30px; padding: 5px; margin-right: 0px}
+div.box4 {border-style: solid; border-color: #f5f5f0; border-width: medium; border-radius: 30px; padding: 5px; margin-right: 0px}
+div.box5 {border-style: solid; border-color: #f5f5f0; border-width: medium; border-radius: 30px; padding: 5px; margin-right: 0px}
+div.box6 {border-style: solid; border-color: #f5f5f0; border-width: medium; border-radius: 30px; padding: 5px; margin-right: 0px}
+div.box7 {border-style: solid; border-color: #f5f5f0; border-width: medium; border-radius: 30px; padding: 5px; margin-right: 0px}
+div.box8 {border-style: solid; border-color: #f5f5f0; border-width: medium; border-radius: 30px; padding: 5px; margin-right: 0px}
+div.box9 {border-style: solid; border-color: #f5f5f0; border-width: medium; border-radius: 30px; padding: 5px; margin-right: 0px}
+
+.list-group-item.active, .list-group-item.active:focus, .list-group-item.active:hover {background-color: #76b82a; border-color: #76b82a}
+h1 {text-align: center; color: #3c7b8a}
+h2 {text-align: center; color: #76b82a}
+h3
+
+/*-- Add logo (based on https://rstudio4edu.github.io/rstudio4edu-book/rmd-fancy.html): --*/
+#TOC::before {content: ""; display: block; height: 60px; margin: 30px 10px 30px; background-image: url("conception_logo.png"); background-size: contain; background-position: center center; background-repeat: no-repeat}
+```
+
+```{r set_locale, include=FALSE}
+Sys.setlocale("LC_ALL", "C")
+`%!in%` = Negate(`%in%`)
+```
+
+```{r time_log, echo=F}
+time_log_1<-fread(paste0(projectFolder,"/g_output/Time log/Step_01_time_log.csv"))
+time_log_1<-time_log_1[,Time_elapsed]
+```
+
+::: box1
+General information:
+
+-   **Script directory:** `r projectFolder`
+-   **Date/time:** `r Sys.time()`
+-   **DAP:** `r data_access_provider_name`
+-   **Data source:** `r data_source_name`
+-   **Time log:** `r time_log_1`
+:::
+
+<br>
+
+::: box2
+Start and end study dates for all projects by DAP
+
+<br>
+
+![Study dates](study_dates.png)
+:::
+
+<br>
+
+Flowchart of creating the pregnancy study population
+
+![Flowchart](pregnancy_flowchart.png)
+:::
+
+<br>
+
+::: box3
+## 1. Application of the same exclusion criteria to OBSERVATION_PERIODS and PERSONS table
+
+<br>
+
+**Step 1:** Load the OBSERVATION_PERIODS table and apply the CreateSpells function.\
+**Step 2:** Clean up the OBSERVATION_PERIODS table.\
+**Step 3:** Load the PERSONS table, clean up records and impute date of birth and date of death when needed.\
+
+spells- observation period, the time span between start of follow up and end of follow up\
+
+<br>
+
+Below all indicators and number of removed records is explained.
+
+```{r std_pop_excl_criteria_same, echo=F}
+if("flowchart_same_criteria_study_population.csv" %in% list.files(paste0(projectFolder,"/g_output/Pregnancy study population/"))){
+removed_rec<-fread(paste0(projectFolder,"/g_output/Pregnancy study population/flowchart_same_criteria_study_population.csv"))
+datatable(removed_rec, options = list(scrollX=T))
+}else{
+  print("This table is missing in the folder g_output/Pregnancy study population.")
+}
+```
+:::
+
+<br>
+
+::: box4
+## 2. Creation of the pregnancy study population and application of specific exclusion criteria 
+
+<br>
+
+**Step 1:** Merge the OBSERVATION_PERIODS table with PERSONS table.\
+**Step 2:** Clean up the created table by removing subjects with no follow up in the study period.\
+**Step 3:** Check for impossible birthdates(>120 years old at end follow up).\
+**Step 4:** Merge with the Pregnancy D3 created in Step 0.\
+**Step 5:** Compare pregnancy dates with start and end of follow up dates.\
+**Step 6:** Check age at start of pregnancy date.\
+**Step 7:** Check lookback time by comparing start of follow up and pregnancy start date.\
+**Step 8:** Check the neccessary follow up period, type of pregnancy(multiple, single).\
+**Step 9:** Create the pregnancy study population for each project.\
+
+<br>
+
+Below all indicators and number of removed records is explained.
+
+```{r std_pop_excl_criteria_specific, echo=F}
+if("flowchart_specific_criteria_study_population.csv" %in% list.files(paste0(projectFolder,"/g_output/Pregnancy study population/"))){
+removed_rec<-fread(paste0(projectFolder,"/g_output/Pregnancy study population/flowchart_specific_criteria_study_population.csv"))
+datatable(removed_rec, options = list(scrollX=T))
+}else{
+  print("This table is missing in the folder g_output/Pregnancy study population.")
+}
+```
+
+:::
+
+<br>
+
+::: box5
+
+## 3. Summary of included records for all projects by year of start pregnancy date
+
+```{r included_rec, echo=F}
+if("included_records_study_pop_pregnancy_D3.csv" %in% list.files(paste0(projectFolder,"/g_output/Pregnancy study population/"))){
+incl_rec<-fread(paste0(projectFolder,"/g_output/Pregnancy study population/included_records_study_pop_pregnancy_D3.csv"))
+datatable(incl_rec, options = list(scrollX=T))
+}else{
+  print("This table is missing in the folder g_output/Pregnancy study population.")
+}
+```
+
+:::
