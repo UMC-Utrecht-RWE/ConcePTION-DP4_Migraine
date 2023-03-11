@@ -12,11 +12,17 @@ obs_table_files<-actual_tables$OBSERVATION_PERIODS
 OBS_PER<-lapply(paste0(path_dir,obs_table_files),function(x) fread(x, colClasses = "character"))
 OBS_PER<-as.data.table(rbindlist(OBS_PER))
 OBS_PER[,op_origin:=NULL]
+OBS_PER<-OBS_PER[, lapply(.SD, FUN=function(x) gsub("^$|^ $", NA, x))] #make sure missing data is read appropriately
+
 #create an op_end_date_max with the maximum between gdm_pe_end_study_date, mig_end_study_date, du_end_study_date, saf_end_study_date
 #create an op_end_date_min with the minimum between gdm_pe_start_study_date, mig_start_study_date, du_start_study_date, saf_start_study_date
 #Allows to run the CreateSpells once
+OBS_PER[,op_end_date_max:=as.character()]
 op_end_date_max<-max(gdm_pe_end_study_date,mig_end_study_date,du_end_study_date,saf_end_study_date)
-OBS_PER[, op_end_date_max:= ifelse(is.na(op_end_date),op_end_date_max,op_end_date)]
+end_date_max <- paste0(year(op_end_date_max),sprintf("%02d",month(op_end_date_max)),sprintf("%02d",day(op_end_date_max)))
+OBS_PER[, op_end_date_max:= as.character(op_end_date)]
+OBS_PER[is.na(op_end_date), op_end_date_max:= as.character(end_date_max)]
+
 print('Set start and end date to date format')
 lapply(c("op_start_date","op_end_date","op_end_date_max"), function (x) OBS_PER <- OBS_PER[,eval(x) := as.IDate(as.character(get(x)),"%Y%m%d")])
 
@@ -86,6 +92,7 @@ persons_table_files<-actual_tables$PERSONS
 PERSONS<-lapply(paste0(path_dir,persons_table_files),function(x) fread(x, colClasses = "character"))
 PERSONS<-as.data.table(rbindlist(PERSONS))
 lapply(c("race","country_of_birth","quality"), function (x) PERSONS <- PERSONS[,eval(x) := NULL])
+PERSONS<-PERSONS[, lapply(.SD, FUN=function(x) gsub("^$|^ $", NA, x))] #make sure missing data is read appropriately
 original_rows_persons<-PERSONS[,.N]
 #Number of records other than female
 no_females<-PERSONS[sex_at_instance_creation!="F",.N]
