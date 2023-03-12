@@ -67,6 +67,19 @@ Flowchart of creating the pregnancy study population
 
 <br>
 
+**Study dates for the DAP of interest**\
+
+```{r ,echo=F}
+if("inclusion_dates_flowchart.csv" %in% list.files(paste0(projectFolder,"/g_output/Pregnancy study population/"))){
+dates_flowchart<-fread(paste0(projectFolder,"/g_output/Pregnancy study population/inclusion_dates_flowchart.csv"))
+datatable(dates_flowchart, options = list(scrollX=T))
+}else{
+  print("This table is missing in the folder g_output/Pregnancy study population.")
+}
+```
+
+<br>
+
 ::: box3
 ## 1. Application of the same exclusion criteria to OBSERVATION_PERIODS and PERSONS table
 
