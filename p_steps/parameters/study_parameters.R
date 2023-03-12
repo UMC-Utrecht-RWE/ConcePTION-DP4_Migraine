@@ -74,18 +74,18 @@ du_start_study_date<-as.IDate(study_dates[Study=="Drug_utilisation",start_covera
 du_end_study_date<-min(as.IDate(as.character(CDM_SOURCE[,date_creation]),"%Y%m%d"),
                            as.IDate(as.character(CDM_SOURCE[,recommended_end_date]),"%Y%m%d"),
                            as.IDate(study_dates[Study=="Drug_utilisation",end_coverage],"%Y%m%d"), na.rm = T)
-# #optional_lookback: will be used for diagnoses, medication and other data related to the event
-# opt_lookback<-study_dates[Study=="GDM_and_PE",optional_lookback]
-# if(opt_lookback==0){
-#   gmd_pe_start_coverage_lookback<-NULL
-# }else{
-#   gdm_pe_start_coverage_lookback<- gdm_pe_start_study_date - as.numeric(opt_lookback)
-# }
+opt_lookback<-unique(study_dates[Study=="Drug_utilisation",optional_lookback])
 
 #min_preg_date_du
 min_preg_date_du<-as.IDate(study_dates[Study=="Drug_utilisation",min_preg_date],"%Y%m%d")
 #max_preg_date_du
 max_preg_date_du<-as.IDate(study_dates[Study=="Drug_utilisation",max_preg_date],"%Y%m%d")
+
+if(opt_lookback==0){
+  du_start_preg_lookback<-NULL
+}else{
+  du_start_preg_lookback<- min_preg_date_du + as.numeric(opt_lookback)
+}
 if(exists("opt_lookback")){rm(opt_lookback)}
 }
 ####Safety####
@@ -98,21 +98,20 @@ saf_end_study_date<-min(as.IDate(as.character(CDM_SOURCE[,date_creation]),"%Y%m%
                            as.IDate(as.character(CDM_SOURCE[,recommended_end_date]),"%Y%m%d"),
                            as.IDate(study_dates[Study=="Safety",end_coverage],"%Y%m%d"), na.rm = T)
 #optional_lookback: will be used for diagnoses, medication and other data related to the event
-opt_lookback<-study_dates[Study=="Safety",optional_lookback]
-if(length(opt_lookback)>0){
+opt_lookback<-unique(study_dates[Study=="Safety",optional_lookback])
+
 if(opt_lookback==0){
-  saf_start_coverage_lookback<-NULL
+  saf_start_preg_lookback<-NULL
 }else{
-  saf_start_coverage_lookback<- saf_start_study_date - as.numeric(opt_lookback)
+  saf_start_preg_lookback<- min_preg_date_saf + as.numeric(opt_lookback)
 }
-  saf_start_coverage_lookback<-NULL
-}
+if(exists("opt_lookback")){rm(opt_lookback)}
 
 #min_preg_date_saf
 min_preg_date_saf<-as.IDate(study_dates[Study=="Safety",min_preg_date],"%Y%m%d")
 #max_preg_date_saf
 max_preg_date_saf<-as.IDate(study_dates[Study=="Safety",max_preg_date],"%Y%m%d")
-if(exists("opt_lookback")){rm(opt_lookback)}
+
 }
 ####Age pregnancy at start pregnancy####
 #min age pregnancy
