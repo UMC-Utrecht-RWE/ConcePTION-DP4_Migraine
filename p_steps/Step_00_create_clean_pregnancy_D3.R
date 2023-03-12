@@ -59,14 +59,14 @@ issues_preg_alg_ga<-pregnancy_D3[diff>=301,.N]
 pregnancy_D3<-pregnancy_D3[diff<301]
 pregnancy_D3[,diff:=NULL]
 incl_rec<-pregnancy_D3[,.N]
-Indicator<-c("Number of original records from the pregnancy algorithm",
-             "Number of records with quality other than green",
-             "Records with sex other than female", 
-             "Records with missing start or end date of pregnancy or both",
-             "Records with missing person id",
-             "Records with missing pregnancy id",
-             "Records where gestational age is longer than 43 weeks(301 days)",
-             "Records left after exclusions")
+Indicator<-c("1.0. Number of original records from the pregnancy algorithm",
+             "1.1. Number of records with quality other than green",
+             "1.2. Records with sex other than female", 
+             "1.3. Records with missing start or end date of pregnancy or both",
+             "1.4. Records with missing person id",
+             "1.5. Records with missing pregnancy id",
+             "1.6. Records where gestational age is longer than 43 weeks(301 days)",
+             "1.7. Records left after exclusions")
 placeholder<-c(original_rows,not_green_rec,issues_preg_alg_sex,issues_preg_alg_date,issues_preg_alg_pid,issues_preg_alg_prid,issues_preg_alg_ga,incl_rec)
 issues<-data.table(Indicator=Indicator, Count=placeholder)
 rm(Indicator,placeholder)
@@ -105,11 +105,11 @@ pregnancy_D3[,GA:=NULL]
 
 included_gdm_pe<-pregnancy_D3[gdm_pe_filter==1,.N]
 
-issues_gdm_pe<-data.table(Indicator=c(paste0("Records with start date before: ",min_preg_date_gdm_pe),
-                          paste0("Records with end date after: ", max_preg_date_gdm_pe),
-                          "Records with GA<20 weeks(140 days)",
+issues_gdm_pe<-data.table(Indicator=c(paste0("1.0. Records with start date before: ",min_preg_date_gdm_pe),
+                          paste0("1.1. Records with end date after: ", max_preg_date_gdm_pe),
+                          "1.2. Records with GA<20 weeks(140 days)",
 #                          "Records with pregnancy outcome other than LB/SB",
-                          "Records left after removing all issues above"),
+                          "1.3. Records left after removing all issues above"),
                           GDM_and_PE=c(before_min_date_gdm_pe,
                                        after_max_date_gdm_pe,
                                        not_incl_ga,
@@ -146,11 +146,11 @@ pregnancy_D3[is.na(keep_outcome), mig_filter:=NA]
 pregnancy_D3[,keep_outcome:=NULL]
 included_mig<-pregnancy_D3[mig_filter==1,.N]
 
-issues_mig<-data.table(Indicator=c(paste0("Records with start date before: ", min_preg_date_mig),
-                                      paste0("Records with end date after: ", max_preg_date_mig),
+issues_mig<-data.table(Indicator=c(paste0("1.0. Records with start date before: ", min_preg_date_mig),
+                                      paste0("1.1. Records with end date after: ", max_preg_date_mig),
 #                                   "Records with GA> 20 weeks(140 days)",
-                                      "Records with pregnancy outcome other than LB/SB",
-                                   "Records left after removing all issues above"),
+                                      "1.2. Records with pregnancy outcome other than LB/SB",
+                                   "1.3. Records left after removing all issues above"),
 
                           Migraine=c(before_min_date_mig,
                                        after_max_date_mig,
@@ -189,11 +189,11 @@ pregnancy_D3[,keep_outcome:=NULL]
 included_du<-pregnancy_D3[du_filter==1,.N]
 
 
-issues_du<-data.table(Indicator=c(paste0("Records with start date before: ",min_preg_date_du),
-                                   paste0("Records with end date after:", max_preg_date_du),
+issues_du<-data.table(Indicator=c(paste0("1.0. Records with start date before: ",min_preg_date_du),
+                                   paste0("1.1. Records with end date after:", max_preg_date_du),
 #                                   "Records with GA> 20 weeks(140 days)",
-                                   "Records with pregnancy outcome other than LB/SB",
-                                   "Records left after removing all issues above"),
+                                   "1.2. Records with pregnancy outcome other than LB/SB",
+                                   "1.3. Records left after removing all issues above"),
                        Drug_utilisation=c(before_min_date_du,
                                   after_max_date_du,
 #                                  "N/A",
@@ -231,11 +231,11 @@ pregnancy_D3[,keep_outcome:=NULL]
 included_saf<-pregnancy_D3[saf_filter==1,.N]
 
 
-issues_saf<-data.table(Indicator=c(paste0("Records with start date before: ",min_preg_date_saf),
-                                  paste0("Records with end date after: ", max_preg_date_saf),
+issues_saf<-data.table(Indicator=c(paste0("1.0. Records with start date before: ",min_preg_date_saf),
+                                  paste0("1.1. Records with end date after: ", max_preg_date_saf),
 #                                  "Records with GA> 20 weeks(140 days)",
-                                  "Records with pregnancy outcome other than LB/SB",
-                                  "Records left after removing all issues above"),
+                                  "1.2. Records with pregnancy outcome other than LB/SB",
+                                  "1.3. Records left after removing all issues above"),
                       Safety=c(before_min_date_saf,
                                  after_max_date_saf,
 #                                 "N/A",
@@ -257,7 +257,7 @@ setnames(summary_gdm,"N","GDM_and_PE")
 summary_mig<-as.data.table(pregnancy_D3[mig_filter==1,.N,by="year"])
 setnames(summary_mig,"N","Migraine")
 summary_du<-as.data.table(pregnancy_D3[du_filter==1,.N,by="year"])
-setnames(summary_du,"N","Drug_utilization")
+setnames(summary_du,"N","Drug_utilisation")
 summary_saf<-as.data.table(pregnancy_D3[saf_filter==1,.N,by="year"])
 setnames(summary_saf,"N","Safety")
 summary<-merge.data.table(summary_gdm,summary_mig,by="year",all=T)
@@ -268,7 +268,7 @@ summary<-merge.data.table(summary,summary_saf,by="year",all=T)
 rm(summary_saf)
 summary[is.na(GDM_and_PE),GDM_and_PE:=0]
 summary[is.na(Migraine),Migraine:=0]
-summary[is.na(Drug_utilization),Drug_utilization:=0]
+summary[is.na(Drug_utilisation),Drug_utilisation:=0]
 summary[is.na(Safety),Safety:=0]
 
 fwrite(summary,paste0(output_dir, "Pregnancy algorithm/included_records_pregnancy_D3.csv"), row.names = F)
