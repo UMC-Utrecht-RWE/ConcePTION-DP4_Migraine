@@ -55,14 +55,14 @@ Start and end study dates for all projects by DAP
 
 <br>
 
-![Study dates](study_dates.png)
+![Study dates](images/study_dates.png)
 :::
 
 <br>
 
 Flowchart of creating the pregnancy study population
 
-![Flowchart](pregnancy_flowchart.png)
+![Flowchart](images/pregnancy_flowchart.png)
 :::
 
 <br>
