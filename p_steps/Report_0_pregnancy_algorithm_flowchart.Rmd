@@ -59,7 +59,7 @@ Minimum and maximum dates of start date of pregnancy records for all projects by
 
 <br>
 
-![pregnancy dates](pregnancy_dates.png)
+![pregnancy dates](images/pregnancy_dates.png)
 
 </div>
 
