@@ -27,6 +27,7 @@ setwd(projectFolder)
 load(paste0(g_intermediate,"environment.RData"))
 source(paste0(pre_dir,"Step_01_create_study_population.R"))
 render(paste0(pre_dir,"Report_1_pregnancy_study_population.Rmd"), output_dir = output_dir, output_file = paste0(format(Sys.Date(), "%Y"),format(Sys.Date(), "%m"),format(Sys.Date(), "%d"),"_",data_access_provider_name,"_", "Report_1_Pregnancy_study_population.html")) 
+source(paste0(pre_dir,"save_environment.R"))
 
 ####Run diagnostic filtering script####
 source(paste0(pre_dir,"Step_02_a_diagnoses_clean_up.R"))
