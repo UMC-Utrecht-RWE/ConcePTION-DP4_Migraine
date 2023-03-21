@@ -1,18 +1,4 @@
 
-g_intermediate/tmp/
-g_output/
-g_intermediate/
-g_intermediate/.DS_Store
-p_parameters/.DS_Store
-p_steps/.DS_Store
-g_intermediate/.DS_Store
-g_output/.DS_Store
-g_output/.DS_Store
-.DS_Store
-.DS_Store
-.Rhistory
-.Rhistory
-g_output/.DS_Store
-p_steps/.DS_Store
-.DS_Store
-.DS_Store
+p_steps/Pregnancy algorithm/g_output/D3_excluded_pregnancies.RData
+p_steps/Pregnancy algorithm/g_output/D3_pregnancy_final.RData
+p_steps/Pregnancy algorithm/g_output/D3_survey_and_visit_ids.RData
