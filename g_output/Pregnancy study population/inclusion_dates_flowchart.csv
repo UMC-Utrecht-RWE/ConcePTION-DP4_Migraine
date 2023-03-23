@@ -1,0 +1,6 @@
+Indication,GDM_and_PE,Migraine,Drug_utilisation,Safety
+start_coverage,2008-01-01,2008-01-01,2008-01-01,2008-01-01
+end_coverage,2019-12-31,2019-12-31,2019-12-31,2019-12-31
+minimum_start_pregnancy_date,2009-01-01,2009-01-01,2009-01-01,2009-01-01
+maxiumum_start_pregnancy_date,2019-03-01,2019-03-01,2019-03-31,2019-03-01
+minimum_start_pregnancy_date_5_years,,2014-01-01,2014-01-01,

@@ -2,3 +2,22 @@
 p_steps/Pregnancy algorithm/g_output/D3_excluded_pregnancies.RData
 p_steps/Pregnancy algorithm/g_output/D3_pregnancy_final.RData
 p_steps/Pregnancy algorithm/g_output/D3_survey_and_visit_ids.RData
+g_intermediate/pregnancy_d3/DU_Pregnancy_D3.rds
+g_intermediate/pregnancy_d3/GDM_PE_Pregnancy_D3.rds
+g_intermediate/pregnancy_d3/MIG_Pregnancy_D3.rds
+g_output/20230323_ARS_Report_1_Pregnancy_study_population.html
+g_intermediate/pregnancy_algorithm/pregnancy_D3.rds
+g_intermediate/pregnancy_d3/SAF_Pregnancy_D3.rds
+g_output/20230323_ARS_Report_0_Pregnancy_algorithm_flowchart.html
+g_output/Pregnancy algorithm/included_records_pregnancy_D3.csv
+g_output/Pregnancy algorithm/issues_DU_flowchart_pregnancy_D3.csv
+g_output/Pregnancy algorithm/issues_GDM_PE_flowchart_pregnancy_D3.csv
+g_output/Pregnancy algorithm/issues_Safety_flowchart_pregnancy_D3.csv
+g_output/Pregnancy algorithm/issues_Migraine_flowchart_pregnancy_D3.csv
+g_output/Pregnancy algorithm/issues_flowchart_pregnancy_D3.csv
+g_output/Pregnancy algorithm/other_quality_records_removed.csv
+g_output/Pregnancy study population/flowchart_same_criteria_study_population.csv
+g_output/Pregnancy study population/flowchart_specific_criteria_study_population.csv
+g_output/Pregnancy study population/included_records_study_pop_pregnancy_D3.csv
+g_output/Time log/Step_00_time_log.csv
+g_output/Time log/Step_01_time_log.csv
