@@ -1,0 +1,251 @@
+---
+title: "CONCEPTION - Demonstration project 4: Migraine"
+subtitle: "Creation of events D3 by codelists and additional concepts data filtering"
+output: 
+  html_document:
+    theme: spacelab
+    output_dir: output_dir
+---
+
+```{css,  echo = F}
+/*-- Specify div's for 'boxes', change color of TOC and center align titles: --*/
+div.box1 {background-color: #f5f5f0; border-radius: 5px; padding: 30px; margin-right: 0px}
+div.box2 {background-color: #d4e5d2; border-radius: 5px; padding: 30px; margin-right: 0px}
+
+div.box3 {border-style: solid; border-color: #f5f5f0; border-width: medium; border-radius: 30px; padding: 5px; margin-right: 0px; text-align: justify}
+
+.list-group-item.active, .list-group-item.active:focus, .list-group-item.active:hover {background-color: #76b82a; border-color: #76b82a}
+h1 {text-align: center; color: #3c7b8a}
+h2 {text-align: center; color: #76b82a}
+h3
+
+/*-- Add logo (based on https://rstudio4edu.github.io/rstudio4edu-book/rmd-fancy.html): --*/
+#TOC::before {content: ""; display: block; height: 60px; margin: 30px 10px 30px; background-image: url("conception_logo.png"); background-size: contain; background-position: center center; background-repeat: no-repeat}
+```
+
+```{r set_locale, include=FALSE}
+Sys.setlocale("LC_ALL", "C")
+`%!in%` = Negate(`%in%`)
+```
+
+
+<div class = 'box1'>
+General information:
+
+-   **Script directory:** `r projectFolder`
+-   **Date/time:** `r Sys.time()`
+-   **DAP:** `r data_access_provider_name`
+-   **Data source:** `r data_source_name`
+
+</div>
+
+<br>
+
+<div class = 'box2'>
+```{r time_log, echo=F}
+timelog<-fread(paste0(projectFolder,"/g_output/Time log/", "Step_02_time_log.csv" ))
+kable(timelog)
+```
+
+```{r, echo=F}
+if("timelog" %in% ls()){rm(timelog)}
+```
+
+</div>
+
+<br>
+
+<div class = 'box3'>
+Start and end study dates for all projects by DAP
+
+<br>
+
+![Study dates](images/study_dates.png)
+</div>
+
+<br>
+
+
+<div class = 'box3'>
+## 1. Flowchart of included records for GDM and PE algorithm
+
+<br>
+
+**Step 1:** Load the EVENTS, SURVEY_OBSERVATIONS and MEDICAL_OBSERVATIONS table.\
+**Step 2:** Apply filtering by using the codelist (for diagnostic codes) and additional template for checkbox information.\
+**Step 3:** Combine filtered data by type of event/study variable and save in g_intermediate. This data will be used to merge with the pregnancy D3.\
+
+<br>
+
+
+```{r flowchart_gdm_pe, echo=F}
+if("flowchart_diagnostic_tables.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+flowchart<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/flowchart_diagnostic_tables.csv"))
+datatable(flowchart, options = list(scrollX=T))
+}else{
+  print("This table is missing in the folder g_output/PE and GDM algorithm.")
+}
+```
+
+```{r, echo=F}
+if("flowchart" %in% ls()){rm(flowchart)}
+```
+
+</div>
+
+<br>
+
+<div class = 'box3'>
+## 2. Flowchart of included records for Migraine algorithm
+
+<br>
+
+**Step 1:** Load the EVENTS, SURVEY_OBSERVATIONS and MEDICAL_OBSERVATIONS table.\
+**Step 2:** Apply filtering by using the codelist (for diagnostic codes) and additional template for checkbox information.\
+**Step 3:** Combine filtered data by type of event/study variable and save in g_intermediate. This data will be used to merge with the pregnancy D3.\
+
+<br>
+
+
+```{r flowchart_mig, echo=F}
+if("flowchart_diagnostic_tables.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
+flowchart<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/flowchart_diagnostic_tables.csv"))
+datatable(flowchart, options = list(scrollX=T))
+}else{
+  print("This table is missing in the folder g_output/Migraine algorithm.")
+}
+```
+
+```{r, echo=F}
+if("flowchart" %in% ls()){rm(flowchart)}
+```
+
+</div>
+<br>
+
+<div class = 'box3'>
+## 3. Exclude duplicated diagonses: GDM and PE
+
+<br>
+
+**Step 1:** Records with the same date and event name(condition) for the same subject will be removed.\
+
+<br>
+
+Below all indicators and number of removed records is explained.
+
+```{r , echo=F}
+if("gdm_pe_duplicated_diagnoses_removed.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+removed_rec<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/gdm_pe_duplicated_diagnoses_removed.csv"))
+datatable(removed_rec, options = list(scrollX=T))
+}else{
+  print("This table is missing in the folder g_output/PE and GDM algorithm.")
+}
+```
+
+```{r, echo=F}
+if("removed_rec" %in% ls()){rm(removed_rec)}
+```
+
+</div>
+
+<br>
+
+<div class = 'box3'>
+
+## 4. Exclude duplicated diagonses: Migraine
+
+<br>
+
+**Step 1:** Records with the same date and event name(condition) for the same subject will be removed.\
+
+<br>
+
+Below all indicators and number of removed records is explained.
+
+```{r , echo=F}
+if("mig_duplicated_diagnoses_removed.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
+removed_rec<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/mig_duplicated_diagnoses_removed.csv"))
+datatable(removed_rec, options = list(scrollX=T))
+}else{
+  print("This table is missing in the folder g_output/Migraine algorithm.")
+}
+```
+
+```{r, echo=F}
+if("removed_rec" %in% ls()){rm(removed_rec)}
+```
+
+</div>
+
+<br>
+
+<div class = 'box3'>
+
+## 5. Summary of included records for GDM
+
+```{r included_rec, echo=F}
+if("summary_gdm_icluded_record.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+incl_rec<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/summary_gdm_icluded_record.csv"))
+datatable(incl_rec, options = list(scrollX=T))
+}else{
+  print("This table is missing in the folder g_output/PE and GDM algorithm.")
+}
+```
+
+```{r, echo=F}
+if("incl_rec" %in% ls()){rm(incl_rec)}
+```
+
+</div>
+
+<br>
+
+<div class = 'box3'>
+
+## 6. Summary of included records for PE
+
+```{r , echo=F}
+if("summary_pe_icluded_record.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+incl_rec<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/summary_pe_icluded_record.csv"))
+datatable(incl_rec, options = list(scrollX=T))
+}else{
+  print("This table is missing in the folder g_output/PE and GDM algorithm.")
+}
+```
+
+```{r, echo=F}
+if("incl_rec" %in% ls()){rm(incl_rec)}
+```
+
+</div>
+
+<br>
+
+<div class = 'box3'>
+
+## 6. Summary of included records for Migraine
+
+```{r , echo=F}
+if("summary_mig_icluded_record.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
+incl_rec<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/summary_mig_icluded_record.csv"))
+datatable(incl_rec, options = list(scrollX=T))
+}else{
+  print("This table is missing in the folder g_output/Migraine algorithm.")
+}
+```
+
+```{r, echo=F}
+if("incl_rec" %in% ls()){rm(incl_rec)}
+```
+
+</div>
+
+<br>
+
+<div class = 'box2'>
+Author: Vjola Hoxhaj Drs.\
+email: [v.hoxhaj\@umcutrecht.nl](mailto:v.hoxhaj@umcutrecht.nl){.email}\
+Organisation: UMC Utrecht, Utrecht, The Netherlands
+
+</div>
