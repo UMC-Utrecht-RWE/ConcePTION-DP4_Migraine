@@ -5,6 +5,7 @@ library(rstudioapi)
 projectFolder<-dirname(rstudioapi::getSourceEditorContext()$path)
 setwd(projectFolder)
 source("packages.R")
+source(paste0(projectFolder,"/p_steps/clean_folders.R"))
 source("99_path.R")
 setwd(projectFolder)
 
@@ -30,12 +31,52 @@ render(paste0(pre_dir,"Report_1_pregnancy_study_population.Rmd"), output_dir = o
 source(paste0(pre_dir,"save_environment.R"))
 
 ####Run diagnostic filtering script####
-source(paste0(pre_dir,"Step_02_a_diagnoses_clean_up.R"))
+rm(list=ls())
+if(!require(rstudioapi)){install.packages("rstudioapi")}
+library(rstudioapi)
+projectFolder<-dirname(rstudioapi::getSourceEditorContext()$path)
+setwd(projectFolder)
+source("packages.R")
+source("99_path.R")
+setwd(projectFolder)
 
-#Run medicines filtering script
-source(paste0(pre_dir,"Step_02_b_medicines_cleanup.R"))
+#Create diagnoses D3(GDM/PE/Migraine)
+load(paste0(g_intermediate,"environment.RData"))
+source(paste0(pre_dir,"Step_02_diagnoses_clean_up.R"))
+render(paste0(pre_dir,"Report_2_diagnoses_clean_up.Rmd"), output_dir = output_dir, output_file = paste0(format(Sys.Date(), "%Y"),format(Sys.Date(), "%m"),format(Sys.Date(), "%d"),"_",data_access_provider_name,"_", "Report_2_Diagnoses_clean_up.html")) 
+source(paste0(pre_dir,"save_environment.R"))
 
-#Run GDM algorithm
+####Run medicines filtering script####
+rm(list=ls())
+if(!require(rstudioapi)){install.packages("rstudioapi")}
+library(rstudioapi)
+projectFolder<-dirname(rstudioapi::getSourceEditorContext()$path)
+setwd(projectFolder)
+source("packages.R")
+source("99_path.R")
+setwd(projectFolder)
+
+#Create medicines D3(GDM/PE/Migraine)
+load(paste0(g_intermediate,"environment.RData"))
+source(paste0(pre_dir,"Step_03_medicines_clean_up.R"))
+render(paste0(pre_dir,"Report_3_medicines_clean_up.Rmd"), output_dir = output_dir, output_file = paste0(format(Sys.Date(), "%Y"),format(Sys.Date(), "%m"),format(Sys.Date(), "%d"),"_",data_access_provider_name,"_", "Report_3_Medicines_clean_up.html")) 
+source(paste0(pre_dir,"save_environment.R"))
+
+####Create algorithms for GDM/PE/Migraine####
+rm(list=ls())
+if(!require(rstudioapi)){install.packages("rstudioapi")}
+library(rstudioapi)
+projectFolder<-dirname(rstudioapi::getSourceEditorContext()$path)
+setwd(projectFolder)
+source("packages.R")
+source("99_path.R")
+setwd(projectFolder)
+
+load(paste0(g_intermediate,"environment.RData"))
+source(paste0(pre_dir,"Step_04_algorithms.R"))
+render(paste0(pre_dir,"Report_4_algorithms.Rmd"), output_dir = output_dir, output_file = paste0(format(Sys.Date(), "%Y"),format(Sys.Date(), "%m"),format(Sys.Date(), "%d"),"_",data_access_provider_name,"_", "Report_4_algorithms.html")) 
+source(paste0(pre_dir,"save_environment.R"))
+
 
 
 
