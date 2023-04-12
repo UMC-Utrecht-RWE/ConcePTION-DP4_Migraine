@@ -10,14 +10,8 @@ output:
 ```{css,  echo = F}
 /*-- Specify div's for 'boxes', change color of TOC and center align titles: --*/
 div.box1 {background-color: #f5f5f0; border-radius: 5px; padding: 30px; margin-right: 0px}
-div.box2 {border-style: solid; border-color: #f5f5f0; border-width: medium; border-radius: 30px; padding: 5px; margin-right: 0px}
+div.box2 {background-color: #d4e5d2; border-radius: 5px; padding: 30px; margin-right: 0px}
 div.box3 {border-style: solid; border-color: #f5f5f0; border-width: medium; border-radius: 30px; padding: 5px; margin-right: 0px}
-div.box4 {border-style: solid; border-color: #f5f5f0; border-width: medium; border-radius: 30px; padding: 5px; margin-right: 0px}
-div.box5 {border-style: solid; border-color: #f5f5f0; border-width: medium; border-radius: 30px; padding: 5px; margin-right: 0px}
-div.box6 {border-style: solid; border-color: #f5f5f0; border-width: medium; border-radius: 30px; padding: 5px; margin-right: 0px}
-div.box7 {border-style: solid; border-color: #f5f5f0; border-width: medium; border-radius: 30px; padding: 5px; margin-right: 0px}
-div.box8 {border-style: solid; border-color: #f5f5f0; border-width: medium; border-radius: 30px; padding: 5px; margin-right: 0px}
-div.box9 {border-style: solid; border-color: #f5f5f0; border-width: medium; border-radius: 30px; padding: 5px; margin-right: 0px}
 
 .list-group-item.active, .list-group-item.active:focus, .list-group-item.active:hover {background-color: #76b82a; border-color: #76b82a}
 h1 {text-align: center; color: #3c7b8a}
@@ -33,10 +27,6 @@ Sys.setlocale("LC_ALL", "C")
 `%!in%` = Negate(`%in%`)
 ```
 
-```{r time_log, echo=F}
-time_log_1<-fread(paste0(projectFolder,"/g_output/Time log/Step_01_time_log.csv"))
-time_log_1<-time_log_1[,Time_elapsed]
-```
 
 ::: box1
 General information:
@@ -45,12 +35,26 @@ General information:
 -   **Date/time:** `r Sys.time()`
 -   **DAP:** `r data_access_provider_name`
 -   **Data source:** `r data_source_name`
--   **Time log:** `r time_log_1`
+
 :::
 
 <br>
 
-::: box2
+<div class = 'box2'>
+```{r time_log, echo=F}
+timelog<-fread(paste0(projectFolder,"/g_output/Time log/", "Step_01_time_log.csv" ))
+kable(timelog)
+```
+
+```{r, echo=F}
+if("timelog" %in% ls()){rm(timelog)}
+```
+
+</div>
+
+<br>
+
+::: box3
 Start and end study dates for all projects by DAP
 
 <br>
@@ -62,7 +66,6 @@ Start and end study dates for all projects by DAP
 
 Flowchart of creating the pregnancy study population
 
-![Flowchart](images/pregnancy_flowchart.png)
 :::
 
 <br>
@@ -107,7 +110,7 @@ datatable(removed_rec, options = list(scrollX=T))
 
 <br>
 
-::: box4
+::: box3
 ## 2. Creation of the pregnancy study population and application of specific exclusion criteria 
 
 <br>
@@ -139,7 +142,7 @@ datatable(removed_rec, options = list(scrollX=T))
 
 <br>
 
-::: box5
+::: box3
 
 ## 3. Summary of included records for all projects by year of start pregnancy date
 
@@ -152,4 +155,14 @@ datatable(incl_rec, options = list(scrollX=T))
 }
 ```
 
-:::
+
+</div>
+
+<br>
+
+<div class = 'box2'>
+Author: Vjola Hoxhaj Drs.\
+email: [v.hoxhaj\@umcutrecht.nl](mailto:v.hoxhaj@umcutrecht.nl){.email}\
+Organisation: UMC Utrecht, Utrecht, The Netherlands
+
+</div>
