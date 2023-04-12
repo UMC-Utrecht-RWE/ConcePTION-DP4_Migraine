@@ -8,6 +8,7 @@ setwd(projectFolder)
 source("99_path.R")
 setwd(projectFolder)
 initial_time<-Sys.time()
+date_running_start<-Sys.Date()
 #Load study parameters
 source(paste0(projectFolder,"/p_steps/info/DAP_info.R"))
 source(paste0(projectFolder,"/p_steps/parameters/study_parameters.R"))
@@ -278,6 +279,15 @@ rm(summary)
 saveRDS(pregnancy_D3,paste0(g_intermediate,"pregnancy_algorithm/pregnancy_D3.rds"))
 rm(pregnancy_D3)
 
+date_running_end<-Sys.Date()
 end_time<-Sys.time()
-time_log<-data.table(DAP=data_access_provider_name, Script="Step_00_create_clean_pregnancy_D3.R", Date=Sys.Date(), Time_elapsed=format(end_time-initial_time),digits=2)
-fwrite(time_log, paste0(output_dir,"Time log/Step_00_time_log.csv"),row.names = F)
+
+time_log<-data.table(DAP=data_access_provider_name,
+                     Script="Step_00_create_clean_pregnancy_D3.R", 
+                     Start_date=date_running_start, 
+                     End_date=date_running_end,
+                     Time_elaspsed=format(end_time-initial_time, digits=2))
+fwrite(time_log,paste0(output_dir,"/Time log/Step_00_time_log.csv"),row.names = F)
+
+
+
