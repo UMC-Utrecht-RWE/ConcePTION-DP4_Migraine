@@ -21,3 +21,5 @@ g_output/Pregnancy study population/flowchart_specific_criteria_study_population
 g_output/Pregnancy study population/included_records_study_pop_pregnancy_D3.csv
 g_output/Time log/Step_00_time_log.csv
 g_output/Time log/Step_01_time_log.csv
+g_intermediate/gdm_algorithm/
+g_intermediate/pe_algorithm/
