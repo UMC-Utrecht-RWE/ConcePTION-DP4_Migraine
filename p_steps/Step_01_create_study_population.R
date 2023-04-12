@@ -1,5 +1,17 @@
 
 initial_time<-Sys.time()
+date_running_start<-Sys.Date()
+
+#Clean folders
+unlink(paste0(projectFolder,"/g_intermediate/tmp"), recursive = T)#delete folder
+dir.create(paste0(projectFolder, "/g_intermediate/tmp"))
+
+unlink(paste0(projectFolder,"/g_intermediate/pregnancy_d3"), recursive = T)#delete folder
+dir.create(paste0(projectFolder, "/g_intermediate/pregnancy_d3"))
+
+unlink(paste0(projectFolder,"/g_output/Pregnancy study population"), recursive = T)#delete folder
+dir.create(paste0(projectFolder, "/g_output/Pregnancy study population"))
+
 
 #Load the Observation periods table
 ####load info, parameters, conceptsets####
@@ -619,7 +631,14 @@ Safety<-c(saf_start_study_date,saf_end_study_date,min_preg_date_saf,max_preg_dat
 dates_flowchart<-data.table(Indication,GDM_and_PE,Migraine,Drug_utilisation,Safety)
 fwrite(dates_flowchart,paste0(output_dir, "Pregnancy study population/inclusion_dates_flowchart.csv"), row.names = F)
 
+date_running_end<-Sys.Date()
 end_time<-Sys.time()
-time_log<-data.table(DAP=data_access_provider_name, Script="Step_01_create_study_population.R", Date=Sys.Date(), Time_elapsed=round(as.numeric(end_time-initial_time),2))
-fwrite(time_log, paste0(output_dir,"Time log/Step_01_time_log.csv"),row.names = F)
+
+time_log<-data.table(DAP=data_access_provider_name,
+                     Script="Step_01_create_study_population.R", 
+                     Start_date=date_running_start, 
+                     End_date=date_running_end,
+                     Time_elaspsed=format(end_time-initial_time, digits=2))
+fwrite(time_log,paste0(output_dir,"/Time log/Step_01_time_log.csv"),row.names = F)
+
 
