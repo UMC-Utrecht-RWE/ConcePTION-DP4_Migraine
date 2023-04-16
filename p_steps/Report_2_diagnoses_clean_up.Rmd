@@ -44,11 +44,14 @@ General information:
 <div class = 'box2'>
 ```{r time_log, echo=F}
 timelog<-fread(paste0(projectFolder,"/g_output/Time log/", "Step_02_time_log.csv" ))
+timelog_2<-fread(paste0(projectFolder,"/g_output/Time log/", "Step_02_combine_time_log.csv" ))
 kable(timelog)
+kable(timelog_2)
 ```
 
 ```{r, echo=F}
 if("timelog" %in% ls()){rm(timelog)}
+if("timelog_2" %in% ls()){rm(timelog_2)}
 ```
 
 </div>
@@ -79,8 +82,8 @@ Start and end study dates for all projects by DAP
 
 
 ```{r flowchart_gdm_pe, echo=F}
-if("flowchart_diagnostic_tables.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
-flowchart<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/flowchart_diagnostic_tables.csv"))
+if("Step_02_flowchart_diagnostic_tables.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+flowchart<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_02_flowchart_diagnostic_tables.csv"))
 datatable(flowchart, options = list(scrollX=T))
 }else{
   print("This table is missing in the folder g_output/PE and GDM algorithm.")
@@ -108,8 +111,8 @@ if("flowchart" %in% ls()){rm(flowchart)}
 
 
 ```{r flowchart_mig, echo=F}
-if("flowchart_diagnostic_tables.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
-flowchart<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/flowchart_diagnostic_tables.csv"))
+if("Step_02_flowchart_diagnostic_tables.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
+flowchart<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_02_flowchart_diagnostic_tables.csv"))
 datatable(flowchart, options = list(scrollX=T))
 }else{
   print("This table is missing in the folder g_output/Migraine algorithm.")
@@ -135,8 +138,8 @@ if("flowchart" %in% ls()){rm(flowchart)}
 Below all indicators and number of removed records is explained.
 
 ```{r , echo=F}
-if("gdm_pe_duplicated_diagnoses_removed.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
-removed_rec<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/gdm_pe_duplicated_diagnoses_removed.csv"))
+if("Step_02_gdm_pe_duplicated_diagnoses_removed.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+removed_rec<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_02_gdm_pe_duplicated_diagnoses_removed.csv"))
 datatable(removed_rec, options = list(scrollX=T))
 }else{
   print("This table is missing in the folder g_output/PE and GDM algorithm.")
@@ -164,8 +167,8 @@ if("removed_rec" %in% ls()){rm(removed_rec)}
 Below all indicators and number of removed records is explained.
 
 ```{r , echo=F}
-if("mig_duplicated_diagnoses_removed.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
-removed_rec<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/mig_duplicated_diagnoses_removed.csv"))
+if("Step_02_mig_duplicated_diagnoses_removed.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
+removed_rec<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_02_mig_duplicated_diagnoses_removed.csv"))
 datatable(removed_rec, options = list(scrollX=T))
 }else{
   print("This table is missing in the folder g_output/Migraine algorithm.")
@@ -185,8 +188,8 @@ if("removed_rec" %in% ls()){rm(removed_rec)}
 ## 5. Summary of included records for GDM
 
 ```{r included_rec, echo=F}
-if("summary_gdm_icluded_record.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
-incl_rec<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/summary_gdm_icluded_record.csv"))
+if("Step_02_summary_gdm_icluded_record.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+incl_rec<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_02_summary_gdm_icluded_record.csv"))
 datatable(incl_rec, options = list(scrollX=T))
 }else{
   print("This table is missing in the folder g_output/PE and GDM algorithm.")
@@ -206,8 +209,8 @@ if("incl_rec" %in% ls()){rm(incl_rec)}
 ## 6. Summary of included records for PE
 
 ```{r , echo=F}
-if("summary_pe_icluded_record.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
-incl_rec<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/summary_pe_icluded_record.csv"))
+if("Step_02_summary_pe_icluded_record.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+incl_rec<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_02_summary_pe_icluded_record.csv"))
 datatable(incl_rec, options = list(scrollX=T))
 }else{
   print("This table is missing in the folder g_output/PE and GDM algorithm.")
@@ -227,8 +230,8 @@ if("incl_rec" %in% ls()){rm(incl_rec)}
 ## 6. Summary of included records for Migraine
 
 ```{r , echo=F}
-if("summary_mig_icluded_record.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
-incl_rec<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/summary_mig_icluded_record.csv"))
+if("Step_02_summary_mig_icluded_record.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
+incl_rec<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_02_summary_mig_icluded_record.csv"))
 datatable(incl_rec, options = list(scrollX=T))
 }else{
   print("This table is missing in the folder g_output/Migraine algorithm.")
