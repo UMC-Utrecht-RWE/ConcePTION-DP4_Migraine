@@ -28,3 +28,5 @@ if(!require(colorRamps)){install.packages("colorRamps")}
 suppressPackageStartupMessages(library(colorRamps))
 if(!require(readxl)){install.packages("readxl")}
 suppressPackageStartupMessages(library(readxl))
+if(!require(scales)){install.packages("scales")}
+suppressPackageStartupMessages(library(scales))
