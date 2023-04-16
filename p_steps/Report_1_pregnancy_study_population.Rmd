@@ -81,6 +81,10 @@ datatable(dates_flowchart, options = list(scrollX=T))
 }
 ```
 
+```{r, echo=F}
+if("dates_flowchart" %in% ls()){rm(dates_flowchart)}
+```
+
 <br>
 
 ::: box3
@@ -99,13 +103,19 @@ spells- observation period, the time span between start of follow up and end of 
 Below all indicators and number of removed records is explained.
 
 ```{r std_pop_excl_criteria_same, echo=F}
-if("flowchart_same_criteria_study_population.csv" %in% list.files(paste0(projectFolder,"/g_output/Pregnancy study population/"))){
-removed_rec<-fread(paste0(projectFolder,"/g_output/Pregnancy study population/flowchart_same_criteria_study_population.csv"))
-datatable(removed_rec, options = list(scrollX=T))
+if("Step_01_flowchart_same_criteria_study_population.csv" %in% list.files(paste0(projectFolder,"/g_output/Pregnancy study population/"))){
+removed_rec_same<-fread(paste0(projectFolder,"/g_output/Pregnancy study population/Step_01_flowchart_same_criteria_study_population.csv"))
+datatable(removed_rec_same, options = list(scrollX=T))
 }else{
   print("This table is missing in the folder g_output/Pregnancy study population.")
 }
 ```
+
+```{r, echo=F}
+if("removed_rec_same" %in% ls()){rm(removed_rec_same)}
+```
+
+
 :::
 
 <br>
@@ -130,12 +140,16 @@ datatable(removed_rec, options = list(scrollX=T))
 Below all indicators and number of removed records is explained.
 
 ```{r std_pop_excl_criteria_specific, echo=F}
-if("flowchart_specific_criteria_study_population.csv" %in% list.files(paste0(projectFolder,"/g_output/Pregnancy study population/"))){
-removed_rec<-fread(paste0(projectFolder,"/g_output/Pregnancy study population/flowchart_specific_criteria_study_population.csv"))
+if("Step_01_flowchart_specific_criteria_study_population.csv" %in% list.files(paste0(projectFolder,"/g_output/Pregnancy study population/"))){
+removed_rec<-fread(paste0(projectFolder,"/g_output/Pregnancy study population/Step_01_flowchart_specific_criteria_study_population.csv"))
 datatable(removed_rec, options = list(scrollX=T))
 }else{
   print("This table is missing in the folder g_output/Pregnancy study population.")
 }
+```
+
+```{r, echo=F}
+if("removed_rec" %in% ls()){rm(removed_rec)}
 ```
 
 :::
@@ -147,12 +161,16 @@ datatable(removed_rec, options = list(scrollX=T))
 ## 3. Summary of included records for all projects by year of start pregnancy date
 
 ```{r included_rec, echo=F}
-if("included_records_study_pop_pregnancy_D3.csv" %in% list.files(paste0(projectFolder,"/g_output/Pregnancy study population/"))){
-incl_rec<-fread(paste0(projectFolder,"/g_output/Pregnancy study population/included_records_study_pop_pregnancy_D3.csv"))
+if("Step_01_included_records_study_pop_pregnancy_D3.csv" %in% list.files(paste0(projectFolder,"/g_output/Pregnancy study population/"))){
+incl_rec<-fread(paste0(projectFolder,"/g_output/Pregnancy study population/Step_01_included_records_study_pop_pregnancy_D3.csv"))
 datatable(incl_rec, options = list(scrollX=T))
 }else{
   print("This table is missing in the folder g_output/Pregnancy study population.")
 }
+```
+
+```{r, echo=F}
+if("incl_rec" %in% ls()){rm(incl_rec)}
 ```
 
 
