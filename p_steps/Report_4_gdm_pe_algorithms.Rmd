@@ -1,0 +1,791 @@
+---
+title: "CONCEPTION - Demonstration project 4: Migraine"
+subtitle: "GDM and PE algorithms"
+output: 
+  html_document:
+    theme: spacelab
+    output_dir: output_dir
+---
+
+```{css,  echo = F}
+/*-- Specify div's for 'boxes', change color of TOC and center align titles: --*/
+div.box1 {background-color: #f5f5f0; border-radius: 5px; padding: 30px; margin-right: 0px}
+div.box2 {background-color: #d4e5d2; border-radius: 5px; padding: 30px; margin-right: 0px}
+
+div.box3 {border-style: solid; border-color: #f5f5f0; border-width: medium; border-radius: 30px; padding: 5px; margin-right: 0px; text-align: justify}
+
+.list-group-item.active, .list-group-item.active:focus, .list-group-item.active:hover {background-color: #76b82a; border-color: #76b82a}
+h1 {text-align: center; color: #3c7b8a}
+h2 {text-align: center; color: #76b82a}
+h3
+
+/*-- Add logo (based on https://rstudio4edu.github.io/rstudio4edu-book/rmd-fancy.html): --*/
+#TOC::before {content: ""; display: block; height: 60px; margin: 30px 10px 30px; background-image: url("conception_logo.png"); background-size: contain; background-position: center center; background-repeat: no-repeat}
+```
+
+```{r set_locale, include=FALSE}
+Sys.setlocale("LC_ALL", "C")
+`%!in%` = Negate(`%in%`)
+```
+
+
+<div class = 'box1'>
+General information:
+
+-   **Script directory:** `r projectFolder`
+-   **Date/time:** `r Sys.time()`
+-   **DAP:** `r data_access_provider_name`
+-   **Data source:** `r data_source_name`
+
+</div>
+
+<br>
+
+<div class = 'box2'>
+```{r time_log, echo=F}
+timelog<-fread(paste0(projectFolder,"/g_output/Time log/", "Step_04_time_log.csv" ))
+timelog_2<-fread(paste0(projectFolder,"/g_output/Time log/", "Step_04_a_time_log.csv" ))
+timelog_3<-fread(paste0(projectFolder,"/g_output/Time log/", "Step_04_b_time_log.csv" ))
+
+timelog_2<-rbind(timelog_2,timelog_3)
+kable(timelog)
+kable(timelog_2)
+```
+
+```{r, echo=F}
+if("timelog" %in% ls()){rm(timelog)}
+if("timelog_2" %in% ls()){rm(timelog_2)}
+if("timelog_3" %in% ls()){rm(timelog_3)}
+```
+
+</div>
+
+<br>
+
+<div class = 'box3'>
+Start and end study dates for all projects by DAP
+
+<br>
+
+![Study dates](images/study_dates.png)
+</div>
+
+<br>
+
+<div class = 'box3'>
+
+<img src="images/prevalence_calculations.png" alt= “” width="500" height="250">
+
+</div>
+
+<br>
+
+<div class = 'box3'>
+
+<br>
+
+**Study dates for the DAP of interest**\
+
+```{r ,echo=F}
+if("inclusion_dates_flowchart.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+dates_flowchart<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/inclusion_dates_flowchart.csv"))
+datatable(dates_flowchart, options = list(scrollX=T))
+}else{
+  print("This table is missing in the folder g_output/PE and GDM algorithm or g_output/Migraine algorithm.")
+}
+```
+
+```{r, echo=F}
+if("dates_flowchart" %in% ls()){rm(dates_flowchart)}
+```
+
+</div>
+<br>
+
+
+<div class = 'box3'>
+
+**Observation period of interest for GDM and PE diagnoses**\
+
+`start_date`: The pregnancy start date\
+`lookback`: The time period before pregnancy start date\
+`end_date`: The pregnancy end date\
+`after`: The time period after pregnancy end date\
+
+<br>
+
+```{r ,echo=F}
+if("Step_04_observation_periods_gdm.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+obs_period<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_observation_periods_gdm.csv"))
+}else{
+ obs_period<-NULL 
+}
+if("Step_04_observation_periods_pe.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+obs_period_pe<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_observation_periods_pe.csv"))
+}else{
+ obs_period_pe<-NULL 
+}
+obs<-rbind(obs_period,obs_period_pe)
+
+if(!is.null(obs)){datatable(obs, options = list(scrollX=T))}else{
+  print("This table is missing in the folder g_output/PE and GDM algorithm.")
+}
+```
+
+```{r, echo=F}
+if("obs_period" %in% ls()){rm(obs_period)}
+if("obs_period_pe" %in% ls()){rm(obs_period_pe)}
+if("obs" %in% ls()){rm(obs)}
+```
+
+</div>
+
+<br>
+
+<div class = 'box3'>
+
+**Excluded event records outside of time window of interest for GDM and PE diagnoses**\
+
+`original_records`: Total umber of records after merging the pregnancy D3 with the diagnoses D3\
+`before_start`: Number of event/medicine records with event/medicine date before the start date of the window of interest (as calculated in the step above)\
+`after_end`: Number of event/medicine records with event/medicine date after the end date of the window of interest (as calculated in the step above)\
+
+<br>
+
+```{r ,echo=F}
+if("Step_04_excluded_records_gdm_pe.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+excl_rec<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_excluded_records_gdm_pe.csv"))
+datatable(excl_rec, options = list(scrollX=T))
+}else{
+  print("This table is missing in the folder g_output/PE and GDM algorithm.")
+}
+```
+
+```{r, echo=F}
+if("excl_rec" %in% ls()){rm(excl_rec)}
+```
+
+</div>
+
+<br>
+
+<div class = 'box3'>
+
+## 1. Summary of included records for GDM and PE algorithm
+
+<br>
+
+**Step 1:** Load the GDM_PE_pregnancy D3 created in Step 1 (created by applying th exclusion criteria to the cleaned pregnancy D3 retrieved from the pregnancy algorithm).\
+**Step 2:** Load the GDM D3 diagnoses files (created in Step 2 by filtering the EVENTS, MEDICAL OBSERVATIONS and SURVEY OBSERVATIONS tables using the GDM codelist and additional concepts template).\
+**Step 3:** Merge the diagnoses D3 with the pregnancy D3 and keep only event records within the timeframe of interest. Indicate the included records for each event definition.\
+**Step 4:** Load the GDM D3 medicines files (created in Step 3 by filtering the MEDICINES table using the GDM medicines codelist).\
+**Step 5:** Merge the medicines D3 with the pregnancy D3 and keep only medicine records within the timeframe of interest. Indicate the included records.\
+**Step 6:** Create the algorithms GDM_1 till GDM_8.\
+**Step 7:** Load the PE D3 diagnoses files (created in Step 2 by filtering the EVENTS, MEDICAL OBSERVATIONS and SURVEY OBSERVATIONS tables using the PE codelist and additional concepts template).\
+**Step 8:** Merge the diagnoses D3 with the pregnancy D3 and keep only event records within the timeframe of interest. Indicate the included records for each event definition.\
+**Step 9:** Load the PE D3 medicines files (created in Step 3 by filtering the MEDICINES table using the PE medicines codelist).\
+**Step 10:** Merge the medicines D3 with the pregnancy D3 and keep only medicine records within the timeframe of interest. Indicate the included records.\
+**Step 11:** Create the algorithms PE_1 till PE_5.
+
+
+<br>
+
+In this table only the number of pregnancies with events/medicines records is shown.\
+When number of records is higher than the number of pregnancies, there was more than one record per pregnancy.\
+
+```{r , echo=F}
+if("Step_04_summary_included_records_gdm_pe.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+summary<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_summary_included_records_gdm_pe.csv"))
+datatable(summary, options = list(scrollX=T))
+}else{
+  print("This table is missing in the folder g_output/PE and GDM algorithm.")
+}
+```
+
+```{r, echo=F}
+if("summary" %in% ls()){rm(summary)}
+```
+
+</div>
+
+<br>
+
+<div class = 'box3'>
+
+## 2. Creation of the GDM Algorithms
+
+<br>
+
+### 2.1 GDM Algorithm Overall
+
+
+```{r , echo=F}
+if("Step_04_GDM_1.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+alg_1<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_GDM_1.csv"))
+}else{alg_1<-NULL}
+
+if("Step_04_GDM_2.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+alg_2<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_GDM_2.csv"))
+}else{alg_2<-NULL}
+
+if("Step_04_GDM_3.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+alg_3<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_GDM_3.csv"))
+}else{alg_3<-NULL}
+
+
+if("Step_04_GDM_4.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+alg_4<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_GDM_4.csv"))
+}else{alg_4<-NULL}
+
+if("Step_04_GDM_5.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+alg_5<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_GDM_5.csv"))
+}else{alg_5<-NULL}
+
+if("Step_04_GDM_8.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+alg_8<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_GDM_8.csv"))
+}else{alg_8<-NULL}
+
+alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_8)
+
+if(!is.null(alg)){
+  datatable(alg, options = list(scrollX=T))
+}else{
+  print("This table is missing in the folder g_output/PE and GDM algorithm.")
+}
+```
+
+```{r, echo=F}
+if(!is.null(alg)){
+  ggplotly(ggplot(alg) +
+  geom_col(aes(x = factor(algorithm,levels =c('GDM_1','GDM_2','GDM_3','GDM_4','GDM_5', 'GDM_8')),  
+               y = no_diagnosed_pregnancies), fill = "green", width = 0.3) +
+  geom_col(aes(x = algorithm, y = no_pregnancies), alpha = 0.3, fill = "#76b82a", width = 0.6) +
+      ggtitle("GDM prevalence rates")+
+xlab("Algorithm") +
+  ylab("Counts")+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1),
+        axis.title.x = element_text(colour = "#76b82a"),
+        axis.title.y = element_text(colour = "#76b82a"),
+        plot.title = element_text(colour = "#76b82a"))+
+  theme_classic()
+)
+}
+```
+
+```{r, echo=F}
+if("alg_1" %in% ls()){rm(alg_1)}
+if("alg_2" %in% ls()){rm(alg_2)}
+if("alg_3" %in% ls()){rm(alg_3)}
+if("alg_4" %in% ls()){rm(alg_4)}
+if("alg_5" %in% ls()){rm(alg_5)}
+if("alg_8" %in% ls()){rm(alg_8)}
+if("alg" %in% ls()){rm(alg)}
+```
+
+
+
+### 2.2 GDM Algorithm by maternal age at start pregnancy
+
+```{r , echo=F}
+if("Step_04_GDM_1_age.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+alg_1<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_GDM_1_age.csv"))
+}else{alg_1<-NULL}
+
+if("Step_04_GDM_2_age.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+alg_2<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_GDM_2_age.csv"))
+}else{alg_2<-NULL}
+
+if("Step_04_GDM_3_age.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+alg_3<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_GDM_3_age.csv"))
+}else{alg_3<-NULL}
+
+
+if("Step_04_GDM_4_age.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+alg_4<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_GDM_4_age.csv"))
+}else{alg_4<-NULL}
+
+if("Step_04_GDM_5_age.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+alg_5<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_GDM_5_age.csv"))
+}else{alg_5<-NULL}
+
+if("Step_04_GDM_8_age.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+alg_8<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_GDM_8_age.csv"))
+}else{alg_8<-NULL}
+
+alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_8)
+
+if(!is.null(alg)){
+  datatable(alg, options = list(scrollX=T))
+}else{
+  print("This table is missing in the folder g_output/PE and GDM algorithm.")
+}
+```
+
+```{r,echo=F}
+  alg[,prevalence_100_pregnancies:=as.numeric(prevalence_100_pregnancies)]
+  ggplotly(ggplot(alg, aes(x=maternal_age, y=prevalence_100_pregnancies, group=algorithm))+
+    geom_line(aes(color=algorithm))+
+    geom_point(aes(color=algorithm))+
+theme(axis.text.x = element_text(size = 8,angle = 45),
+      axis.title.x = element_text(colour = "#76b82a"),
+      axis.title.y = element_text(colour = "#76b82a"),
+      plot.title = element_text(colour = "#76b82a"))+
+  ggtitle("GDM prevalence rates")+
+  xlab("Maternal age") +
+  ylab("Prevalence_per_100_pregnancies")+
+  theme_classic()
+  )
+
+```
+
+```{r, echo=F}
+if("alg_1" %in% ls()){rm(alg_1)}
+if("alg_2" %in% ls()){rm(alg_2)}
+if("alg_3" %in% ls()){rm(alg_3)}
+if("alg_4" %in% ls()){rm(alg_4)}
+if("alg_5" %in% ls()){rm(alg_5)}
+if("alg_8" %in% ls()){rm(alg_8)}
+if("alg" %in% ls()){rm(alg)}
+```
+
+
+<br>
+
+
+### 2.3 GDM Algorithm by year of start pregnancy
+
+```{r , echo=F}
+if("Step_04_GDM_1_year.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+alg_1<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_GDM_1_year.csv"))
+}else{alg_1<-NULL}
+
+if("Step_04_GDM_2_year.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+alg_2<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_GDM_2_year.csv"))
+}else{alg_2<-NULL}
+
+if("Step_04_GDM_3_year.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+alg_3<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_GDM_3_year.csv"))
+}else{alg_3<-NULL}
+
+
+if("Step_04_GDM_4_year.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+alg_4<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_GDM_4_year.csv"))
+}else{alg_4<-NULL}
+
+if("Step_04_GDM_5_year.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+alg_5<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_GDM_5_year.csv"))
+}else{alg_5<-NULL}
+
+if("Step_04_GDM_8_year.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+alg_8<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_GDM_8_year.csv"))
+}else{alg_8<-NULL}
+
+alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_8)
+
+if(!is.null(alg)){
+  datatable(alg, options = list(scrollX=T))
+}else{
+  print("This table is missing in the folder g_output/PE and GDM algorithm.")
+}
+```
+
+```{r,echo=F}
+  alg[,prevalence_100_pregnancies:=as.numeric(prevalence_100_pregnancies)]
+  ggplotly(ggplot(alg, aes(x=year, y=prevalence_100_pregnancies, group=algorithm))+
+    geom_line(aes(color=algorithm))+
+    geom_point(aes(color=algorithm))+
+theme(axis.text.x = element_text(size = 8,angle = 45),
+      axis.title.x = element_text(colour = "#76b82a"),
+      axis.title.y = element_text(colour = "#76b82a"),
+      plot.title = element_text(colour = "#76b82a"))+
+  ggtitle("GDM prevalence rates")+
+  xlab("Year") +
+  ylab("Prevalence_per_100_pregnancies")+
+  theme_classic()
+  )
+
+```
+
+```{r, echo=F}
+if("alg_1" %in% ls()){rm(alg_1)}
+if("alg_2" %in% ls()){rm(alg_2)}
+if("alg_3" %in% ls()){rm(alg_3)}
+if("alg_4" %in% ls()){rm(alg_4)}
+if("alg_5" %in% ls()){rm(alg_5)}
+if("alg_8" %in% ls()){rm(alg_8)}
+if("alg" %in% ls()){rm(alg)}
+```
+
+
+<br>
+
+
+### 2.4 GDM Algorithm by maternal age and year of start pregnancy
+
+```{r , echo=F}
+if("Step_04_GDM_1_year_age.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+alg_1<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_GDM_1_year_age.csv"))
+}else{alg_1<-NULL}
+
+if("Step_04_GDM_2_year_age.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+alg_2<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_GDM_2_year_age.csv"))
+}else{alg_2<-NULL}
+
+if("Step_04_GDM_3_year_age.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+alg_3<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_GDM_3_year_age.csv"))
+}else{alg_3<-NULL}
+
+
+if("Step_04_GDM_4_year_age.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+alg_4<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_GDM_4_year_age.csv"))
+}else{alg_4<-NULL}
+
+if("Step_04_GDM_5_year_age.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+alg_5<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_GDM_5_year_age.csv"))
+}else{alg_5<-NULL}
+
+if("Step_04_GDM_8_year_age.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+alg_8<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_GDM_8_year_age.csv"))
+}else{alg_8<-NULL}
+
+alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_8)
+
+if(!is.null(alg)){
+  datatable(alg, options = list(scrollX=T))
+}else{
+  print("This table is missing in the folder g_output/PE and GDM algorithm.")
+}
+```
+
+```{r,echo=F}
+  alg[,prevalence_100_pregnancies:=as.numeric(prevalence_100_pregnancies)]
+   ggplotly(ggplot(alg, aes(x=maternal_age,y=prevalence_100_pregnancies, group=algorithm)) +
+    geom_line(aes(color=algorithm))+
+      geom_line(aes(x=maternal_age,y=lower_95_CI, color=algorithm))+
+    geom_point(aes(color=algorithm))+
+    facet_wrap(~year_group, scales="fixed", ncol=1)+
+    theme(axis.text.x = element_text(size = 8,angle = 45),
+          axis.title.x = element_text(colour = "#76b82a"),
+          axis.title.y = element_text(colour = "#76b82a"),
+          plot.title = element_text(colour = "#76b82a"))+
+    ggtitle("GDM prevalence rates")+
+    xlab("Maternal age") +
+    ylab("Prevalence_per_100_pregnancies")+
+    theme(panel.background=element_rect(color="lightgreen", linewidth = 1)))
+
+```
+
+```{r, echo=F}
+if("alg_1" %in% ls()){rm(alg_1)}
+if("alg_2" %in% ls()){rm(alg_2)}
+if("alg_3" %in% ls()){rm(alg_3)}
+if("alg_4" %in% ls()){rm(alg_4)}
+if("alg_5" %in% ls()){rm(alg_5)}
+if("alg_8" %in% ls()){rm(alg_8)}
+if("alg" %in% ls()){rm(alg)}
+```
+
+</div>
+
+<br>
+
+<div class = 'box3'>
+
+<br>
+
+**GDM algorithms**
+
+* GDM_1: **At least one** diagnoses of GDM (GD) during second and third trimester **and not** diagnoses of early GDM in the first trimester (PRE_GD) **and not** diagnoses of DM (DM) recorded up to 6 months prior to LMP through first trimester.\
+* GDM_2: **At least one** diagnoses of GDM (GD) or **at least one** antidiabetic drug prescription for GDM (GDM_medicines) during second and third trimester **and not** diagnoses of early GDM in the first trimester (PRE_GD) **and not** diagnoses of DM (DM) **and not** antidiabetic drug prescription for GDM (GDM_medicines) recorded up to 6 months prior to LMP through first trimester.\
+* GDM_3: **At least two** diagnoses of GDM (GD) or **at least two** antidiabetic drug prescription for GDM (GDM_medicines) during second and third trimester **and not** diagnoses of early GDM in the first trimester (PRE_GD) **and not** diagnoses of DM (DM) **and not** antidiabetic drug prescription for GDM (GDM_medicines) recorded up to 6 months prior to LMP through first trimester.\
+* GDM_4: **At least one** diagnoses of GDM (GD) or **at least one** diagnoses of unspecified DM in pregnancy (UNK_GD) or **at least one** antidiabetic drug prescription for GDM (GDM_medicines) during second and third trimester **and not** diagnoses of early GDM in the first trimester (PRE_GD) **and not** diagnoses of DM **and not** antidiabetic drug prescription for GDM (GDM_medicines) recorded up to 6 months prior to LMP through first trimester.\
+* GDM_5: **At least one** diagnoses of GDM (GD) or **at least one** antidiabetic drug prescription for GDM (GDM_medicines) during second and third trimester **and not** diagnoses of early GDM in the first trimester (PRE_GD) **and not** diagnoses of DM **and not** antidiabetic drug prescription for GDM (GDM_medicines) recorded up to 6 months prior to LMP through first trimester **and not** diagnoses of pre existing diabetes mellitus in pregnancy (DM_PREG) anytime in pregnancy.\
+* GDM_8: Presence of GDM checkbox records during second and third trimester.\
+
+</div>
+
+<br>
+
+<div class = 'box3'>
+
+<br>
+
+
+## 2. Creation of the PE Algorithms
+
+<br>
+
+### 2.1 PE Algorithm Overall
+
+<br>
+  
+```{r , echo=F}
+if("Step_04_PE_1.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+  alg_1<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_PE_1.csv"))
+}else{alg_1<-NULL}
+
+if("Step_04_PE_2.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+  alg_2<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_PE_2.csv"))
+}else{alg_2<-NULL}
+
+if("Step_04_PE_3.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+  alg_3<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_PE_3.csv"))
+}else{alg_3<-NULL}
+
+
+if("Step_04_PE_4.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+  alg_4<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_PE_4.csv"))
+}else{alg_4<-NULL}
+
+if("Step_04_PE_5.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+  alg_5<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_PE_5.csv"))
+}else{alg_5<-NULL}
+
+
+alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5)
+
+if(!is.null(alg)){
+  datatable(alg, options = list(scrollX=T))
+}else{
+  print("This table is missing in the folder g_output/PE and GDM algorithm.")
+}
+```
+
+```{r, echo=F}
+if(!is.null(alg)){
+  ggplotly(ggplot(alg) +
+             geom_col(aes(x = factor(algorithm,levels =c('PE_1','PE_2','PE_3','PE_4','PE_5')),  
+                          y = no_diagnosed_pregnancies), fill = "green", width = 0.3) +
+             geom_col(aes(x = algorithm, y = no_pregnancies), alpha = 0.3, fill = "#76b82a", width = 0.6) +
+             ggtitle("PE prevalence rates")+
+             xlab("Algorithm") +
+             ylab("Counts")+
+             theme(axis.text.x = element_text(angle = 90, hjust = 1),
+                   axis.title.x = element_text(colour = "#76b82a"),
+                   axis.title.y = element_text(colour = "#76b82a"),
+                   plot.title = element_text(colour = "#76b82a"))+
+             theme_classic()
+  )
+}
+```
+
+```{r, echo=F}
+if("alg_1" %in% ls()){rm(alg_1)}
+if("alg_2" %in% ls()){rm(alg_2)}
+if("alg_3" %in% ls()){rm(alg_3)}
+if("alg_4" %in% ls()){rm(alg_4)}
+if("alg_5" %in% ls()){rm(alg_5)}
+if("alg" %in% ls()){rm(alg)}
+```
+
+<br>
+
+
+### 2.2 PE Algorithm by maternal age at start pregnancy
+
+```{r , echo=F}
+if("Step_04_PE_1_age.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+  alg_1<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_PE_1_age.csv"))
+}else{alg_1<-NULL}
+
+if("Step_04_PE_2_age.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+  alg_2<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_PE_2_age.csv"))
+}else{alg_2<-NULL}
+
+if("Step_04_PE_3_age.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+  alg_3<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_PE_3_age.csv"))
+}else{alg_3<-NULL}
+
+if("Step_04_PE_4_age.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+  alg_4<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_PE_4_age.csv"))
+}else{alg_4<-NULL}
+
+if("Step_04_PE_5_age.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+  alg_5<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_PE_5_age.csv"))
+}else{alg_5<-NULL}
+
+alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5)
+
+if(!is.null(alg)){
+  datatable(alg, options = list(scrollX=T))
+}else{
+  print("This table is missing in the folder g_output/PE and GDM algorithm.")
+}
+```
+
+```{r,echo=F}
+alg[,prevalence_100_pregnancies:=as.numeric(prevalence_100_pregnancies)]
+ggplotly(ggplot(alg, aes(x=maternal_age, y=prevalence_100_pregnancies, group=algorithm))+
+           geom_line(aes(color=algorithm))+
+           geom_point(aes(color=algorithm))+
+           theme(axis.text.x = element_text(size = 8,angle = 45),
+                 axis.title.x = element_text(colour = "#76b82a"),
+                 axis.title.y = element_text(colour = "#76b82a"),
+                 plot.title = element_text(colour = "#76b82a"))+
+           ggtitle("PE prevalence rates")+
+           xlab("Maternal age") +
+           ylab("Prevalence_per_100_pregnancies")+
+           theme_classic()
+)
+
+```
+
+```{r, echo=F}
+if("alg_1" %in% ls()){rm(alg_1)}
+if("alg_2" %in% ls()){rm(alg_2)}
+if("alg_3" %in% ls()){rm(alg_3)}
+if("alg_4" %in% ls()){rm(alg_4)}
+if("alg_5" %in% ls()){rm(alg_5)}
+if("alg" %in% ls()){rm(alg)}
+```
+
+<br>
+
+  
+### 2.3 PE Algorithm by year of start pregnancy
+  
+```{r , echo=F}
+if("Step_04_PE_1_year.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+  alg_1<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_PE_1_year.csv"))
+}else{alg_1<-NULL}
+
+if("Step_04_PE_2_year.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+  alg_2<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_PE_2_year.csv"))
+}else{alg_2<-NULL}
+
+if("Step_04_PE_3_year.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+  alg_3<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_PE_3_year.csv"))
+}else{alg_3<-NULL}
+
+
+if("Step_04_PE_4_year.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+  alg_4<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_PE_4_year.csv"))
+}else{alg_4<-NULL}
+
+if("Step_04_PE_5_year.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+  alg_5<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_PE_5_year.csv"))
+}else{alg_5<-NULL}
+
+alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5)
+
+if(!is.null(alg)){
+  datatable(alg, options = list(scrollX=T))
+}else{
+  print("This table is missing in the folder g_output/PE and GDM algorithm.")
+}
+```
+
+```{r,echo=F}
+alg[,prevalence_100_pregnancies:=as.numeric(prevalence_100_pregnancies)]
+ggplotly(ggplot(alg, aes(x=year, y=prevalence_100_pregnancies, group=algorithm))+
+           geom_line(aes(color=algorithm))+
+           geom_point(aes(color=algorithm))+
+           theme(axis.text.x = element_text(size = 8,angle = 45),
+                 axis.title.x = element_text(colour = "#76b82a"),
+                 axis.title.y = element_text(colour = "#76b82a"),
+                 plot.title = element_text(colour = "#76b82a"))+
+           ggtitle("PE prevalence rates")+
+           xlab("Year") +
+           ylab("Prevalence_per_100_pregnancies")+
+           theme_classic()
+)
+
+```
+
+```{r, echo=F}
+if("alg_1" %in% ls()){rm(alg_1)}
+if("alg_2" %in% ls()){rm(alg_2)}
+if("alg_3" %in% ls()){rm(alg_3)}
+if("alg_4" %in% ls()){rm(alg_4)}
+if("alg_5" %in% ls()){rm(alg_5)}
+if("alg" %in% ls()){rm(alg)}
+```
+
+<br>
+
+### 2.4 PE Algorithm by maternal age and year of start pregnancy
+  
+```{r , echo=F}
+if("Step_04_PE_1_year_age.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+  alg_1<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_PE_1_year_age.csv"))
+}else{alg_1<-NULL}
+
+if("Step_04_PE_2_year_age.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+  alg_2<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_PE_2_year_age.csv"))
+}else{alg_2<-NULL}
+
+if("Step_04_PE_3_year_age.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+  alg_3<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_PE_3_year_age.csv"))
+}else{alg_3<-NULL}
+
+
+if("Step_04_PE_4_year_age.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+  alg_4<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_PE_4_year_age.csv"))
+}else{alg_4<-NULL}
+
+if("Step_04_PE_5_year_age.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
+  alg_5<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_PE_5_year_age.csv"))
+}else{alg_5<-NULL}
+
+alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5)
+
+if(!is.null(alg)){
+  datatable(alg, options = list(scrollX=T))
+}else{
+  print("This table is missing in the folder g_output/PE and GDM algorithm.")
+}
+```
+
+```{r,echo=F}
+alg[,prevalence_100_pregnancies:=as.numeric(prevalence_100_pregnancies)]
+ggplotly(ggplot(alg, aes(x=maternal_age,y=prevalence_100_pregnancies, group=algorithm)) +
+           geom_line(aes(color=algorithm))+
+           geom_line(aes(x=maternal_age,y=lower_95_CI, color=algorithm))+
+           geom_point(aes(color=algorithm))+
+           facet_wrap(~year_group, scales="fixed", ncol=1)+
+           theme(axis.text.x = element_text(size = 8,angle = 45),
+                 axis.title.x = element_text(colour = "#76b82a"),
+                 axis.title.y = element_text(colour = "#76b82a"),
+                 plot.title = element_text(colour = "#76b82a"))+
+           ggtitle("PE prevalence rates")+
+           xlab("Maternal age") +
+           ylab("Prevalence_per_100_pregnancies")+
+           theme(panel.background=element_rect(color="lightgreen", linewidth = 1)))
+
+```
+
+```{r, echo=F}
+if("alg_1" %in% ls()){rm(alg_1)}
+if("alg_2" %in% ls()){rm(alg_2)}
+if("alg_3" %in% ls()){rm(alg_3)}
+if("alg_4" %in% ls()){rm(alg_4)}
+if("alg_5" %in% ls()){rm(alg_5)}
+if("alg" %in% ls()){rm(alg)}
+```
+
+</div>
+  
+<br>
+
+<div class = 'box3'>
+
+<br>
+
+**PE algorithms**
+
+* PE_1: **At least one** diagnoses of PE (PE) recorded from GA week 21 till 7 days after delivery.\
+* PE_2: **At least two** diagnoses of PE (PE) recorded from GA week 21 till 7 days after delivery.\
+* PE_3: **At least one** diagnoses of PE (PE) or **at least one** diagnoses of eclampsia (ECL) or **at least one** diagnoses of HELLP syndrome (HELLP) recorded from GA week 21 till 7 days after delivery.\
+* PE_4: **At least two** diagnoses of PE (PE), eclampsia (ECL) and/or HELLP (HELLP) recorded from GA week 21 till 7 days after delivery.\
+* PE_5: Presence of PE checkbox recorded from GA week 21 till 7 days after delivery.\
+
+</div>
+
+<br>
+
+<div class = 'box2'>
+Author: Vjola Hoxhaj Drs.\
+email: [v.hoxhaj\@umcutrecht.nl](mailto:v.hoxhaj@umcutrecht.nl){.email}\
+Organisation: UMC Utrecht, Utrecht, The Netherlands
+
+</div>
