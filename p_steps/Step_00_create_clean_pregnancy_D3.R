@@ -40,7 +40,8 @@ removed_rec<-data.table(Indicator="Pregnancy records",
                                      round((blue_rec/pregnancy_D3[,.N])*100,1),
                                      round((red_rec/pregnancy_D3[,.N])*100,1)))
 rm(yellow_rec,blue_rec,red_rec)
-fwrite(removed_rec,paste0(output_dir, "Pregnancy algorithm/other_quality_records_removed.csv"), row.names = F)
+fwrite(removed_rec,paste0(output_dir, "Pregnancy algorithm/Step_00_other_quality_records_removed.csv"), row.names = F)
+rm(removed_rec)
 
 pregnancy_D3<-pregnancy_D3[highest_quality=="1_green"]
 
@@ -73,7 +74,7 @@ issues<-data.table(Indicator=Indicator, Count=placeholder)
 rm(Indicator,placeholder)
 rm(issues_preg_alg_sex,not_green_rec,issues_preg_alg_date,issues_preg_alg_pid,issues_preg_alg_prid,issues_preg_alg_ga,incl_rec)
 
-fwrite(issues,paste0(output_dir, "Pregnancy algorithm/issues_flowchart_pregnancy_D3.csv"), row.names = F)
+fwrite(issues,paste0(output_dir, "Pregnancy algorithm/Step_00_issues_flowchart_pregnancy_D3.csv"), row.names = F)
 rm(issues)
 
 ####Remove all records with date before min preg date####
@@ -119,7 +120,7 @@ issues_gdm_pe<-data.table(Indicator=c(paste0("1.0. Records with start date befor
 )
 
 rm(before_min_date_gdm_pe,after_max_date_gdm_pe,not_incl_ga,included_gdm_pe)
-fwrite(issues_gdm_pe,paste0(output_dir, "Pregnancy algorithm/issues_GDM_PE_flowchart_pregnancy_D3.csv"), row.names = F)
+fwrite(issues_gdm_pe,paste0(output_dir, "Pregnancy algorithm/Step_00_issues_GDM_PE_flowchart_pregnancy_D3.csv"), row.names = F)
 rm(issues_gdm_pe)
 ####Migraine####
 pregnancy_D3[,filter_1:=as.character(NA)]
@@ -161,7 +162,7 @@ issues_mig<-data.table(Indicator=c(paste0("1.0. Records with start date before: 
 )
 
 rm(before_min_date_mig,after_max_date_mig,other_outcome_mig,included_mig)
-fwrite(issues_mig,paste0(output_dir, "Pregnancy algorithm/issues_Migraine_flowchart_pregnancy_D3.csv"), row.names = F)
+fwrite(issues_mig,paste0(output_dir, "Pregnancy algorithm/Step_00_issues_Migraine_flowchart_pregnancy_D3.csv"), row.names = F)
 rm(issues_mig)
 ####Drug utilisation####
 pregnancy_D3[,filter_1:=as.character(NA)]
@@ -203,7 +204,7 @@ issues_du<-data.table(Indicator=c(paste0("1.0. Records with start date before: "
 )
 
 rm(before_min_date_du,after_max_date_du,other_outcome_du,included_du)
-fwrite(issues_du,paste0(output_dir, "Pregnancy algorithm/issues_DU_flowchart_pregnancy_D3.csv"), row.names = F)
+fwrite(issues_du,paste0(output_dir, "Pregnancy algorithm/Step_00_issues_DU_flowchart_pregnancy_D3.csv"), row.names = F)
 rm(issues_du)
 ####Safety####
 pregnancy_D3[,filter_1:=as.character(NA)]
@@ -245,7 +246,7 @@ issues_saf<-data.table(Indicator=c(paste0("1.0. Records with start date before: 
 )
 
 rm(before_min_date_saf,after_max_date_saf,other_outcome_saf,included_saf)
-fwrite(issues_saf,paste0(output_dir, "Pregnancy algorithm/issues_Safety_flowchart_pregnancy_D3.csv"), row.names = F)
+fwrite(issues_saf,paste0(output_dir, "Pregnancy algorithm/Step_00_issues_Safety_flowchart_pregnancy_D3.csv"), row.names = F)
 rm(issues_saf)
 
 ####remove uneccessary columns####
@@ -272,7 +273,7 @@ summary[is.na(Migraine),Migraine:=0]
 summary[is.na(Drug_utilisation),Drug_utilisation:=0]
 summary[is.na(Safety),Safety:=0]
 
-fwrite(summary,paste0(output_dir, "Pregnancy algorithm/included_records_pregnancy_D3.csv"), row.names = F)
+fwrite(summary,paste0(output_dir, "Pregnancy algorithm/Step_00_included_records_pregnancy_D3.csv"), row.names = F)
 rm(summary)
 
 #save pregnancy population to g_intermediate
@@ -288,6 +289,6 @@ time_log<-data.table(DAP=data_access_provider_name,
                      End_date=date_running_end,
                      Time_elaspsed=format(end_time-initial_time, digits=2))
 fwrite(time_log,paste0(output_dir,"/Time log/Step_00_time_log.csv"),row.names = F)
-
+rm(time_log)
 
 
