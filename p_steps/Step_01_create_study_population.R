@@ -158,7 +158,7 @@ rm(Indicator,placeholder)
 flowchart<-rbind(flowchart_obs_per,flowchart)
 rm(flowchart_obs_per)
 
-fwrite(flowchart, paste0(output_dir,"Pregnancy study population/flowchart_same_criteria_study_population.csv"), row.names = F)
+fwrite(flowchart, paste0(output_dir,"Pregnancy study population/Step_01_flowchart_same_criteria_study_population.csv"), row.names = F)
 rm(flowchart)
 ####Merge Observation periods with PERSONS####
 PERSONS<-merge.data.table(PERSONS,OBS_PER1, by="person_id", all.x=T)
@@ -577,7 +577,7 @@ rm(Indicator)
 flowchart_separate<-rbind(flowchart_separate,flowchart_final)
 rm(flowchart_final)
 
-fwrite(flowchart_separate, paste0(output_dir,"Pregnancy study population/flowchart_specific_criteria_study_population.csv"), row.names = F)
+fwrite(flowchart_separate, paste0(output_dir,"Pregnancy study population/Step_01_flowchart_specific_criteria_study_population.csv"), row.names = F)
 rm(flowchart_separate)
 
 #Export the D3_PREGNANCY by specific project
@@ -616,10 +616,10 @@ summary[is.na(Migraine),Migraine:=0]
 summary[is.na(Drug_utilisation),Drug_utilisation:=0]
 summary[is.na(Safety),Safety:=0]
 
-fwrite(summary,paste0(output_dir, "Pregnancy study population/included_records_study_pop_pregnancy_D3.csv"), row.names = F)
+fwrite(summary,paste0(output_dir, "Pregnancy study population/Step_01_included_records_study_pop_pregnancy_D3.csv"), row.names = F)
 rm(summary)
 
-rm(pregnancy_D3,persons_table_files,obs_table_files,lookback_3_months,lookback_12_months,incl_rec)
+rm(pregnancy_D3,persons_table_files,obs_table_files,lookback_3_months,lookback_12_months)
 
 #create date flowcharts
 Indication<-c("start_coverage", "end_coverage", "minimum_start_pregnancy_date", "maxiumum_start_pregnancy_date","minimum_start_pregnancy_date_5_years")
@@ -630,6 +630,7 @@ Safety<-c(saf_start_study_date,saf_end_study_date,min_preg_date_saf,max_preg_dat
 
 dates_flowchart<-data.table(Indication,GDM_and_PE,Migraine,Drug_utilisation,Safety)
 fwrite(dates_flowchart,paste0(output_dir, "Pregnancy study population/inclusion_dates_flowchart.csv"), row.names = F)
+rm(dates_flowchart)
 
 date_running_end<-Sys.Date()
 end_time<-Sys.time()
@@ -640,5 +641,6 @@ time_log<-data.table(DAP=data_access_provider_name,
                      End_date=date_running_end,
                      Time_elaspsed=format(end_time-initial_time, digits=2))
 fwrite(time_log,paste0(output_dir,"/Time log/Step_01_time_log.csv"),row.names = F)
+rm(time_log)
 
 
