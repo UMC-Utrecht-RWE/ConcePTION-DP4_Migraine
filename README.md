@@ -17,6 +17,11 @@ Demostrating solutions for studying intermittent medication exposures in disease
 | Folder           | Parameter                                                          |
 | ---------------- | ------------------------------------------------------------------ |
 | p_steps          | study_dates.xlsx |
+| p_steps/codelists | migraine_codelist.csv |
+|                   | migraine_medication_codelist.csv|
+|                   | gestational_diabetes_codelist.csv |
+|                   | antidiabetic_medications_codelist.csv | 
+|                   | pre_eclampsia_cdelist.csv |
 | p_parameters     | additional_concepts.xlsx |
 
 # Work in progress
