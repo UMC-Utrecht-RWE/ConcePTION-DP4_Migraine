@@ -21,7 +21,7 @@ Demostrating solutions for studying intermittent medication exposures in disease
 |                   | migraine_medication_codelist.csv|
 |                   | gestational_diabetes_codelist.csv |
 |                   | antidiabetic_medications_codelist.csv | 
-|                   | pre_eclampsia_cdelist.csv |
+|                   | pre_eclampsia_codelist.csv |
 | p_parameters     | additional_concepts.xlsx |
 
 # Work in progress
