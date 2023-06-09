@@ -3,18 +3,18 @@ date_running_start<-Sys.Date()
 
 
 ####Migraine DIAGNOSES####
-print("Loading all Migarine diagnoses D3 and merge with the pregnancy D3.")
-obs_period<-data.table(StudyVar=c("GD","UNK_GD","PRE_GD","DM","DM_PREG","GDM_checkbox"),
-                       lookback=c(0,0,0,6*30.25,0,0),
-                       start_date=c(98,98,0,0,0,0),
-                       end_date=c(7*40,7*40,97,97,7*40,7*40),
-                       after=c(7,7,0,0,7,7))
-#gdm files
-gdm_files<-list.files(paste0(projectFolder,"/g_intermediate/gdm_algorithm/"))
-gdm_files<-gdm_files[!gdm_files %in% "GDM_medicines.rds"]
+print("Loading all Migraine diagnoses D3 and merge with the pregnancy D3.")
+obs_period<-data.table(StudyVar=c("MG","MG_NO_AURA","MG_AURA","MG_STATUS","OTHER_MG","UNSP_MG","COMP_MG"),
+                       lookback=c(0,0,0,0,0,0,0),
+                       start_date=c(0,0,0,0,0,0,0),
+                       end_date=c(7*40,7*40,7*40,7*40,7*40,7*40,7*40),
+                       after=c(0,0,0,0,0,0,0))
+#mig files
+mig_files<-list.files(paste0(projectFolder,"/g_intermediate/migraine_algorithm/"))
+mig_files<-mig_files[!mig_files %in% "Migraine_medicines.rds"]
 names_events<-list()
-for(i in 1:length(gdm_files)){
-  names_events[[i]]<-unlist(str_split(gdm_files[i],"[.]"))[1] 
+for(i in 1:length(mig_files)){
+  names_events[[i]]<-unlist(str_split(mig_files[i],"[.]"))[1] 
 }
 names_events<-as.vector(do.call(rbind,names_events))
 original<-list()
@@ -22,14 +22,17 @@ before<-list()
 after<-list()
 sum<-list()
 
-  dir.create(paste0(projectFolder,"/g_intermediate/gdm_algorithm/final_d3"))
+  dir.create(paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3"))
 
-
+#Create an exclude variable that will be used to exclude pregnancies with onset migraine diagnoses or triptan prescription
+  #pregnancy_d3_mig
+  
+  
 w<-1
-for(gdm_fl in 1:length(gdm_files)){
+for(gdm_fl in 1:length(mig_files)){
   gdm_dt<-readRDS(paste0(projectFolder,"/g_intermediate/gdm_algorithm/", gdm_files[gdm_fl]))
   #merge with the pregnancy d3
-  gdm_dt<-merge.data.table(pregnancy_d3_gdm_pe, gdm_dt, by="person_id", all.x=T, allow.cartesian = T)
+  gdm_dt<-merge.data.table(pregnancy_d3_mig, gdm_dt, by="person_id", all.x=T, allow.cartesian = T)
   gdm_dt<-gdm_dt[!is.na(event_date)]
   if(gdm_dt[,.N]>0){
     original[[w]]<-data.table(StudyVar=names_events[gdm_fl], event_records=gdm_dt[,.N])
