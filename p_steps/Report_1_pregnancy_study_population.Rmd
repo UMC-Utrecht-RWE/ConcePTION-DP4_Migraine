@@ -88,6 +88,23 @@ if("dates_flowchart" %in% ls()){rm(dates_flowchart)}
 <br>
 
 ::: box3
+
+Overview of the number of observation periods
+```{r spell_overview, echo=F}
+if("Step_01_spells_overview.csv" %in% list.files(paste0(projectFolder,"/g_output/Pregnancy study population/"))){
+spells_overview<-fread(paste0(projectFolder,"/g_output/Pregnancy study population/Step_01_spells_overview.csv"))
+datatable(spells_overview, options = list(scrollX=T))
+}else{
+  print("This table is missing in the folder g_output/Pregnancy study population.")
+}
+```
+
+```{r, echo=F}
+if("spells_overview" %in% ls()){rm(spells_overview)}
+```
+
+<br>
+
 ## 1. Application of the same exclusion criteria to OBSERVATION_PERIODS and PERSONS table
 
 <br>
@@ -115,8 +132,8 @@ datatable(removed_rec_same, options = list(scrollX=T))
 if("removed_rec_same" %in% ls()){rm(removed_rec_same)}
 ```
 
-
 :::
+
 
 <br>
 
