@@ -48,13 +48,43 @@ OBS_PER1 <- CreateSpells(
   only_overlaps = F
 )
 original_rows<-OBS_PER[,.N]
+#identif duplicated person id
+OBS_PER[duplicated(person_id), dup:=1]
+OBS_PER<-merge.data.table(OBS_PER, OBS_PER[dup==1,c("person_id","dup")], by="person_id", all.x=T, allow.cartesian = T)
+OBS_PER[,dup.x:=NULL]
+
+#no_of_subjects with 1 spell
+one_spell_org<-OBS_PER[is.na(dup.y),.N]
+more_than_one_org<-OBS_PER[!is.na(dup.y) & !duplicated(person_id),.N]
 rm(OBS_PER)
 after_run_create_spell<-OBS_PER1[,.N]
+OBS_PER1[duplicated(person_id), dup:=1]
+OBS_PER1<-merge.data.table(OBS_PER1, OBS_PER1[dup==1,c("person_id","dup")], by="person_id", all.x=T, allow.cartesian = T)
+OBS_PER1[,dup.x:=NULL]
+one_spell_1<-OBS_PER1[is.na(dup.y),.N]
+more_than_one_1<-OBS_PER1[!is.na(dup.y) & !duplicated(person_id),.N]
+OBS_PER1[,dup.y:=NULL]
 #Keep only one record per person(latest)
 OBS_PER1 <- OBS_PER1[,temp := lapply(.SD, max), by = c("person_id"), .SDcols = "num_spell"][temp == num_spell,][,temp := NULL]
 setnames(OBS_PER1, "entry_spell_category", "op_start_date")
 setnames(OBS_PER1, "exit_spell_category", "op_end_date")
 included_spells<-OBS_PER1[,.N]
+OBS_PER1[duplicated(person_id), dup:=1]
+OBS_PER1<-merge.data.table(OBS_PER1, OBS_PER1[dup==1,c("person_id","dup")], by="person_id", all.x=T, allow.cartesian = T)
+OBS_PER1[,dup.x:=NULL]
+one_spell_1a<-OBS_PER1[is.na(dup.y),.N]
+more_than_one_1a<-OBS_PER1[!is.na(dup.y) & !duplicated(person_id),.N]
+OBS_PER1[,dup.y:=NULL]
+
+#Create the overview
+spells_overview<-data.table(Indicator=c("1.0. Number of subjects with one observation period",
+                                        "1.1. Number of subjects with more than one observation period"),
+                            Original_table=c(one_spell_org,more_than_one_org),
+                            After_CreateSpells=c(one_spell_1,more_than_one_1),
+                            After_Selection=c(one_spell_1a,more_than_one_1a))
+rm(one_spell_org,more_than_one_org,one_spell_1,more_than_one_1,one_spell_1a,more_than_one_1a)
+fwrite(spells_overview, paste0(output_dir,"Pregnancy study population/Step_01_spells_overview.csv"), row.names = F)
+rm(spells_overview)
 
 #Fix dates of observation for each project
 origin_date<-as.Date("2016-12-06") - as.numeric(as.Date("2016-12-06"))
@@ -90,9 +120,9 @@ OBS_PER1[,op_start_date_saf:=as.Date.numeric(op_start_date_saf,origin_date)]
 OBS_PER1[,op_start_date:=NULL]
 
 #create obs_per flowchart
-Indicator=c("1.0. Number of original records in the OBSERVATION_PERIODS table",
-            "1.1. Number of records in the OBSERVATION_PERIODS table after cleaning up the spells",
-            "1.2. Number of records in the OBSERVATION_PERIODS table after keeping one record per person(latest)")
+Indicator=c("2.0. Number of original records in the OBSERVATION_PERIODS table",
+            "2.1. Number of records in the OBSERVATION_PERIODS table after cleaning up the spells",
+            "2.2. Number of records in the OBSERVATION_PERIODS table after keeping one record per person(latest)")
 placeholder<-c(original_rows, after_run_create_spell, included_spells)
 flowchart_obs_per<-data.table(Indicator,no_records=placeholder)
 rm(original_rows,after_run_create_spell,included_spells)
@@ -140,15 +170,15 @@ PERSONS[!is.na(day_of_death) & !is.na(month_of_death) & !is.na(year_of_death),de
 incl_pers<-PERSONS[,.N]
 lapply(c("day_of_birth", "month_of_birth","year_of_birth", "day_of_death","month_of_death","year_of_death"), function (x) PERSONS <- PERSONS[,eval(x) := NULL])
 #Create flowchart persons
-Indicator=c("2.0. Number of original records in the PERSONS table",
-            "2.1. Number of records in the PERSONS table with sex other than female",
-            "2.2. Number of records in the PERSONS table with empty year of birth",
-            "2.3. Number of records in the PERSONS table with empty year of death, when date or/and month of death are present",
-            "2.4. Number of records in the PERSONS table where only day of birth was imputed",
-            "2.5. Number of records in the PERSONS table where only day of death was imputed",
-            "2.6. Number of records in the PERSONS table where both day and month of birth were imputed",
-            "2.7. Number of records in the PERSONS table where both day and month of death were imputed",
-            "2.8. Number of records left in the PERSONS table")
+Indicator=c("3.0. Number of original records in the PERSONS table",
+            "3.1. Number of records in the PERSONS table with sex other than female",
+            "3.2. Number of records in the PERSONS table with empty year of birth",
+            "3.3. Number of records in the PERSONS table with empty year of death, when date or/and month of death are present",
+            "3.4. Number of records in the PERSONS table where only day of birth was imputed",
+            "3.5. Number of records in the PERSONS table where only day of death was imputed",
+            "3.6. Number of records in the PERSONS table where both day and month of birth were imputed",
+            "3.7. Number of records in the PERSONS table where both day and month of death were imputed",
+            "3.8. Number of records left in the PERSONS table")
 placeholder<-c(original_rows_persons, no_females, no_birth_year, no_death_year,impt_day_birth,impt_day_death,impt_dm_birth,impt_dm_death,incl_pers)
 flowchart<-data.table(Indicator,no_records=placeholder)
 rm(original_rows_persons,no_females,no_birth_year,no_death_year,impt_day_birth,impt_day_death,impt_dm_birth,impt_dm_death,incl_pers)
@@ -174,7 +204,7 @@ not_present_in_obs_du<-PERSONS[!is.na(sex_at_instance_creation) & is.na(op_start
 #Safety
 not_present_in_obs_saf<-PERSONS[!is.na(sex_at_instance_creation) & is.na(op_start_date_saf),.N]
 
-Indicator=c("3.0. Number of records present in PERSONS but not in OBSERVATION_PERIODS")
+Indicator=c("4.0. Number of records present in PERSONS but not in OBSERVATION_PERIODS")
 flowchart_obs_pers<-data.table(Indicator,GDM_and_PE=not_present_in_obs_gdm_pe,Migraine=not_present_in_obs_mig,Drug_utilisation=not_present_in_obs_du,Safety=not_present_in_obs_saf)
 rm(not_present_in_obs_gdm_pe,not_present_in_obs_mig,not_present_in_obs_du,not_present_in_obs_saf)
 rm(Indicator)
@@ -220,7 +250,7 @@ no_fup_saf<-PERSONS[saf_filter==1 & op_end_date_saf<=op_start_date_saf,.N]
 PERSONS[saf_filter==1 & op_end_date_saf<=op_start_date_saf,saf_filter:=NA]
 
 
-Indicator<-c("3.1. Number of records with follow up <1 day")
+Indicator<-c("4.1. Number of records with follow up <1 day")
 flowchart_separate<-data.table(Indicator,GDM_and_PE=no_fup_gdm_pe,Migraine=no_fup_mig,Drug_utilisation=no_fup_du,Safety=no_fup_saf)
 rm(no_fup_gdm_pe,no_fup_mig,no_fup_du,no_fup_saf)
 rm(Indicator)
@@ -256,7 +286,7 @@ impossible_birth_saf<-PERSONS[age>120, .N]
 PERSONS[age>120, saf_filter:=NA]
 PERSONS[,age:=NULL]
 
-Indicator<-c("3.2. Number of subjects with age>120 years old at end follow up")
+Indicator<-c("4.2. Number of subjects with age>120 years old at end follow up")
 flowchart_birth_imp<-data.table(Indicator,GDM_and_PE=impossible_birth_gdm_pe,Migraine=impossible_birth_mig,Drug_utilisation=impossible_birth_du,Safety=impossible_birth_saf)
 rm(impossible_birth_gdm_pe,impossible_birth_mig,impossible_birth_du,impossible_birth_saf)
 rm(Indicator)
@@ -291,7 +321,7 @@ pregnancy_D3[du_filter==1 & is.na(sex_at_instance_creation), du_filter:=NA]
 preg_not_in_persons_saf<-pregnancy_D3[saf_filter==1  & is.na(sex_at_instance_creation),.N]
 pregnancy_D3[saf_filter==1 & is.na(sex_at_instance_creation), saf_filter:=NA]
 
-Indicator<-c("4.0. Number of subjects present in the pregnancy D3 but missing in the PERSONS table")
+Indicator<-c("5.0. Number of subjects present in the pregnancy D3 but missing in the PERSONS table")
 flowchart_pers_mis<-data.table(Indicator,GDM_and_PE=preg_not_in_persons_gdm_pe,Migraine=preg_not_in_persons_mig,Drug_utilisation=preg_not_in_persons_du,Safety=preg_not_in_persons_saf)
 rm(preg_not_in_persons_gdm_pe,preg_not_in_persons_mig,preg_not_in_persons_du,preg_not_in_persons_saf)
 rm(Indicator)
@@ -309,7 +339,7 @@ preg_incl_du<-pregnancy_D3[du_filter==1 & du_filter_persons==1,.N]
 #Safety
 preg_incl_saf<-pregnancy_D3[saf_filter==1 & saf_filter_persons==1,.N]
 
-Indicator<-c("4.1. Number of pregnancies included after merging with the PERSONS table")
+Indicator<-c("5.1. Number of pregnancies included after merging with the PERSONS table")
 flowchart_incl_preg<-data.table(Indicator,GDM_and_PE=preg_incl_gdm_pe,Migraine=preg_incl_mig,Drug_utilisation=preg_incl_du,Safety=preg_incl_saf)
 rm(preg_incl_gdm_pe,preg_incl_mig,preg_incl_du,preg_incl_saf)
 rm(Indicator)
@@ -351,7 +381,7 @@ preg_before_start_saf<-pregnancy_D3[dif>0,.N]
 pregnancy_D3[dif>0, saf_filter:=NA]
 pregnancy_D3[,dif:=NULL][,min_preg_date_saf:=NULL]
 
-Indicator<-c("4.2. Number of pregnancies with pregnancy start date before the minimum pregnancy date")
+Indicator<-c("5.2. Number of pregnancies with pregnancy start date before the minimum pregnancy date")
 flowchart_min_preg<-data.table(Indicator,GDM_and_PE=preg_before_start_gdm_pe,Migraine=preg_before_start_mig,Drug_utilisation=preg_before_start_du,Safety=preg_before_start_saf)
 rm(preg_before_start_gdm_pe,preg_before_start_mig,preg_before_start_du,preg_before_start_saf)
 rm(Indicator)
@@ -385,7 +415,7 @@ preg_after_max_saf<-pregnancy_D3[dif<=0,.N]
 pregnancy_D3[dif<=0, saf_filter:=NA]
 pregnancy_D3[,dif:=NULL][,max_preg_date_saf:=NULL]
 
-Indicator<-c("4.3. Number of pregnancies with pregnancy start date after the maximum pregnancy date")
+Indicator<-c("5.3. Number of pregnancies with pregnancy start date after the maximum pregnancy date")
 flowchart_max_preg<-data.table(Indicator,GDM_and_PE=preg_after_max_gdm_pe,Migraine=preg_after_max_mig,Drug_utilisation=preg_after_max_du,Safety=preg_after_max_saf)
 rm(preg_after_max_gdm_pe,preg_after_max_mig,preg_after_max_du,preg_after_max_saf)
 rm(Indicator)
@@ -409,7 +439,7 @@ pregnancy_D3[du_filter==1 & age< min_age_preg, du_filter:=NA]
 age_before_15_saf<-pregnancy_D3[saf_filter==1 & age< min_age_preg,.N]
 pregnancy_D3[saf_filter==1 & age< min_age_preg, saf_filter:=NA]
 
-Indicator<-c(paste0("4.4. Number of pregnancies with age at pregnancy start date < ", min_age_preg, "years old"))
+Indicator<-c(paste0("5.4. Number of pregnancies with age at pregnancy start date < ", min_age_preg, "years old"))
 flowchart_min_age<-data.table(Indicator,GDM_and_PE=age_before_15_gdm_pe,Migraine=age_before_15_mig,Drug_utilisation=age_before_15_du,Safety=age_before_15_saf)
 rm(age_before_15_gdm_pe,age_before_15_mig,age_before_15_du,age_before_15_saf)
 rm(Indicator)
@@ -430,7 +460,7 @@ pregnancy_D3[du_filter==1 & age> max_age_preg, du_filter:=NA]
 age_after_49_saf<-pregnancy_D3[saf_filter==1 & age> max_age_preg,.N]
 pregnancy_D3[saf_filter==1 & age> max_age_preg, saf_filter:=NA]
 
-Indicator<-c(paste0("4.5. Number of pregnancies with age at pregnancy start date > ", max_age_preg, "years old"))
+Indicator<-c(paste0("5.5. Number of pregnancies with age at pregnancy start date > ", max_age_preg, "years old"))
 flowchart_max_age<-data.table(Indicator,GDM_and_PE=age_after_49_gdm_pe,Migraine=age_after_49_mig,Drug_utilisation=age_after_49_du,Safety=age_after_49_saf)
 rm(age_after_49_gdm_pe,age_after_49_mig,age_after_49_du,age_after_49_saf)
 rm(Indicator)
@@ -507,7 +537,7 @@ multiple_preg_records<-pregnancy_D3[!duplicated(person_id) & rowid>=2,.N]
 pregnancy_D3<-pregnancy_D3[rowid==1] 
 pregnancy_D3[,rowid:=NULL]
 #Create flowchart
-Indicator<-c("4.6. Number of records with lookback period less than 3 months")
+Indicator<-c("5.6. Number of records with lookback period less than 3 months")
 flowchart_3_months<-data.table(Indicator,GDM_and_PE=less_than_3_month_gdm_pe,Migraine=less_than_3_month_mig,Drug_utilisation=less_than_3_month_du,Safety=less_than_3_month_saf)
 rm(less_than_3_month_gdm_pe,less_than_3_month_mig,less_than_3_month_du,less_than_3_month_saf)
 rm(Indicator)
@@ -515,7 +545,7 @@ rm(Indicator)
 flowchart_separate<-rbind(flowchart_separate,flowchart_3_months)
 rm(flowchart_3_months)
 
-Indicator<-c("4.7. Number of included records up to now")
+Indicator<-c("5.7. Number of included records up to now")
 flowchart_incl<-data.table(Indicator,GDM_and_PE=included_rec_gdm_pe,Migraine=included_rec_mig,Drug_utilisation=included_rec_du,Safety=included_rec_saf)
 rm(included_rec_gdm_pe,included_rec_mig,included_rec_du,included_rec_saf)
 rm(Indicator)
@@ -523,7 +553,7 @@ rm(Indicator)
 flowchart_separate<-rbind(flowchart_separate,flowchart_incl)
 rm(flowchart_incl)
 
-Indicator<-c("4.8. Number of records with 12 months lookback")
+Indicator<-c("5.8. Number of records with 12 months lookback")
 flowchart_12<-data.table(Indicator,GDM_and_PE=lookback_12_month_gdm_pe,Migraine=lookback_12_month_mig,Drug_utilisation=lookback_12_month_du,Safety=lookback_12_month_saf)
 rm(lookback_12_month_gdm_pe,lookback_12_month_mig,lookback_12_month_du,lookback_12_month_saf)
 rm(Indicator)
@@ -531,7 +561,7 @@ rm(Indicator)
 flowchart_separate<-rbind(flowchart_separate,flowchart_12)
 rm(flowchart_12)
 
-Indicator<-c("4.9. Number of records with less than 42 weeks of follow up")
+Indicator<-c("5.9. Number of records with less than 42 weeks of follow up")
 flowchart_42_fup<-data.table(Indicator,GDM_and_PE=no_fup_42_weeks,Migraine="N/A",Drug_utilisation="N/A",Safety=no_fup_42_weeks_saf)
 rm(no_fup_42_weeks,no_fup_42_weeks_saf)
 rm(Indicator)
@@ -539,7 +569,7 @@ rm(Indicator)
 flowchart_separate<-rbind(flowchart_separate,flowchart_42_fup)
 rm(flowchart_42_fup)
 
-Indicator<-c("4.10. Number of records with less than 7 days after pregnancy end date")
+Indicator<-c("5.10. Number of records with less than 7 days after pregnancy end date")
 flowchart_7_fup<-data.table(Indicator,GDM_and_PE=no_7_days,Migraine="N/A",Drug_utilisation="N/A",Safety="N/A")
 rm(no_7_days)
 rm(Indicator)
@@ -547,7 +577,7 @@ rm(Indicator)
 flowchart_separate<-rbind(flowchart_separate,flowchart_7_fup)
 rm(flowchart_7_fup)
 
-Indicator<-c("4.11. Number of records with 5 years lookback")
+Indicator<-c("5.11. Number of records with 5 years lookback")
 flowchart_5<-data.table(Indicator,GDM_and_PE="N/A",Migraine=incl_5_years,Drug_utilisation="N/A",Safety="N/A")
 rm(incl_5_years)
 rm(Indicator)
@@ -555,7 +585,7 @@ rm(Indicator)
 flowchart_separate<-rbind(flowchart_separate,flowchart_5)
 rm(flowchart_5)
 
-Indicator<-c("4.12. Number of multiple pregnancies")
+Indicator<-c("5.12. Number of multiple pregnancies")
 flowchart_mult<-data.table(Indicator,GDM_and_PE="N/A",Migraine="N/A",Drug_utilisation="N/A",Safety=multiple_preg_records)
 rm(multiple_preg_records)
 rm(Indicator)
@@ -569,7 +599,7 @@ incl_mig<-pregnancy_D3[mig_filter==1,.N]
 incl_du<-pregnancy_D3[du_filter==1,.N]
 incl_saf<-pregnancy_D3[saf_filter==1,.N]
 
-Indicator<-c("4.13. Number of included records")
+Indicator<-c("5.13. Number of included records")
 flowchart_final<-data.table(Indicator,GDM_and_PE=incl_gdm_pe,Migraine=incl_mig,Drug_utilisation=incl_du,Safety=incl_saf)
 rm(incl_gdm_pe,incl_mig,incl_du,incl_saf)
 rm(Indicator)
