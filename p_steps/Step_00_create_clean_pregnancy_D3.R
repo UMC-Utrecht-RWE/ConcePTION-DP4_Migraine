@@ -143,6 +143,11 @@ pregnancy_D3[,filter_1:=NULL][,filter_2:=NULL]
 #Calculate number of pregnancy records with outcome LB/SB
 pregnancy_D3[type_of_pregnancy_end=="LB" | type_of_pregnancy_end=="SB", keep_outcome:=1]
 other_outcome_mig<-pregnancy_D3[is.na(keep_outcome) & mig_filter==1,.N]
+if(other_outcome_mig>0){
+type_other_outcome<-paste(unique(pregnancy_D3[is.na(keep_outcome) & mig_filter==1,type_of_pregnancy_end]), collapse = ",")
+}else{
+  type_other_outcome<-"N/A" 
+}
 #Update filter_mig based on the type of outcome
 pregnancy_D3[is.na(keep_outcome), mig_filter:=NA]
 pregnancy_D3[,keep_outcome:=NULL]
@@ -151,7 +156,7 @@ included_mig<-pregnancy_D3[mig_filter==1,.N]
 issues_mig<-data.table(Indicator=c(paste0("1.0. Records with start date before: ", min_preg_date_mig),
                                       paste0("1.1. Records with end date after: ", max_preg_date_mig),
 #                                   "Records with GA> 20 weeks(140 days)",
-                                      "1.2. Records with pregnancy outcome other than LB/SB",
+                                      paste0("1.2. Records with pregnancy outcome other than LB/SB (",type_other_outcome,")"),
                                    "1.3. Records left after removing all issues above"),
 
                           Migraine=c(before_min_date_mig,
@@ -161,7 +166,7 @@ issues_mig<-data.table(Indicator=c(paste0("1.0. Records with start date before: 
                                      included_mig)
 )
 
-rm(before_min_date_mig,after_max_date_mig,other_outcome_mig,included_mig)
+rm(before_min_date_mig,after_max_date_mig,other_outcome_mig,included_mig,type_other_outcome)
 fwrite(issues_mig,paste0(output_dir, "Pregnancy algorithm/Step_00_issues_Migraine_flowchart_pregnancy_D3.csv"), row.names = F)
 rm(issues_mig)
 ####Drug utilisation####
@@ -185,6 +190,12 @@ pregnancy_D3[,filter_1:=NULL][,filter_2:=NULL]
 #Calculate number of pregnancy records with outcome LB/SB
 pregnancy_D3[type_of_pregnancy_end=="LB" | type_of_pregnancy_end=="SB", keep_outcome:=1]
 other_outcome_du<-pregnancy_D3[is.na(keep_outcome) & du_filter==1,.N]
+if(other_outcome_du>0){
+  type_other_outcome<-paste(unique(pregnancy_D3[is.na(keep_outcome) & du_filter==1,type_of_pregnancy_end]), collapse = ",")
+}else{
+  type_other_outcome<-"N/A" 
+}
+
 #Update filter_mig based on the type of outcome
 pregnancy_D3[is.na(keep_outcome), du_filter:=NA]
 pregnancy_D3[,keep_outcome:=NULL]
@@ -194,7 +205,7 @@ included_du<-pregnancy_D3[du_filter==1,.N]
 issues_du<-data.table(Indicator=c(paste0("1.0. Records with start date before: ",min_preg_date_du),
                                    paste0("1.1. Records with end date after:", max_preg_date_du),
 #                                   "Records with GA> 20 weeks(140 days)",
-                                   "1.2. Records with pregnancy outcome other than LB/SB",
+paste0("1.2. Records with pregnancy outcome other than LB/SB (",type_other_outcome,")"),
                                    "1.3. Records left after removing all issues above"),
                        Drug_utilisation=c(before_min_date_du,
                                   after_max_date_du,
@@ -203,7 +214,7 @@ issues_du<-data.table(Indicator=c(paste0("1.0. Records with start date before: "
                                   included_du)
 )
 
-rm(before_min_date_du,after_max_date_du,other_outcome_du,included_du)
+rm(before_min_date_du,after_max_date_du,other_outcome_du,included_du,type_other_outcome)
 fwrite(issues_du,paste0(output_dir, "Pregnancy algorithm/Step_00_issues_DU_flowchart_pregnancy_D3.csv"), row.names = F)
 rm(issues_du)
 ####Safety####
@@ -227,6 +238,12 @@ pregnancy_D3[,filter_1:=NULL][,filter_2:=NULL]
 #Calculate number of pregnancy records with outcome LB/SB
 pregnancy_D3[type_of_pregnancy_end=="LB" | type_of_pregnancy_end=="SB", keep_outcome:=1]
 other_outcome_saf<-pregnancy_D3[is.na(keep_outcome) & saf_filter==1,.N]
+if(other_outcome_saf>0){
+  type_other_outcome<-paste(unique(pregnancy_D3[is.na(keep_outcome) & saf_filter==1,type_of_pregnancy_end]), collapse = ",")
+}else{
+  type_other_outcome<-"N/A" 
+}
+
 #Update filter_mig based on the type of outcome
 pregnancy_D3[is.na(keep_outcome), saf_filter:=NA]
 pregnancy_D3[,keep_outcome:=NULL]
@@ -236,7 +253,7 @@ included_saf<-pregnancy_D3[saf_filter==1,.N]
 issues_saf<-data.table(Indicator=c(paste0("1.0. Records with start date before: ",min_preg_date_saf),
                                   paste0("1.1. Records with end date after: ", max_preg_date_saf),
 #                                  "Records with GA> 20 weeks(140 days)",
-                                  "1.2. Records with pregnancy outcome other than LB/SB",
+paste0("1.2. Records with pregnancy outcome other than LB/SB (",type_other_outcome,")"),
                                   "1.3. Records left after removing all issues above"),
                       Safety=c(before_min_date_saf,
                                  after_max_date_saf,
@@ -245,7 +262,7 @@ issues_saf<-data.table(Indicator=c(paste0("1.0. Records with start date before: 
                                  included_saf)
 )
 
-rm(before_min_date_saf,after_max_date_saf,other_outcome_saf,included_saf)
+rm(before_min_date_saf,after_max_date_saf,other_outcome_saf,included_saf,type_other_outcome)
 fwrite(issues_saf,paste0(output_dir, "Pregnancy algorithm/Step_00_issues_Safety_flowchart_pregnancy_D3.csv"), row.names = F)
 rm(issues_saf)
 
