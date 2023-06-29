@@ -1,6 +1,6 @@
 
-initial_time<-Sys.time()
-date_running_start<-Sys.Date()
+initial_time_01<-Sys.time()
+date_running_start_01<-Sys.Date()
 
 #Clean folders
 unlink(paste0(projectFolder,"/g_intermediate/tmp"), recursive = T)#delete folder
@@ -34,6 +34,24 @@ op_end_date_max<-max(gdm_pe_end_study_date,mig_end_study_date,du_end_study_date,
 end_date_max <- paste0(year(op_end_date_max),sprintf("%02d",month(op_end_date_max)),sprintf("%02d",day(op_end_date_max)))
 OBS_PER[, op_end_date_max:= as.character(op_end_date)]
 OBS_PER[is.na(op_end_date), op_end_date_max:= as.character(end_date_max)]
+
+
+#Check if DAP is Efemeris and then create one observation period per women
+DAP_name<-fread(paste0(path_dir, list.files(path_dir,"CDM_SOURCE")))[,data_access_provider_name]
+if(DAP_name=="EFEMERIS"){
+  #Find the minimum date for each subject
+  OBS_PER[,min_start_date:=min(op_start_date), by="person_id"]
+  OBS_PER[,max_end_date:=max(op_end_date_max), by="person_id"]
+  #remove all duplicated person id
+  OBS_PER_concept<-OBS_PER[,c("person_id","min_start_date","max_end_date")]
+  OBS_PER_concept<-OBS_PER_concept[!duplicated(person_id)]
+  #Add data to orignal table
+  OBS_PER<-rbind(OBS_PER,OBS_PER_concept,fill=T)
+  rm(OBS_PER_concept)
+  OBS_PER[is.na(op_start_date),op_start_date:=min_start_date]
+  OBS_PER[is.na(op_end_date_max),op_end_date_max:=max_end_date]
+  OBS_PER[,min_start_date:=NULL][,max_end_date:=NULL]
+}
 
 print('Set start and end date to date format')
 lapply(c("op_start_date","op_end_date","op_end_date_max"), function (x) OBS_PER <- OBS_PER[,eval(x) := as.IDate(as.character(get(x)),"%Y%m%d")])
@@ -662,14 +680,14 @@ dates_flowchart<-data.table(Indication,GDM_and_PE,Migraine,Drug_utilisation,Safe
 fwrite(dates_flowchart,paste0(output_dir, "Pregnancy study population/inclusion_dates_flowchart.csv"), row.names = F)
 rm(dates_flowchart)
 
-date_running_end<-Sys.Date()
-end_time<-Sys.time()
+date_running_end_01<-Sys.Date()
+end_time_01<-Sys.time()
 
 time_log<-data.table(DAP=data_access_provider_name,
                      Script="Step_01_create_study_population.R", 
-                     Start_date=date_running_start, 
-                     End_date=date_running_end,
-                     Time_elaspsed=format(end_time-initial_time, digits=2))
+                     Start_date=date_running_start_01, 
+                     End_date=date_running_end_01,
+                     Time_elaspsed=format(end_time_01-initial_time_01, digits=2))
 fwrite(time_log,paste0(output_dir,"/Time log/Step_01_time_log.csv"),row.names = F)
 rm(time_log)
 
