@@ -458,21 +458,27 @@ if(!is.null(alg)){
 ```
 
 ```{r,echo=F}
-  alg[,prevalence_100_pregnancies:=as.numeric(prevalence_100_pregnancies)]
-   ggplotly(ggplot(alg, aes(x=maternal_age,y=prevalence_100_pregnancies, group=algorithm)) +
+alg[,prevalence_100_pregnancies:=as.numeric(prevalence_100_pregnancies)]
+years<-unique(alg[,year_group])
+fig.1<-list()
+for(i in 1:length(years)){
+   fig.1[[i]]<-ggplotly(ggplot(alg[year_group==years[i]], aes(x=maternal_age,y=prevalence_100_pregnancies, group=algorithm)) +
     geom_line(aes(color=algorithm))+
-      geom_line(aes(x=maternal_age,y=lower_95_CI, color=algorithm))+
     geom_point(aes(color=algorithm))+
-    facet_wrap(~year_group, scales="fixed", ncol=1)+
+    #facet_wrap(~year_group, scales="fixed", ncol=1)+
     theme(axis.text.x = element_text(size = 8,angle = 45),
           axis.title.x = element_text(colour = "#76b82a"),
           axis.title.y = element_text(colour = "#76b82a"),
           plot.title = element_text(colour = "#76b82a"))+
-    ggtitle("GDM prevalence rates")+
+    ggtitle(paste0("GDM prevalence rates: ", years[i]))+
     xlab("Maternal age") +
     ylab("Prevalence_per_100_pregnancies")+
     theme(panel.background=element_rect(color="lightgreen", linewidth = 1)))
+}
+```
 
+```{r, echo=F}
+htmltools::tagList(list(fig.1))
 ```
 
 ```{r, echo=F}
@@ -483,6 +489,7 @@ if("alg_4" %in% ls()){rm(alg_4)}
 if("alg_5" %in% ls()){rm(alg_5)}
 if("alg_8" %in% ls()){rm(alg_8)}
 if("alg" %in% ls()){rm(alg)}
+if("fig.1" %in% ls()){rm(fig.1)}
 ```
 
 </div>
@@ -738,20 +745,26 @@ if(!is.null(alg)){
 
 ```{r,echo=F}
 alg[,prevalence_100_pregnancies:=as.numeric(prevalence_100_pregnancies)]
-ggplotly(ggplot(alg, aes(x=maternal_age,y=prevalence_100_pregnancies, group=algorithm)) +
+years<-unique(alg[,year_group])
+fig.1<-list()
+for(i in 1:length(years)){
+   fig.1[[i]]<-ggplotly(ggplot(alg[year_group==years[i]], aes(x=maternal_age,y=prevalence_100_pregnancies, group=algorithm)) +
            geom_line(aes(color=algorithm))+
-           geom_line(aes(x=maternal_age,y=lower_95_CI, color=algorithm))+
            geom_point(aes(color=algorithm))+
-           facet_wrap(~year_group, scales="fixed", ncol=1)+
+           #facet_wrap(~year_group, scales="fixed", ncol=1)+
            theme(axis.text.x = element_text(size = 8,angle = 45),
                  axis.title.x = element_text(colour = "#76b82a"),
                  axis.title.y = element_text(colour = "#76b82a"),
                  plot.title = element_text(colour = "#76b82a"))+
-           ggtitle("PE prevalence rates")+
+           ggtitle(paste0("PE prevalence rates: ", years[i]))+
            xlab("Maternal age") +
            ylab("Prevalence_per_100_pregnancies")+
            theme(panel.background=element_rect(color="lightgreen", linewidth = 1)))
+}
+```
 
+```{r, echo=F}
+htmltools:: tagList(list(fig.1))
 ```
 
 ```{r, echo=F}
@@ -760,6 +773,7 @@ if("alg_2" %in% ls()){rm(alg_2)}
 if("alg_3" %in% ls()){rm(alg_3)}
 if("alg_4" %in% ls()){rm(alg_4)}
 if("alg_5" %in% ls()){rm(alg_5)}
+if("fig.1" %in% ls()){rm(fig.1)}
 if("alg" %in% ls()){rm(alg)}
 ```
 

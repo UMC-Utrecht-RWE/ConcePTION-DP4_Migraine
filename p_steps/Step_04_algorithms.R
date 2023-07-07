@@ -1,5 +1,5 @@
-initial_time<-Sys.time()
-date_running_start<-Sys.Date()
+initial_time_04<-Sys.time()
+date_running_start_04<-Sys.Date()
 
 
 age_band_creation<-function(x){
@@ -48,6 +48,7 @@ rm(sum,sum_gdm,sum_pe)
 
 rm(pregnancy_d3_gdm_pe)
 gc()
+
 #Load all migraine_algorithm file and combine with the pregnancy D3
 pregnancy_d3_mig<-readRDS(paste0(projectFolder,"/g_intermediate/pregnancy_d3/MIG_Pregnancy_D3.rds"))
 pregnancy_d3_mig[,pregnancy_start_date:=as.IDate(pregnancy_start_date)][,pregnancy_end_date:=as.IDate(pregnancy_end_date)][,birth_date:=as.IDate(birth_date)][,death_date:=as.IDate(death_date)][,op_start_date_gdm_pe:=as.IDate(op_start_date_gdm_pe)][,op_end_date_gdm_pe:=as.IDate(op_end_date_gdm_pe)]
@@ -59,16 +60,16 @@ pregnancy_d3_mig[,year_group:=as.character(lapply(year, year_group_creation))]
 if("final_d3" %in% list.files(paste0(projectFolder,"/g_intermediate/migraine_algorithm/"))){
   unlink(paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3"), recursive = T)
 }
-source(paste0(projectFolder,"/p_steps/Step_04_c_migraine_algorithms.R"))
+# source(paste0(projectFolder,"/p_steps/Step_04_c_migraine_algorithms.R"))
 
-date_running_end<-Sys.Date()
-end_time<-Sys.time()
+date_running_end_04<-Sys.Date()
+end_time_04<-Sys.time()
 
-time_log<-data.table(DAP=data_access_provider_name,
+time_log_04<-data.table(DAP=data_access_provider_name,
                      Script="Step_04_algorithm.R", 
-                     Start_date=date_running_start, 
-                     End_date=date_running_end,
-                     Time_elaspsed=format(end_time-initial_time, digits=2))
-fwrite(time_log,paste0(output_dir,"/Time log/Step_04_time_log.csv"),row.names = F)
-rm(time_log)
+                     Start_date=date_running_start_04, 
+                     End_date=date_running_end_04,
+                     Time_elaspsed=format(end_time_04-initial_time_04, digits=2))
+fwrite(time_log_04,paste0(output_dir,"/Time log/Step_04_time_log.csv"),row.names = F)
+rm(time_log_04)
 

@@ -15,7 +15,7 @@ study_dates<-study_dates[DAP==data_access_provider_name]
 if(study_dates[,.N]==0){
   stop("This is not a script issue. There is no data for your data source in study_dates. Fix the issue and then rerun the script.")
 }
-study_dates[,optional_lookback:=as.numeric(optional_lookback)]
+study_dates[,optional_lookback:=as.numeric(optional_lookback)][,after_delivery:=as.numeric(after_delivery)]
 #source(paste0(pre_dir,"parameters/template_error_check.R"))
 #Split the information into medicines or diagnoses codesheet(where the codelists will be used) and not fixed
 
@@ -36,14 +36,9 @@ min_preg_date_gdm_pe<-as.IDate(as.character(study_dates[Study=="GDM_and_PE",min_
 max_preg_date_gdm_pe<-as.IDate(as.character(study_dates[Study=="GDM_and_PE",max_preg_date]),"%Y%m%d")
 
 #optional_lookback: will be used for diagnoses, medication and other data related to the event
-opt_lookback<-study_dates[Study=="GDM_and_PE",optional_lookback]
-if(opt_lookback==0){
-  gdm_pe_start_preg_lookback<-NULL
-}else{
-  gdm_pe_start_preg_lookback<- min_preg_date_gdm_pe + as.numeric(opt_lookback)
+opt_lookback_gdm_pe<-study_dates[Study=="GDM_and_PE",optional_lookback]
+after_delivery_gdm_pe<-study_dates[Study=="GDM_and_PE",after_delivery]
 }
-}
-if(exists("opt_lookback")){rm(opt_lookback)}
 
 ####Migraine####
 if(study_dates[Study=="Migraine" & DAP==data_access_provider_name,.N]>0){
@@ -59,13 +54,8 @@ min_preg_date_mig<-unique(as.IDate(study_dates[Study=="Migraine",min_preg_date],
 max_preg_date_mig<-as.IDate(as.character(study_dates[Study=="Migraine",max_preg_date]),"%Y%m%d")
 
 #optional_lookback: will be used for pregnancy start date
-opt_lookback<-unique(study_dates[Study=="Migraine",optional_lookback])
-if(opt_lookback==0){
-  mig_start_preg_lookback<-NULL
-}else{
-  mig_start_preg_lookback<- min_preg_date_mig + as.numeric(opt_lookback)
-}
-if(exists("opt_lookback")){rm(opt_lookback)}
+opt_lookback_migraine<-unique(study_dates[Study=="Migraine",optional_lookback])
+after_delivery_migraine<-study_dates[Study=="Migraine",after_delivery]
 }
 ####Drug utilisation####
 if(study_dates[Study=="Drug_utilisation" & DAP==data_access_provider_name,.N]>0){
@@ -76,19 +66,14 @@ du_start_study_date<-as.IDate(study_dates[Study=="Drug_utilisation",start_covera
 du_end_study_date<-min(as.IDate(as.character(CDM_SOURCE[,date_creation]),"%Y%m%d"),
                            as.IDate(as.character(CDM_SOURCE[,recommended_end_date]),"%Y%m%d"),
                            as.IDate(study_dates[Study=="Drug_utilisation",end_coverage],"%Y%m%d"), na.rm = T)
-opt_lookback<-unique(study_dates[Study=="Drug_utilisation",optional_lookback])
 
 #min_preg_date_du
 min_preg_date_du<-as.IDate(study_dates[Study=="Drug_utilisation",min_preg_date],"%Y%m%d")
 #max_preg_date_du
 max_preg_date_du<-as.IDate(study_dates[Study=="Drug_utilisation",max_preg_date],"%Y%m%d")
 
-if(opt_lookback==0){
-  du_start_preg_lookback<-NULL
-}else{
-  du_start_preg_lookback<- min_preg_date_du + as.numeric(opt_lookback)
-}
-if(exists("opt_lookback")){rm(opt_lookback)}
+opt_lookback_du<-unique(study_dates[Study=="Drug_utilisation",optional_lookback])
+after_delivery_du<-study_dates[Study=="Drug_utilisation",after_delivery]
 }
 ####Safety####
 if(study_dates[Study=="Safety" & DAP==data_access_provider_name,.N]>0){
@@ -99,19 +84,15 @@ saf_start_study_date<-as.IDate(study_dates[Study=="Safety",start_coverage],"%Y%m
 saf_end_study_date<-min(as.IDate(as.character(CDM_SOURCE[,date_creation]),"%Y%m%d"),
                            as.IDate(as.character(CDM_SOURCE[,recommended_end_date]),"%Y%m%d"),
                            as.IDate(study_dates[Study=="Safety",end_coverage],"%Y%m%d"), na.rm = T)
-#optional_lookback: will be used for diagnoses, medication and other data related to the event
-opt_lookback<-unique(study_dates[Study=="Safety",optional_lookback])
 
 #min_preg_date_saf
 min_preg_date_saf<-as.IDate(study_dates[Study=="Safety",min_preg_date],"%Y%m%d")
 #max_preg_date_saf
 max_preg_date_saf<-as.IDate(study_dates[Study=="Safety",max_preg_date],"%Y%m%d")
-if(opt_lookback==0){
-  saf_start_preg_lookback<-NULL
-}else{
-  saf_start_preg_lookback<- min_preg_date_saf + as.numeric(opt_lookback)
-}
-if(exists("opt_lookback")){rm(opt_lookback)}
+
+#optional_lookback: will be used for diagnoses, medication and other data related to the event
+opt_lookback_saf<-unique(study_dates[Study=="Safety",optional_lookback])
+after_delivery_saf<-study_dates[Study=="Safety",after_delivery]
 }
 ####Age pregnancy at start pregnancy####
 #min age pregnancy

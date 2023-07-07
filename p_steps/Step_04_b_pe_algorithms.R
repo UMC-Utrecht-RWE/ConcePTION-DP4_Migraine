@@ -1,15 +1,15 @@
-initial_time<-Sys.time()
-date_running_start<-Sys.Date()
+initial_time_04_b<-Sys.time()
+date_running_start_04_b<-Sys.Date()
 
 
 ####PE DIAGNOSES####
 print("Loading all PE diagnoses D3 and merge with the pregnancy D3.")
-obs_period<-data.table(StudyVar=c("PE","ECL","HELLP","PE_checkbox"),
+obs_period_diag<-data.table(StudyVar=c("PE","ECL","HELLP","PE_checkbox"),
                        lookback=c(0,0,0,0),
                        start_date=c(20*7,20*7,20*7,20*7),
                        end_date=c(7*40,7*40,7*40,7*40),
                        after=c(7,7,7,7))
-fwrite(obs_period, paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_observation_periods_pe.csv"),row.names = F)
+fwrite(obs_period_diag, paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_observation_periods_pe.csv"),row.names = F)
 
 #pe files
 pe_files<-list.files(paste0(projectFolder,"/g_intermediate/pe_algorithm/"))
@@ -36,8 +36,8 @@ for(pe_fl in 1:length(pe_files)){
     original[[w]]<-data.table(StudyVar=names_events[pe_fl], event_records=pe_dt[,.N])
     pe_dt[,event_date:=as.IDate(event_date)]
     
-    if(obs_period[StudyVar==names_events[pe_fl],lookback]>0){
-      pe_dt[,lookback:=obs_period[StudyVar==names_events[pe_fl],lookback]]
+    if(obs_period_diag[StudyVar==names_events[pe_fl],lookback]>0){
+      pe_dt[,lookback:=obs_period_diag[StudyVar==names_events[pe_fl],lookback]]
       pe_dt[,start_preg:=as.IDate(pregnancy_start_date-lookback)]
       #exclude all pregnancies that are outside observation period of interest
       pe_dt[,diff:=event_date-start_preg]
@@ -47,7 +47,7 @@ for(pe_fl in 1:length(pe_files)){
       pe_dt[,diff:=NULL][,lookback:=NULL][,start_preg:=NULL]
     }else{
       #remove all records before start obs
-      pe_dt[,start:=obs_period[StudyVar==names_events[pe_fl],start_date]]
+      pe_dt[,start:=obs_period_diag[StudyVar==names_events[pe_fl],start_date]]
       pe_dt[,start_preg:=as.IDate(pregnancy_start_date+start)]
       pe_dt[,diff:=event_date-start_preg]
       before[[w]]<-data.table(StudyVar=names_events[pe_fl], before_start=pe_dt[diff<0,.N])
@@ -56,15 +56,15 @@ for(pe_fl in 1:length(pe_files)){
     }
     
     if(pe_dt[,.N]>0){
-      if(obs_period[StudyVar==names_events[pe_fl],after]>0){
-        pe_dt[,after:=obs_period[StudyVar==names_events[pe_fl],after]]
+      if(obs_period_diag[StudyVar==names_events[pe_fl],after]>0){
+        pe_dt[,after:=obs_period_diag[StudyVar==names_events[pe_fl],after]]
         pe_dt[,end_preg:=as.IDate(pregnancy_end_date+after)]
         pe_dt[,diff:=event_date-end_preg]
         after[[w]]<-data.table(StudyVar=names_events[pe_fl], after_end=pe_dt[diff>0,.N])
         pe_dt<-pe_dt[diff<=0]
         pe_dt[,diff:=NULL][,after:=NULL][,end_preg:=NULL]
       }else{
-        pe_dt[,end:=obs_period[StudyVar==names_events[pe_fl],end_date]]
+        pe_dt[,end:=obs_period_diag[StudyVar==names_events[pe_fl],end_date]]
         pe_dt[,end_preg:=as.IDate(pregnancy_start_date+end)]
         pe_dt[,diff:=event_date-end_preg]
         after[[w]]<-data.table(StudyVar=names_events[pe_fl], after_end=pe_dt[diff>0,.N])
@@ -112,11 +112,12 @@ setnames(removed_rec_pe,"event_records", "original_records")
 sum_pe<-as.data.table(do.call(rbind,sum))
 #fwrite(sum_pe, paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_summary_records_pe.csv"),row.names = F)
 rm(original,before,after,sum)
-rm(obs_period,pe_files)
+rm(pe_files)
 
 #identify events that are not present from conditions_pe
-not_present<-setdiff(names(conditions_pe), names_events)
+not_present<-setdiff(obs_period_diag[,StudyVar], names_events)
 pregnancy_d3_gdm_pe[,eval(not_present):=list(0)]
+rm(obs_period_diag)
 
 print("Export PE pregnancy D3")
 fwrite(pregnancy_d3_gdm_pe,paste0(projectFolder,"/g_intermediate/pe_algorithm/final_d3/pregnancy_D3_pe_algorithm.csv"),row.names = F)
@@ -547,7 +548,7 @@ PE_5_b[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_preg
 PE_5_b[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
 PE_5_b[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
 PE_5_b[lower_95_CI<0,lower_95_CI:=0]
-fwrite(PE_5_b,paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_PE_1_age.csv"),row.names = F)
+fwrite(PE_5_b,paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_PE_5_age.csv"),row.names = F)
 
 
 records<-pregnancy_d3_gdm_pe[include==1 & !duplicated(pregnancy_id),by="year", .N]
@@ -592,13 +593,13 @@ if("PE" %in% names(pregnancy_d3_gdm_pe)){pregnancy_d3_gdm_pe[,PE:=NULL]}
 if("ECL" %in% names(pregnancy_d3_gdm_pe)){pregnancy_d3_gdm_pe[,ECL:=NULL]}
 if("HELLP" %in% names(pregnancy_d3_gdm_pe)){pregnancy_d3_gdm_pe[,HELLP:=NULL]}
 
-date_running_end<-Sys.Date()
-end_time<-Sys.time()
+date_running_end_04_b<-Sys.Date()
+end_time_04_b<-Sys.time()
 
-time_log<-data.table(DAP=data_access_provider_name,
+time_log_04_b<-data.table(DAP=data_access_provider_name,
                      Script="Step_04_b_pe_algorithms.R", 
-                     Start_date=date_running_start, 
-                     End_date=date_running_end,
-                     Time_elaspsed=format(end_time-initial_time, digits=2))
-fwrite(time_log,paste0(output_dir,"/Time log/Step_04_b_time_log.csv"),row.names = F)
-rm(time_log)
+                     Start_date=date_running_start_04_b, 
+                     End_date=date_running_end_04_b,
+                     Time_elaspsed=format(end_time_04_b-initial_time_04_b, digits=2))
+fwrite(time_log_04_b,paste0(output_dir,"/Time log/Step_04_b_time_log.csv"),row.names = F)
+rm(time_log_04_b)

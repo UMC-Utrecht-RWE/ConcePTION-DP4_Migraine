@@ -1,5 +1,5 @@
-initial_time<-Sys.time()
-date_running_start<-Sys.Date()
+initial_time_04_a<-Sys.time()
+date_running_start_04_a<-Sys.Date()
 
 
 ####GDM DIAGNOSES####
@@ -110,7 +110,7 @@ rm(original,before,after,sum)
 rm(gdm_files)
 
 #identify events that are not present from conditions_gdm
-not_present<-setdiff(names(conditions_gdm), names_events)
+not_present<-setdiff(obs_period_diag[,StudyVar], names_events)
 pregnancy_d3_gdm_pe[,eval(not_present):=list(0)]
 ####GDM MEDICINES####
 print("Loading all GDM medicines D3 and merge with the pregnancy D3.")
@@ -732,14 +732,14 @@ if("DM_PREG" %in% names(pregnancy_d3_gdm_pe)){pregnancy_d3_gdm_pe[,DM_PREG:=NULL
 if("GD_med" %in% names(pregnancy_d3_gdm_pe)){pregnancy_d3_gdm_pe[,GD_med:=NULL]}
 if("PRE_GD_med" %in% names(pregnancy_d3_gdm_pe)){pregnancy_d3_gdm_pe[,PRE_GD_med:=NULL]}
 
-date_running_end<-Sys.Date()
-end_time<-Sys.time()
+date_running_end_04_a<-Sys.Date()
+end_time_04_a<-Sys.time()
 
-time_log<-data.table(DAP=data_access_provider_name,
+time_log_04_a<-data.table(DAP=data_access_provider_name,
                      Script="Step_04_a_gdm_algorithms.R", 
-                     Start_date=date_running_start, 
-                     End_date=date_running_end,
-                     Time_elaspsed=format(end_time-initial_time, digits=2))
-fwrite(time_log,paste0(output_dir,"/Time log/Step_04_a_time_log.csv"),row.names = F)
-rm(time_log)
+                     Start_date=date_running_start_04_a, 
+                     End_date=date_running_end_04_a,
+                     Time_elaspsed=format(end_time_04_a-initial_time_04_a, digits=2))
+fwrite(time_log_04_a,paste0(output_dir,"/Time log/Step_04_a_time_log.csv"),row.names = F)
+rm(time_log_04_a)
 

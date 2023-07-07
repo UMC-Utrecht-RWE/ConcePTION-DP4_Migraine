@@ -29,6 +29,10 @@ if(sum(events_gdm_diagnoses,events_pe_diagnoses,events_migraine_diagnoses)>0){
     date_var<-codesheet_diagnoses_migraine[table=="EVENTS",date_column]
   }
   if(length(actual_tables$EVENTS)>0){
+    #Load the observation periods hint table(use to make smaller the table)
+    hint_fl<-list.files(paste0(projectFolder, "/g_intermediate/pregnancy_d3/"), "obs_period_hint")
+    #use this table first to remove all uneccessary subjects(not needed for any of the studies)
+    obs_hint_table<-readRDS(paste0(projectFolder, "/g_intermediate/pregnancy_d3/", hint_fl))
     print("Analyse EVENTS table.")
     ####List for saving info####
     print("Creating lists to save the information.")
@@ -42,6 +46,8 @@ if(sum(events_gdm_diagnoses,events_pe_diagnoses,events_migraine_diagnoses)>0){
     empty_event_vocabulary_mig<-list() #numer of records with missing event vocabulary
     empty_event_meaning_gdm_pe<-list() #numer of records with missing event meaning
     empty_event_meaning_mig<-list() #numer of records with missing event meaning
+    any_study_no<-list() #number of records for subjects not needed in any of the SAPs
+    outside_obs<-list() #number of records outside obs min and obs max between SAPs for each subject
     prior_diagnoses_rec_gdm_pe<-list() #number of records with date prior to start study date - 365 days
     prior_diagnoses_rec_mig<-list() #number of records with date prior to start study date - 365 days
     after_diagnoses_rec_gdm_pe<-list() #number of records with date after end study date
@@ -83,6 +89,16 @@ if(sum(events_gdm_diagnoses,events_pe_diagnoses,events_migraine_diagnoses)>0){
       df[,event_date:=as.IDate(event_date,"%Y%m%d")] #transform to date variables
       #create year variable
       df[,year:=year(event_date)]
+      #merge with the obs_hint table and remove subjects not present in the pregnancy d3 for any of teh studies
+      df<-merge.data.table(df, obs_hint_table, by="person_id", all.x = T)
+      any_study_no[[w]]<-df[is.na(obs_min), .N]
+      df<-df[!is.na(obs_min)]
+      if(df[,.N]>0){
+        #Remove all records outside the window for observation for each subject
+        df[event_date>=obs_min & event_date<=obs_max, keep:=1]
+      outside_obs[[w]]<-df[is.na(keep),.N]
+      df<-df[keep==1]
+      if(df[,.N]>0){
       #remove all records with dates prior to start study date or start study date plus lookback if any
       #gdm&pe
       df[,prior_gdm_pe:=ifelse(gdm_pe_start_study_date>event_date,1,0)]
@@ -107,6 +123,8 @@ if(sum(events_gdm_diagnoses,events_pe_diagnoses,events_migraine_diagnoses)>0){
       df[,after_saf:=ifelse(saf_end_study_date<event_date,1,0)]
       #clean up dataset:keep records when at least one is zero
       df<-df[after_gdm_pe==0|after_mig==0|after_du==0|after_saf==0]
+      
+      
       #create code with nodot
       df[,code_no_dot:=as.character(gsub("\\.","",df[,event_code]))]
       included_records_filtering_gdm_pe[[w]]<-df[prior_gdm_pe==0 & after_gdm_pe==0,.N]
@@ -263,10 +281,28 @@ if(sum(events_gdm_diagnoses,events_pe_diagnoses,events_migraine_diagnoses)>0){
           }
         }
       }
-      
+      }else{
+        prior_diagnoses_rec_gdm_pe[[w]]<-0
+        prior_diagnoses_rec_mig[[w]]<-0
+        after_diagnoses_rec_gdm_pe[[w]]<-0
+        after_diagnoses_rec_mig[[w]]<-0
+        included_records_filtering_gdm_pe[[w]]<-0
+        included_records_filtering_mig[[w]]<-0
+      }
+      }else{
+        outside_obs[[w]]<-0  
+        prior_diagnoses_rec_gdm_pe[[w]]<-0
+        prior_diagnoses_rec_mig[[w]]<-0
+        after_diagnoses_rec_gdm_pe[[w]]<-0
+        after_diagnoses_rec_mig[[w]]<-0
+        included_records_filtering_gdm_pe[[w]]<-0
+        included_records_filtering_mig[[w]]<-0
+        
+      }
       w<-w+1
       rm(df)
     }
+    rm(hint_fl,obs_hint_table)
     ####Combine results####
     #combine flowchart results
     original_rows_gdm_pe<-sum(do.call(rbind,original_rows_gdm_pe))
@@ -279,6 +315,8 @@ if(sum(events_gdm_diagnoses,events_pe_diagnoses,events_migraine_diagnoses)>0){
     empty_event_vocabulary_mig<-sum(do.call(rbind,empty_event_vocabulary_mig))
     empty_event_meaning_gdm_pe<-sum(do.call(rbind,empty_event_meaning_gdm_pe))
     empty_event_meaning_mig<-sum(do.call(rbind,empty_event_meaning_mig))
+    any_study_no<-sum(do.call(rbind,any_study_no))
+    outside_obs<-sum(do.call(rbind,outside_obs))
     prior_diagnoses_rec_gdm_pe<-sum(do.call(rbind,prior_diagnoses_rec_gdm_pe))
     prior_diagnoses_rec_mig<-sum(do.call(rbind,prior_diagnoses_rec_mig))
     after_diagnoses_rec_gdm_pe<-sum(do.call(rbind,after_diagnoses_rec_gdm_pe))
@@ -292,6 +330,8 @@ if(sum(events_gdm_diagnoses,events_pe_diagnoses,events_migraine_diagnoses)>0){
                                                     "Number of records with missing event code",
                                                     "Number of records with missing event vocabulary",
                                                     "Number of records with missing event meaning",
+                                                    "Number of records not present in the pregnancy D3 for any of the studies",
+                                                    "Number of records outside min and max observation period for any of the studies",
                                                     "Number of records with event date before start of study date",
                                                     "Number of records with event date after end of study date",
                                                     "Number of records included, before data filtering"),
@@ -300,6 +340,8 @@ if(sum(events_gdm_diagnoses,events_pe_diagnoses,events_migraine_diagnoses)>0){
                                                  empty_event_code_gdm_pe,
                                                  empty_event_vocabulary_gdm_pe,
                                                  empty_event_meaning_gdm_pe,
+                                                 any_study_no,
+                                                 outside_obs,
                                                  prior_diagnoses_rec_gdm_pe,
                                                  after_diagnoses_rec_gdm_pe,
                                                  included_records_filtering_gdm_pe))
@@ -310,6 +352,8 @@ if(sum(events_gdm_diagnoses,events_pe_diagnoses,events_migraine_diagnoses)>0){
                                                  "Number of records with missing event code",
                                                  "Number of records with missing event vocabulary",
                                                  "Number of records with missing event meaning",
+                                                 "Number of records not present in the pregnancy D3 for any of the studies",
+                                                 "Number of records outside min and max observation period for any of the studies",
                                                  "Number of records with event date before start of study date",
                                                  "Number of records with event date after end of study date",
                                                  "Number of records included, before data filtering"),
@@ -318,12 +362,14 @@ if(sum(events_gdm_diagnoses,events_pe_diagnoses,events_migraine_diagnoses)>0){
                                               empty_event_code_mig,
                                               empty_event_vocabulary_mig,
                                               empty_event_meaning_mig,
+                                              any_study_no,
+                                              outside_obs,
                                               prior_diagnoses_rec_mig,
                                               after_diagnoses_rec_mig,
                                               included_records_filtering_mig))
     
     #fwrite(flowchart_events, paste0(output_dir, "PE and GDM algorithm/flowchart_events.csv"), row.names = F)
-    rm(original_rows_mig,empty_event_date_mig,empty_event_code_mig,empty_event_vocabulary_mig,empty_event_meaning_mig,prior_diagnoses_rec_mig,after_diagnoses_rec_mig,included_records_filtering_mig)
+    rm(original_rows_mig,empty_event_date_mig,empty_event_code_mig,empty_event_vocabulary_mig,empty_event_meaning_mig,any_study_no,outside_obs,prior_diagnoses_rec_mig,after_diagnoses_rec_mig,included_records_filtering_mig)
     
   } else {
     flowchart_events_gdm_pe<-data.table(Indicator=c("Number of original rows",
@@ -331,10 +377,14 @@ if(sum(events_gdm_diagnoses,events_pe_diagnoses,events_migraine_diagnoses)>0){
                                                     "Number of records with missing event code",
                                                     "Number of records with missing event vocabulary",
                                                     "Number of records with missing event meaning",
+                                                    "Number of records not present in the pregnancy D3 for any of the studies",
+                                                    "Number of records outside min and max observation period for any of the studies",
                                                     "Number of records with event date before start of study date",
                                                     "Number of records with event date after end of study date",
                                                     "Number of records included, before data filtering"),
                                         EVENTS=c(0,
+                                                 0,
+                                                 0,
                                                  0,
                                                  0,
                                                  0,
@@ -347,10 +397,14 @@ if(sum(events_gdm_diagnoses,events_pe_diagnoses,events_migraine_diagnoses)>0){
                                                  "Number of records with missing event code",
                                                  "Number of records with missing event vocabulary",
                                                  "Number of records with missing event meaning",
+                                                 "Number of records not present in the pregnancy D3 for any of the studies",
+                                                 "Number of records outside min and max observation period for any of the studies",
                                                  "Number of records with event date before start of study date",
                                                  "Number of records with event date after end of study date",
                                                  "Number of records included, before data filtering"),
                                      EVENTS=c(0,
+                                              0,
+                                              0,
                                               0,
                                               0,
                                               0,
@@ -366,10 +420,14 @@ if(sum(events_gdm_diagnoses,events_pe_diagnoses,events_migraine_diagnoses)>0){
                                                   "Number of records with missing event code",
                                                   "Number of records with missing event vocabulary",
                                                   "Number of records with missing event meaning",
+                                                  "Number of records not present in the pregnancy D3 for any of the studies",
+                                                  "Number of records outside min and max observation period for any of the studies",
                                                   "Number of records with event date before start of study date",
                                                   "Number of records with event date after end of study date",
                                                   "Number of records included, before data filtering"),
                                       EVENTS=c(0,
+                                               0,
+                                               0,
                                                0,
                                                0,
                                                0,
@@ -382,10 +440,14 @@ if(sum(events_gdm_diagnoses,events_pe_diagnoses,events_migraine_diagnoses)>0){
                                                "Number of records with missing event code",
                                                "Number of records with missing event vocabulary",
                                                "Number of records with missing event meaning",
+                                               "Number of records not present in the pregnancy D3 for any of the studies",
+                                               "Number of records outside min and max observation period for any of the studies",
                                                "Number of records with event date before start of study date",
                                                "Number of records with event date after end of study date",
                                                "Number of records included, before data filtering"),
                                    EVENTS=c(0,
+                                            0,
+                                            0,
                                             0,
                                             0,
                                             0,

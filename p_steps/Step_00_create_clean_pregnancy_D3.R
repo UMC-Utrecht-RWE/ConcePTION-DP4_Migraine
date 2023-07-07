@@ -59,7 +59,23 @@ pregnancy_D3<-pregnancy_D3[!is.na(pregnancy_id)]
 pregnancy_D3[,diff:=pregnancy_end_date- pregnancy_start_date]
 issues_preg_alg_ga<-pregnancy_D3[diff>=301,.N]
 pregnancy_D3<-pregnancy_D3[diff<301]
-pregnancy_D3[,diff:=NULL]
+
+
+#Check for presence of multiple pregnancies
+#We eitehr check for the same combination person_id:pregnancy_id:start_date_pregnancy or person_id:start_date_pregnancy
+pregnancy_D3[,id_st:=rowid(person_id, pregnancy_start_date)]
+issue_1<-pregnancy_D3[id_st>1,.N]
+if(issue_1>0){
+  pregnancy_D3[,comb:=paste(person_id,pregnancy_start_date,sep="_")]
+  pregnancy_D3[duplicated(comb) | duplicated(comb, fromLast = TRUE)][,Filter := diff == max(diff), by = comb]
+  #keep only records where FILTER is equal to TRUE
+  pregnancy_D3<-pregnancy_D3[Filter==T]
+  pregnancy_D3[,Filter:=NULL]
+  #Keep not duplicated id(remove twins, triplets etc)
+  pregnancy_D3<-pregnancy_D3[!duplicated(comb)]
+  pregnancy_D3[,comb:=NULL]
+}
+
 incl_rec<-pregnancy_D3[,.N]
 Indicator<-c("1.0. Number of original records from the pregnancy algorithm",
              "1.1. Number of records with quality other than green",
@@ -68,11 +84,12 @@ Indicator<-c("1.0. Number of original records from the pregnancy algorithm",
              "1.4. Records with missing person id",
              "1.5. Records with missing pregnancy id",
              "1.6. Records where gestational age is longer than 43 weeks(301 days)",
-             "1.7. Records left after exclusions")
-placeholder<-c(original_rows,not_green_rec,issues_preg_alg_sex,issues_preg_alg_date,issues_preg_alg_pid,issues_preg_alg_prid,issues_preg_alg_ga,incl_rec)
+             "1.7. Records with the same person_id and start_date_pregnancy(keep the longest record, exclude others)",
+             "1.8. Records left after exclusions")
+placeholder<-c(original_rows,not_green_rec,issues_preg_alg_sex,issues_preg_alg_date,issues_preg_alg_pid,issues_preg_alg_prid,issues_preg_alg_ga,issue_1, incl_rec)
 issues<-data.table(Indicator=Indicator, Count=placeholder)
 rm(Indicator,placeholder)
-rm(issues_preg_alg_sex,not_green_rec,issues_preg_alg_date,issues_preg_alg_pid,issues_preg_alg_prid,issues_preg_alg_ga,incl_rec)
+rm(issues_preg_alg_sex,not_green_rec,issues_preg_alg_date,issues_preg_alg_pid,issues_preg_alg_prid,issues_preg_alg_ga,incl_rec, issue_1)
 
 fwrite(issues,paste0(output_dir, "Pregnancy algorithm/Step_00_issues_flowchart_pregnancy_D3.csv"), row.names = F)
 rm(issues)
@@ -141,7 +158,7 @@ pregnancy_D3[filter_1==1 & filter_2==1,mig_filter:=1]
 pregnancy_D3[,filter_1:=NULL][,filter_2:=NULL]
 
 #Calculate number of pregnancy records with outcome LB/SB
-pregnancy_D3[type_of_pregnancy_end=="LB" | type_of_pregnancy_end=="SB", keep_outcome:=1]
+pregnancy_D3[type_of_pregnancy_end %in% c("LB", "SB", "SA", "T"), keep_outcome:=1]
 other_outcome_mig<-pregnancy_D3[is.na(keep_outcome) & mig_filter==1,.N]
 if(other_outcome_mig>0){
 type_other_outcome<-paste(unique(pregnancy_D3[is.na(keep_outcome) & mig_filter==1,type_of_pregnancy_end]), collapse = ",")
@@ -156,7 +173,7 @@ included_mig<-pregnancy_D3[mig_filter==1,.N]
 issues_mig<-data.table(Indicator=c(paste0("1.0. Records with start date before: ", min_preg_date_mig),
                                       paste0("1.1. Records with end date after: ", max_preg_date_mig),
 #                                   "Records with GA> 20 weeks(140 days)",
-                                      paste0("1.2. Records with pregnancy outcome other than LB/SB (",type_other_outcome,")"),
+                                      paste0("1.2. Records with pregnancy outcome other than LB/SB/SA/T (",type_other_outcome,")"),
                                    "1.3. Records left after removing all issues above"),
 
                           Migraine=c(before_min_date_mig,
@@ -188,7 +205,7 @@ pregnancy_D3[filter_1==1 & filter_2==1,du_filter:=1]
 pregnancy_D3[,filter_1:=NULL][,filter_2:=NULL]
 
 #Calculate number of pregnancy records with outcome LB/SB
-pregnancy_D3[type_of_pregnancy_end=="LB" | type_of_pregnancy_end=="SB", keep_outcome:=1]
+pregnancy_D3[type_of_pregnancy_end  %in% c("LB", "SB", "SA", "T"), keep_outcome:=1]
 other_outcome_du<-pregnancy_D3[is.na(keep_outcome) & du_filter==1,.N]
 if(other_outcome_du>0){
   type_other_outcome<-paste(unique(pregnancy_D3[is.na(keep_outcome) & du_filter==1,type_of_pregnancy_end]), collapse = ",")
@@ -205,7 +222,7 @@ included_du<-pregnancy_D3[du_filter==1,.N]
 issues_du<-data.table(Indicator=c(paste0("1.0. Records with start date before: ",min_preg_date_du),
                                    paste0("1.1. Records with end date after:", max_preg_date_du),
 #                                   "Records with GA> 20 weeks(140 days)",
-paste0("1.2. Records with pregnancy outcome other than LB/SB (",type_other_outcome,")"),
+paste0("1.2. Records with pregnancy outcome other than LB/SB/SA/T (",type_other_outcome,")"),
                                    "1.3. Records left after removing all issues above"),
                        Drug_utilisation=c(before_min_date_du,
                                   after_max_date_du,
@@ -236,7 +253,7 @@ pregnancy_D3[filter_1==1 & filter_2==1,saf_filter:=1]
 pregnancy_D3[,filter_1:=NULL][,filter_2:=NULL]
 
 #Calculate number of pregnancy records with outcome LB/SB
-pregnancy_D3[type_of_pregnancy_end=="LB" | type_of_pregnancy_end=="SB", keep_outcome:=1]
+pregnancy_D3[type_of_pregnancy_end  %in% c("LB", "SB", "SA", "T"), keep_outcome:=1]
 other_outcome_saf<-pregnancy_D3[is.na(keep_outcome) & saf_filter==1,.N]
 if(other_outcome_saf>0){
   type_other_outcome<-paste(unique(pregnancy_D3[is.na(keep_outcome) & saf_filter==1,type_of_pregnancy_end]), collapse = ",")
@@ -253,7 +270,7 @@ included_saf<-pregnancy_D3[saf_filter==1,.N]
 issues_saf<-data.table(Indicator=c(paste0("1.0. Records with start date before: ",min_preg_date_saf),
                                   paste0("1.1. Records with end date after: ", max_preg_date_saf),
 #                                  "Records with GA> 20 weeks(140 days)",
-paste0("1.2. Records with pregnancy outcome other than LB/SB (",type_other_outcome,")"),
+paste0("1.2. Records with pregnancy outcome other than LB/SB/SA/T (",type_other_outcome,")"),
                                   "1.3. Records left after removing all issues above"),
                       Safety=c(before_min_date_saf,
                                  after_max_date_saf,

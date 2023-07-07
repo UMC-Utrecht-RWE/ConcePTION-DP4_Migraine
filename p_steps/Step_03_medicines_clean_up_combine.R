@@ -1,5 +1,5 @@
-initial_time<-Sys.time()
-date_running_start<-Sys.Date()
+initial_time_03_c<-Sys.time()
+date_running_start_03_c<-Sys.Date()
 
 
 setnames(start_med,"truncated_atc_code","atc_code")
@@ -59,16 +59,16 @@ if(length(mig_med_files_fl)>0){
 }
 rm(mig_med_files_fl)
 
-date_running_end<-Sys.Date()
-end_time<-Sys.time()
+date_running_end_03_c<-Sys.Date()
+end_time_03_c<-Sys.time()
 
-time_log<-data.table(DAP=data_access_provider_name,
+time_log_03_c<-data.table(DAP=data_access_provider_name,
                      Script="Step_03_medicines_clean_up_combine.R", 
-                     Start_date=date_running_start, 
-                     End_date=date_running_end,
-                     Time_elaspsed=format(end_time-initial_time, digits=2))
-fwrite(time_log,paste0(output_dir,"/Time log/Step_03_combine_time_log.csv"),row.names = F)
-rm(time_log)
+                     Start_date=date_running_start_03_c, 
+                     End_date=date_running_end_03_c,
+                     Time_elaspsed=format(end_time_03_c-initial_time_03_c, digits=2))
+fwrite(time_log_03_c,paste0(output_dir,"/Time log/Step_03_combine_time_log.csv"),row.names = F)
+rm(time_log_03_c)
 
 rm_environment<-c("cat_ind","checkbox_date_col","code_var","codelist_gdm","codelist_migraine","codelist_pe","codes_ind", 
                   "codesheet_diagnoses_gdm","codesheet_diagnoses_gdm_cat","codesheet_diagnoses_migraine","codesheet_diagnoses_migraine_cat",

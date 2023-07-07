@@ -1,5 +1,5 @@
-initial_time<-Sys.time()
-date_running_start<-Sys.Date()
+initial_time_02_c<-Sys.time()
+date_running_start_02_c<-Sys.Date()
 
 ####Combine results by event####
 ###GDM checkbox####
@@ -684,16 +684,16 @@ if(sum(!is.null(sum_dt_mg_no_aura),!is.null(sum_dt_mg_aura),!is.null(sum_dt_mg_s
   rm(sum,sum_dt_mg_no_aura,sum_dt_mg_aura,sum_dt_mg_status,sum_dt_other_mg,sum_dt_unsp_mg,sum_dt_comp_mg,sum_dt_mg)
 }
 
-date_running_end<-Sys.Date()
-end_time<-Sys.time()
+date_running_end_02_c<-Sys.Date()
+end_time_02_c<-Sys.time()
 
-time_log<-data.table(DAP=data_access_provider_name,
+time_log_02_c<-data.table(DAP=data_access_provider_name,
                      Script="Step_02_diagnoses_clean_up_combine.R", 
-                     Start_date=date_running_start, 
-                     End_date=date_running_end,
-                     Time_elaspsed=format(end_time-initial_time, digits=2))
-fwrite(time_log,paste0(output_dir,"/Time log/Step_02_combine_time_log.csv"),row.names = F)
-rm(time_log)
+                     Start_date=date_running_start_02_c, 
+                     End_date=date_running_end_02_c,
+                     Time_elaspsed=format(end_time_02_c-initial_time_02_c, digits=2))
+fwrite(time_log_02_c,paste0(output_dir,"/Time log/Step_02_combine_time_log.csv"),row.names = F)
+rm(time_log_02_c)
 
 rm_environment<-c("cat_ind","checkbox_date_col","code_var","codelist_gdm","codelist_migraine","codelist_pe","codes_ind", 
                   "codesheet_diagnoses_gdm","codesheet_diagnoses_gdm_cat","codesheet_diagnoses_migraine","codesheet_diagnoses_migraine_cat",

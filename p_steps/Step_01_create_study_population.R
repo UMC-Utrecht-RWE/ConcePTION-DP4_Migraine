@@ -66,33 +66,32 @@ OBS_PER1 <- CreateSpells(
   only_overlaps = F
 )
 original_rows<-OBS_PER[,.N]
+
+
 #identif duplicated person id
-OBS_PER[duplicated(person_id), dup:=1]
-OBS_PER<-merge.data.table(OBS_PER, OBS_PER[dup==1,c("person_id","dup")], by="person_id", all.x=T, allow.cartesian = T)
-OBS_PER[,dup.x:=NULL]
+OBS_PER[, dup := .N > 1, by = .(person_id)]
 
 #no_of_subjects with 1 spell
-one_spell_org<-OBS_PER[is.na(dup.y),.N]
-more_than_one_org<-OBS_PER[!is.na(dup.y) & !duplicated(person_id),.N]
+one_spell_org<-OBS_PER[dup==F,.N]
+more_than_one_org<-OBS_PER[dup==T & !duplicated(person_id),.N]
 rm(OBS_PER)
 after_run_create_spell<-OBS_PER1[,.N]
-OBS_PER1[duplicated(person_id), dup:=1]
-OBS_PER1<-merge.data.table(OBS_PER1, OBS_PER1[dup==1,c("person_id","dup")], by="person_id", all.x=T, allow.cartesian = T)
-OBS_PER1[,dup.x:=NULL]
-one_spell_1<-OBS_PER1[is.na(dup.y),.N]
-more_than_one_1<-OBS_PER1[!is.na(dup.y) & !duplicated(person_id),.N]
-OBS_PER1[,dup.y:=NULL]
+OBS_PER1[, dup := .N > 1, by = .(person_id)]
+one_spell_1<-OBS_PER1[dup==F,.N]
+more_than_one_1<-OBS_PER1[dup==T & !duplicated(person_id),.N]
+OBS_PER1[,dup:=NULL]
+
 #Keep only one record per person(latest)
-OBS_PER1 <- OBS_PER1[,temp := lapply(.SD, max), by = c("person_id"), .SDcols = "num_spell"][temp == num_spell,][,temp := NULL]
+OBS_PER1[,temp := lapply(.SD, max), by = c("person_id"), .SDcols = "num_spell"][temp == num_spell,keep:=1][,temp := NULL]
+OBS_PER1<-OBS_PER1[keep==1]
+OBS_PER1[,keep:=NULL]
 setnames(OBS_PER1, "entry_spell_category", "op_start_date")
 setnames(OBS_PER1, "exit_spell_category", "op_end_date")
 included_spells<-OBS_PER1[,.N]
-OBS_PER1[duplicated(person_id), dup:=1]
-OBS_PER1<-merge.data.table(OBS_PER1, OBS_PER1[dup==1,c("person_id","dup")], by="person_id", all.x=T, allow.cartesian = T)
-OBS_PER1[,dup.x:=NULL]
-one_spell_1a<-OBS_PER1[is.na(dup.y),.N]
-more_than_one_1a<-OBS_PER1[!is.na(dup.y) & !duplicated(person_id),.N]
-OBS_PER1[,dup.y:=NULL]
+OBS_PER1[, dup := .N > 1, by = .(person_id)]
+one_spell_1a<-OBS_PER1[dup==F,.N]
+more_than_one_1a<-OBS_PER1[dup==T & !duplicated(person_id),.N]
+OBS_PER1[,dup:=NULL]
 
 #Create the overview
 spells_overview<-data.table(Indicator=c("1.0. Number of subjects with one observation period",
@@ -103,9 +102,10 @@ spells_overview<-data.table(Indicator=c("1.0. Number of subjects with one observ
 rm(one_spell_org,more_than_one_org,one_spell_1,more_than_one_1,one_spell_1a,more_than_one_1a)
 fwrite(spells_overview, paste0(output_dir,"Pregnancy study population/Step_01_spells_overview.csv"), row.names = F)
 rm(spells_overview)
+OBS_PER1[,num_spell:=NULL]
 
 #Fix dates of observation for each project
-origin_date<-as.Date("2016-12-06") - as.numeric(as.Date("2016-12-06"))
+origin_date<-as.IDate("2016-12-06") - as.numeric(as.IDate("2016-12-06"))
 #GDM_and_PE
 OBS_PER1[, op_end_date_gdm_pe:= ifelse(op_end_date>=gdm_pe_end_study_date,gdm_pe_end_study_date,op_end_date)]
 OBS_PER1[,op_end_date_gdm_pe:=as.Date.numeric(op_end_date_gdm_pe,origin_date)]
@@ -211,7 +211,6 @@ rm(flowchart)
 ####Merge Observation periods with PERSONS####
 PERSONS<-merge.data.table(PERSONS,OBS_PER1, by="person_id", all.x=T)
 rm(OBS_PER1)
-PERSONS[,num_spell:=NULL]
 #Check number of persons present in PERSONS table but that are missing in OBS_PER
 #GDM_and_PE
 not_present_in_obs_gdm_pe<-PERSONS[!is.na(sex_at_instance_creation) & is.na(op_start_date_gdm_pe),.N]
@@ -488,8 +487,8 @@ rm(flowchart_max_age)
 
 ####Apply specific criteria to each project####
 #Check if the records have at least 3 months of lookback
-lookback_3_months<-3*30
-lookback_12_months<-12*30
+lookback_3_months<-3*30.25
+lookback_12_months<-365.25
 #GDM_and_PE
 pregnancy_D3[gdm_pe_filter==1,dif:=pregnancy_start_date-op_start_date_gdm_pe]
 less_than_3_month_gdm_pe<-pregnancy_D3[gdm_pe_filter==1 & dif<lookback_3_months,.N]
@@ -509,10 +508,10 @@ pregnancy_D3[mig_filter==1,dif:=pregnancy_start_date-op_start_date_mig]
 lookback_12_month_mig<-pregnancy_D3[mig_filter==1 & dif>=lookback_12_months,.N]
 pregnancy_D3[,dif:=NULL]
 #Check number of records to be included when the lookback is 5 years
-#mig_start_preg_lookback
+#mig_start_preg_lookback(Not used)
 #calculate all pregnancy records that start after mig_start_preg_lookback
-mig_start_preg_lookback<-as.IDate(mig_start_preg_lookback)
-incl_5_years<-pregnancy_D3[mig_filter==1 & pregnancy_start_date>=mig_start_preg_lookback,.N]
+# mig_start_preg_lookback<-as.IDate(mig_start_preg_lookback)
+# incl_5_years<-pregnancy_D3[mig_filter==1 & pregnancy_start_date>=mig_start_preg_lookback,.N]
 #Drug utilisation
 pregnancy_D3[du_filter==1,dif:=pregnancy_start_date-op_start_date_du]
 less_than_3_month_du<-pregnancy_D3[du_filter==1 & dif<lookback_3_months,.N]
@@ -541,19 +540,44 @@ no_fup_42_weeks<-pregnancy_D3[gdm_pe_filter==1 & new_date>op_end_date_gdm_pe,.N]
 pregnancy_D3[gdm_pe_filter==1 & new_date>op_end_date_gdm_pe, gdm_pe_filter:=NA]
 pregnancy_D3[,new_date:=NULL]
 #7 days after delivery
-no_7_days<-pregnancy_D3[gdm_pe_filter==1 & op_end_date_gdm_pe<pregnancy_end_date+7,.N]
-pregnancy_D3[gdm_pe_filter==1 & op_end_date_gdm_pe<pregnancy_end_date+7,gdm_pe_filter:=NA]
+# no_7_days<-pregnancy_D3[gdm_pe_filter==1 & op_end_date_gdm_pe<pregnancy_end_date+7,.N]
+# pregnancy_D3[gdm_pe_filter==1 & op_end_date_gdm_pe<pregnancy_end_date+7,gdm_pe_filter:=NA]
 #Safety
 pregnancy_D3[saf_filter==1,new_date:=pregnancy_start_date+42*7]
 no_fup_42_weeks_saf<-pregnancy_D3[saf_filter==1 & new_date>op_end_date_saf,.N]
 pregnancy_D3[saf_filter==1 & new_date>op_end_date_saf, saf_filter:=NA]
 pregnancy_D3[,new_date:=NULL]
 
+#record with necessary time after delivery
+#GDM and PE
+pregnancy_D3[gdm_pe_filter==1,new_date:=pregnancy_end_date+after_delivery_gdm_pe]
+no_after_gdm_pe<-pregnancy_D3[gdm_pe_filter==1 & new_date>op_end_date_gdm_pe,.N]
+pregnancy_D3[gdm_pe_filter==1 & new_date>op_end_date_gdm_pe, gdm_pe_filter:=NA]
+pregnancy_D3[,new_date:=NULL]
+#Migraine
+pregnancy_D3[mig_filter==1,new_date:=pregnancy_end_date+after_delivery_migraine]
+no_after_mig<-pregnancy_D3[mig_filter==1 & new_date>op_end_date_mig,.N]
+pregnancy_D3[mig_filter==1 & new_date>op_end_date_mig, mig_filter:=NA]
+pregnancy_D3[,new_date:=NULL]
+#DU
+pregnancy_D3[du_filter==1,new_date:=pregnancy_end_date+after_delivery_du]
+no_after_du<-pregnancy_D3[du_filter==1 & new_date>op_end_date_du,.N]
+pregnancy_D3[du_filter==1 & new_date>op_end_date_du, du_filter:=NA]
+pregnancy_D3[,new_date:=NULL]
+#Saf
+pregnancy_D3[saf_filter==1,new_date:=pregnancy_end_date+after_delivery_saf]
+no_after_saf<-pregnancy_D3[saf_filter==1 & new_date>op_end_date_saf,.N]
+pregnancy_D3[saf_filter==1 & new_date>op_end_date_saf, saf_filter:=NA]
+pregnancy_D3[,new_date:=NULL]
+
+
+
+#Not used
 #Check if its multiple or single pregnancy record
-pregnancy_D3[saf_filter==1, rowid:=rowid(person_id,pregnancy_start_date)]
-multiple_preg_records<-pregnancy_D3[!duplicated(person_id) & rowid>=2,.N]
-pregnancy_D3<-pregnancy_D3[rowid==1] 
-pregnancy_D3[,rowid:=NULL]
+# pregnancy_D3[saf_filter==1, rowid:=rowid(person_id,pregnancy_start_date)]
+# multiple_preg_records<-pregnancy_D3[!duplicated(person_id) & rowid>=2,.N]
+# pregnancy_D3<-pregnancy_D3[rowid==1] 
+# pregnancy_D3[,rowid:=NULL]
 #Create flowchart
 Indicator<-c("5.6. Number of records with lookback period less than 3 months")
 flowchart_3_months<-data.table(Indicator,GDM_and_PE=less_than_3_month_gdm_pe,Migraine=less_than_3_month_mig,Drug_utilisation=less_than_3_month_du,Safety=less_than_3_month_saf)
@@ -587,29 +611,30 @@ rm(Indicator)
 flowchart_separate<-rbind(flowchart_separate,flowchart_42_fup)
 rm(flowchart_42_fup)
 
-Indicator<-c("5.10. Number of records with less than 7 days after pregnancy end date")
-flowchart_7_fup<-data.table(Indicator,GDM_and_PE=no_7_days,Migraine="N/A",Drug_utilisation="N/A",Safety="N/A")
-rm(no_7_days)
+Indicator<-c("5.10. Number of records without the neccessary period after pregnancy end date")
+flowchart_after<-data.table(Indicator,GDM_and_PE=no_after_gdm_pe,Migraine=no_after_mig,Drug_utilisation=no_after_du,Safety=no_after_saf)
+rm(no_after_gdm_pe,no_after_mig,no_after_du,no_after_saf)
 rm(Indicator)
 
-flowchart_separate<-rbind(flowchart_separate,flowchart_7_fup)
-rm(flowchart_7_fup)
+flowchart_separate<-rbind(flowchart_separate,flowchart_after)
+rm(flowchart_after)
 
-Indicator<-c("5.11. Number of records with 5 years lookback")
-flowchart_5<-data.table(Indicator,GDM_and_PE="N/A",Migraine=incl_5_years,Drug_utilisation="N/A",Safety="N/A")
-rm(incl_5_years)
-rm(Indicator)
+#Not used
+# Indicator<-c("5.11. Number of records with 5 years lookback")
+# flowchart_5<-data.table(Indicator,GDM_and_PE="N/A",Migraine=incl_5_years,Drug_utilisation="N/A",Safety="N/A")
+# rm(incl_5_years)
+# rm(Indicator)
+# 
+# flowchart_separate<-rbind(flowchart_separate,flowchart_5)
+# rm(flowchart_5)
 
-flowchart_separate<-rbind(flowchart_separate,flowchart_5)
-rm(flowchart_5)
-
-Indicator<-c("5.12. Number of multiple pregnancies")
-flowchart_mult<-data.table(Indicator,GDM_and_PE="N/A",Migraine="N/A",Drug_utilisation="N/A",Safety=multiple_preg_records)
-rm(multiple_preg_records)
-rm(Indicator)
-
-flowchart_separate<-rbind(flowchart_separate,flowchart_mult)
-rm(flowchart_mult)
+# Indicator<-c("5.12. Number of multiple pregnancies")
+# flowchart_mult<-data.table(Indicator,GDM_and_PE="N/A",Migraine="N/A",Drug_utilisation="N/A",Safety=multiple_preg_records)
+# rm(multiple_preg_records)
+# rm(Indicator)
+# 
+# flowchart_separate<-rbind(flowchart_separate,flowchart_mult)
+# rm(flowchart_mult)
 
 #Included records
 incl_gdm_pe<-pregnancy_D3[gdm_pe_filter==1,.N]
@@ -617,7 +642,7 @@ incl_mig<-pregnancy_D3[mig_filter==1,.N]
 incl_du<-pregnancy_D3[du_filter==1,.N]
 incl_saf<-pregnancy_D3[saf_filter==1,.N]
 
-Indicator<-c("5.13. Number of included records")
+Indicator<-c("5.11. Number of included records")
 flowchart_final<-data.table(Indicator,GDM_and_PE=incl_gdm_pe,Migraine=incl_mig,Drug_utilisation=incl_du,Safety=incl_saf)
 rm(incl_gdm_pe,incl_mig,incl_du,incl_saf)
 rm(Indicator)
@@ -667,14 +692,32 @@ summary[is.na(Safety),Safety:=0]
 fwrite(summary,paste0(output_dir, "Pregnancy study population/Step_01_included_records_study_pop_pregnancy_D3.csv"), row.names = F)
 rm(summary)
 
-rm(pregnancy_D3,persons_table_files,obs_table_files,lookback_3_months,lookback_12_months)
+#Create an observation period template for each person_id + pregnancy_id to be used when filtering events and medicines
+#Clean up the file
+pregnancy_D3<-pregnancy_D3[gdm_pe_filter==1 | mig_filter==1 | du_filter==1 | saf_filter==1]
+opt_lookback<-max(opt_lookback_gdm_pe,opt_lookback_migraine, opt_lookback_du, opt_lookback_saf)
+after_delivery<-max(after_delivery_gdm_pe, after_delivery_migraine, after_delivery_saf, after_delivery_du)
+#The max lookback for all SAP is 12 month or 3 months(depending on the DAP)
+pregnancy_D3[,obs_min:=pregnancy_start_date - opt_lookback]
+pregnancy_D3[,obs_max:=pregnancy_end_date + after_delivery]
+pregnancy_D3<-pregnancy_D3[,c("person_id", "obs_min", "obs_max")]
+pregnancy_D3[, min_filter:= obs_min == min(obs_min), by=person_id]
+pregnancy_D3[, max_filter:= obs_max == max(obs_max), by=person_id]
+min_obs<-pregnancy_D3[min_filter==T, c("person_id","obs_min")]
+max_obs<-pregnancy_D3[max_filter==T, c("person_id","obs_max")]
+rm(pregnancy_D3)
+min_obs<-merge.data.table(min_obs, max_obs, by="person_id", all=T)
+rm(max_obs)
+saveRDS(min_obs, paste0(projectFolder, "/g_intermediate/pregnancy_d3/obs_period_hint.rds"))
+
+rm(persons_table_files,obs_table_files,lookback_3_months,lookback_12_months, min_obs)
 
 #create date flowcharts
-Indication<-c("start_coverage", "end_coverage", "minimum_start_pregnancy_date", "maxiumum_start_pregnancy_date","minimum_start_pregnancy_date_5_years")
-GDM_and_PE<-c(gdm_pe_start_study_date,gdm_pe_end_study_date,min_preg_date_gdm_pe,max_preg_date_gdm_pe, ifelse(!is.null(gdm_pe_start_preg_lookback),gdm_pe_start_preg_lookback,NA))
-Migraine<-c(mig_start_study_date,mig_end_study_date,min_preg_date_mig,max_preg_date_mig, ifelse(!is.null(mig_start_preg_lookback),mig_start_preg_lookback,NA))
-Drug_utilisation<-c(du_start_study_date,du_end_study_date,min_preg_date_du,max_preg_date_du, ifelse(!is.null(du_start_preg_lookback),du_start_preg_lookback,NA))
-Safety<-c(saf_start_study_date,saf_end_study_date,min_preg_date_saf,max_preg_date_saf, ifelse(!is.null(saf_start_preg_lookback),saf_start_preg_lookback,NA))
+Indication<-c("start_coverage", "end_coverage", "minimum_start_pregnancy_date", "maxiumum_start_pregnancy_date", "lookback_period", "after_delivery")
+GDM_and_PE<-c(as.character(gdm_pe_start_study_date),as.character(gdm_pe_end_study_date),as.character(min_preg_date_gdm_pe),as.character(max_preg_date_gdm_pe), as.character(opt_lookback_gdm_pe), as.character(after_delivery_gdm_pe))
+Migraine<-c(as.character(mig_start_study_date),as.character(mig_end_study_date),as.character(min_preg_date_mig),as.character(max_preg_date_mig), as.character(opt_lookback_migraine), as.character(after_delivery_migraine))
+Drug_utilisation<-c(as.character(du_start_study_date),as.character(du_end_study_date),as.character(min_preg_date_du),as.character(max_preg_date_du), as.character(opt_lookback_du), as.character(after_delivery_du))
+Safety<-c(as.character(saf_start_study_date),as.character(saf_end_study_date),as.character(min_preg_date_saf),as.character(max_preg_date_saf), as.character(opt_lookback_saf), as.character(after_delivery_saf))
 
 dates_flowchart<-data.table(Indication,GDM_and_PE,Migraine,Drug_utilisation,Safety)
 fwrite(dates_flowchart,paste0(output_dir, "Pregnancy study population/inclusion_dates_flowchart.csv"), row.names = F)
@@ -683,12 +726,12 @@ rm(dates_flowchart)
 date_running_end_01<-Sys.Date()
 end_time_01<-Sys.time()
 
-time_log<-data.table(DAP=data_access_provider_name,
+time_log_01<-data.table(DAP=data_access_provider_name,
                      Script="Step_01_create_study_population.R", 
                      Start_date=date_running_start_01, 
                      End_date=date_running_end_01,
                      Time_elaspsed=format(end_time_01-initial_time_01, digits=2))
-fwrite(time_log,paste0(output_dir,"/Time log/Step_01_time_log.csv"),row.names = F)
-rm(time_log)
+fwrite(time_log_01,paste0(output_dir,"/Time log/Step_01_time_log.csv"),row.names = F)
+rm(time_log_01)
 
 

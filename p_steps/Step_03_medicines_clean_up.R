@@ -1,8 +1,8 @@
 #Clean up the medicines table to create the antidiabetic_medicines_D3
 
 #Load the MEDICINES tables one by one and keep only antidiabetic medications as explained in antidiabetic_medications_codelist
-initial_time<-Sys.time()
-date_running_start<-Sys.Date()
+initial_time_03<-Sys.time()
+date_running_start_03<-Sys.Date()
 
 #Clean folders
 unlink(paste0(projectFolder,"/g_intermediate/tmp"), recursive = T)#delete folder
@@ -16,15 +16,16 @@ source(paste0(pre_dir,"parameters/parameters_metadata.R"))
 source(paste0(pre_dir,"parameters/study_parameters.R"))
 
 #create date flowcharts
-Indication<-c("start_coverage", "end_coverage", "minimum_start_pregnancy_date", "maxiumum_start_pregnancy_date","minimum_start_pregnancy_date_5_years")
-GDM_and_PE<-c(gdm_pe_start_study_date,gdm_pe_end_study_date,min_preg_date_gdm_pe,max_preg_date_gdm_pe, ifelse(!is.null(gdm_pe_start_preg_lookback),gdm_pe_start_preg_lookback,NA))
-Migraine<-c(mig_start_study_date,mig_end_study_date,min_preg_date_mig,max_preg_date_mig, ifelse(!is.null(mig_start_preg_lookback),mig_start_preg_lookback,NA))
-Drug_utilisation<-c(du_start_study_date,du_end_study_date,min_preg_date_du,max_preg_date_du, ifelse(!is.null(du_start_preg_lookback),du_start_preg_lookback,NA))
-Safety<-c(saf_start_study_date,saf_end_study_date,min_preg_date_saf,max_preg_date_saf, ifelse(!is.null(saf_start_preg_lookback),saf_start_preg_lookback,NA))
+Indication<-c("start_coverage", "end_coverage", "minimum_start_pregnancy_date", "maxiumum_start_pregnancy_date", "lookback_period", "after_delivery")
+GDM_and_PE<-c(as.character(gdm_pe_start_study_date),as.character(gdm_pe_end_study_date),as.character(min_preg_date_gdm_pe),as.character(max_preg_date_gdm_pe), as.character(opt_lookback_gdm_pe), as.character(after_delivery_gdm_pe))
+Migraine<-c(as.character(mig_start_study_date),as.character(mig_end_study_date),as.character(min_preg_date_mig),as.character(max_preg_date_mig), as.character(opt_lookback_migraine), as.character(after_delivery_migraine))
+Drug_utilisation<-c(as.character(du_start_study_date),as.character(du_end_study_date),as.character(min_preg_date_du),as.character(max_preg_date_du), as.character(opt_lookback_du), as.character(after_delivery_du))
+Safety<-c(as.character(saf_start_study_date),as.character(saf_end_study_date),as.character(min_preg_date_saf),as.character(max_preg_date_saf), as.character(opt_lookback_saf), as.character(after_delivery_saf))
 
 dates_flowchart<-data.table(Indication,GDM_and_PE,Migraine,Drug_utilisation,Safety)
 fwrite(dates_flowchart,paste0(output_dir, "PE and GDM algorithm/inclusion_dates_flowchart.csv"), row.names = F)
 fwrite(dates_flowchart,paste0(output_dir, "Migraine algorithm/inclusion_dates_flowchart.csv"), row.names = F)
+rm(dates_flowchart)
 
 ####Load the codelist####
 gdm_med_codelist<-fread(paste0(pre_dir,"codelists/", list.files(paste0(pre_dir,"codelists/"),"antidiabetic_medications_codelist")))
@@ -100,6 +101,10 @@ if(sum(length(med_gdm_medicines),length(med_migraine_medicines))>0){
 
     ####Main script####
   if(length(actual_tables$MEDICINES)>0){
+    #Load the observation periods hint table(use to make smaller the table)
+    hint_fl<-list.files(paste0(projectFolder, "/g_intermediate/pregnancy_d3/"), "obs_period_hint")
+    #use this table first to remove all uneccessary subjects(not needed for any of the studies)
+    obs_hint_table<-readRDS(paste0(projectFolder, "/g_intermediate/pregnancy_d3/", hint_fl))
     print("Analyse MEDICINES table.")
     ####List for saving info####
     print("Creating lists to save the information.")
@@ -113,7 +118,8 @@ if(sum(length(med_gdm_medicines),length(med_migraine_medicines))>0){
   lower_atc_mig<-list() #numer of records with atc code < 3 digits
   empty_med_meaning_gdm_pe<-list() #numer of records with missing med meaning
   empty_med_meaning_mig<-list() #numer of records with missing med meaning
-  
+  any_study_no<-list() #number of records for subjects not needed in any of the SAPs
+  outside_obs<-list() #number of records outside obs min and obs max between SAPs for each subject
   prior_med_rec_gdm_pe<-list() #number of records with date prior to start study date
   prior_med_rec_mig<-list() #number of records with date prior to start study date
   after_med_rec_gdm_pe<-list() #number of records with date after end study date
@@ -166,10 +172,19 @@ if(sum(length(med_gdm_medicines),length(med_migraine_medicines))>0){
     df<-df[!is.na(meaning)]
     
     #transform into date variables
-    df[,medicine_date:=as.Date(medicine_date,"%Y%m%d")] #transform to date variables
+    df[,medicine_date:=as.IDate(medicine_date,"%Y%m%d")] #transform to date variables
     #create year variable
     df[,year:=year(medicine_date)]
-    
+    #merge with the obs_hint table and remove subjects not present in the pregnancy d3 for any of teh studies
+    df<-merge.data.table(df, obs_hint_table, by="person_id", all.x = T)
+    any_study_no[[w]]<-df[is.na(obs_min), .N]
+    df<-df[!is.na(obs_min)]
+    if(df[,.N]>0){
+      #Remove all records outside the window for observation for each subject
+      df[medicine_date>=obs_min & medicine_date<=obs_max, keep:=1]
+      outside_obs[[w]]<-df[is.na(keep),.N]
+      df<-df[keep==1]
+      if(df[,.N]>0){
     #remove all records with dates prior to start study date or start study date plus lookback if any
     #gdm&pe
     df[,prior_gdm_pe:=ifelse(gdm_pe_start_study_date>medicine_date,1,0)]
@@ -323,6 +338,8 @@ if(sum(length(med_gdm_medicines),length(med_migraine_medicines))>0){
        rm(length)
     }
     }
+      }
+    }
     w<-w+1
     rm(df)
   }
@@ -339,6 +356,8 @@ if(sum(length(med_gdm_medicines),length(med_migraine_medicines))>0){
   lower_atc_mig<-sum(do.call(rbind,lower_atc_mig))
   empty_med_meaning_gdm_pe<-sum(do.call(rbind,empty_med_meaning_gdm_pe))
   empty_med_meaning_mig<-sum(do.call(rbind,empty_med_meaning_mig))
+  any_study_no<-sum(do.call(rbind,any_study_no))
+  outside_obs<-sum(do.call(rbind,outside_obs))
   prior_med_rec_gdm_pe<-sum(do.call(rbind,prior_med_rec_gdm_pe))
   prior_med_rec_mig<-sum(do.call(rbind,prior_med_rec_mig))
   after_med_rec_gdm_pe<-sum(do.call(rbind,after_med_rec_gdm_pe))
@@ -351,6 +370,8 @@ if(sum(length(med_gdm_medicines),length(med_migraine_medicines))>0){
                                               "Number of records with empty ATC codes",
                                               "Number of records with ATC code shorter than 3 characters",
                                               "Number of records with missing meaning(source of record)",
+                                              "Number of records not present in the pregnancy D3 for any of the studies",
+                                              "Number of records outside min and max observation period for any of the studies",
                                               "Number of records with medicine date before start of study date",
                                               "Number of records with medicine date after end of study date",
                                               "Number of records included, before data filtering"),
@@ -359,6 +380,8 @@ if(sum(length(med_gdm_medicines),length(med_migraine_medicines))>0){
                                                empty_atc_code_gdm_pe,
                                                lower_atc_gdm_pe,
                                                empty_med_meaning_gdm_pe,
+                                               any_study_no,
+                                               outside_obs,
                                                prior_med_rec_gdm_pe,
                                                after_med_rec_gdm_pe,
                                                pre_dt_gdm_pe))
@@ -367,6 +390,8 @@ if(sum(length(med_gdm_medicines),length(med_migraine_medicines))>0){
                                                      "Number of records with empty ATC codes",
                                                      "Number of records with ATC code shorter than 3 characters",
                                                      "Number of records with missing meaning(source of record)",
+                                                  "Number of records not present in the pregnancy D3 for any of the studies",
+                                                  "Number of records outside min and max observation period for any of the studies",
                                                      "Number of records with medicine date before start of study date",
                                                      "Number of records with medicine date after end of study date",
                                                      "Number of records included, before data filtering"),
@@ -375,6 +400,8 @@ if(sum(length(med_gdm_medicines),length(med_migraine_medicines))>0){
                                                     empty_atc_code_mig,
                                                     lower_atc_mig,
                                                     empty_med_meaning_mig,
+                                                    any_study_no,
+                                                    outside_obs,
                                                     prior_med_rec_mig,
                                                     after_med_rec_mig,
                                                     pre_dt_mig))
@@ -382,6 +409,7 @@ if(sum(length(med_gdm_medicines),length(med_migraine_medicines))>0){
   
   rm(original_rows_gdm_pe,empty_med_date_gdm_pe,lower_atc_gdm_pe,empty_med_meaning_gdm_pe,prior_med_rec_gdm_pe,after_med_rec_gdm_pe,pre_dt_gdm_pe)
   rm(original_rows_mig,empty_med_date_mig,lower_atc_mig,empty_med_meaning_mig,prior_med_rec_mig,after_med_rec_mig,pre_dt_mig)
+  rm(any_study_no, outside_obs)
   
   
   
@@ -391,10 +419,14 @@ if(sum(length(med_gdm_medicines),length(med_migraine_medicines))>0){
                                                        "Number of records with empty ATC codes",
                                                        "Number of records with ATC code shorter than 3 characters",
                                                        "Number of records with missing meaning(source of record)",
+                                                       "Number of records not present in the pregnancy D3 for any of the studies",
+                                                       "Number of records outside min and max observation period for any of the studies",
                                                        "Number of records with medicine date before start of study date",
                                                        "Number of records with medicine date after end of study date",
                                                        "Number of records included, before data filtering"),
                                            GDM_and_PE=c(0,
+                                                        0,
+                                                        0,
                                                         0,
                                                         0,
                                                         0,
@@ -407,10 +439,14 @@ if(sum(length(med_gdm_medicines),length(med_migraine_medicines))>0){
                                                     "Number of records with empty ATC codes",
                                                     "Number of records with ATC code shorter than 3 characters",
                                                     "Number of records with missing meaning(source of record)",
+                                                    "Number of records not present in the pregnancy D3 for any of the studies",
+                                                    "Number of records outside min and max observation period for any of the studies",
                                                     "Number of records with medicine date before start of study date",
                                                     "Number of records with medicine date after end of study date",
                                                     "Number of records included, before data filtering"),
                                         Migraine=c(0,
+                                                   0,
+                                                   0,
                                                    0,
                                                    0,
                                                    0,
@@ -426,10 +462,14 @@ if(sum(length(med_gdm_medicines),length(med_migraine_medicines))>0){
                                                      "Number of records with empty ATC codes",
                                                      "Number of records with ATC code shorter than 3 characters",
                                                      "Number of records with missing meaning(source of record)",
+                                                     "Number of records not present in the pregnancy D3 for any of the studies",
+                                                     "Number of records outside min and max observation period for any of the studies",
                                                      "Number of records with medicine date before start of study date",
                                                      "Number of records with medicine date after end of study date",
                                                      "Number of records included, before data filtering"),
                                          GDM_and_PE=c(0,
+                                                      0,
+                                                      0,
                                                       0,
                                                       0,
                                                       0,
@@ -442,10 +482,14 @@ if(sum(length(med_gdm_medicines),length(med_migraine_medicines))>0){
                                                   "Number of records with empty ATC codes",
                                                   "Number of records with ATC code shorter than 3 characters",
                                                   "Number of records with missing meaning(source of record)",
+                                                  "Number of records not present in the pregnancy D3 for any of the studies",
+                                                  "Number of records outside min and max observation period for any of the studies",
                                                   "Number of records with medicine date before start of study date",
                                                   "Number of records with medicine date after end of study date",
                                                   "Number of records included, before data filtering"),
                                       Migraine=c(0,
+                                                 0,
+                                                 0,
                                                  0,
                                                  0,
                                                  0,
@@ -460,13 +504,13 @@ fwrite(flowchart_medicines_gdm_pe, paste0(projectFolder,"/g_output/PE and GDM al
 fwrite(flowchart_medicines_mig, paste0(projectFolder,"/g_output/Migraine algorithm/Step_03_flowchart_medicines_mig.csv"),row.names = F)
 rm(flowchart_medicines_gdm_pe,flowchart_medicines_mig)
 
-date_running_end<-Sys.Date()
-end_time<-Sys.time()
+date_running_end_03<-Sys.Date()
+end_time_03<-Sys.time()
 
-time_log<-data.table(DAP=data_access_provider_name,
+time_log_03<-data.table(DAP=data_access_provider_name,
                      Script="Step_03_medicines_clean_up.R", 
-                     Start_date=date_running_start, 
-                     End_date=date_running_end,
-                     Time_elaspsed=format(end_time-initial_time, digits=2))
-fwrite(time_log,paste0(output_dir,"/Time log/Step_03_time_log.csv"),row.names = F)
+                     Start_date=date_running_start_03, 
+                     End_date=date_running_end_03,
+                     Time_elaspsed=format(end_time_03-initial_time_03, digits=2))
+fwrite(time_log_03,paste0(output_dir,"/Time log/Step_03_time_log.csv"),row.names = F)
 
