@@ -50,16 +50,16 @@ rm(pregnancy_d3_gdm_pe)
 gc()
 
 #Load all migraine_algorithm file and combine with the pregnancy D3
-pregnancy_d3_mig<-readRDS(paste0(projectFolder,"/g_intermediate/pregnancy_d3/MIG_Pregnancy_D3.rds"))
-pregnancy_d3_mig[,pregnancy_start_date:=as.IDate(pregnancy_start_date)][,pregnancy_end_date:=as.IDate(pregnancy_end_date)][,birth_date:=as.IDate(birth_date)][,death_date:=as.IDate(death_date)][,op_start_date_gdm_pe:=as.IDate(op_start_date_gdm_pe)][,op_end_date_gdm_pe:=as.IDate(op_end_date_gdm_pe)]
-pregnancy_d3_mig[,age:=floor((pregnancy_start_date-birth_date)/365.25)]
-pregnancy_d3_mig[,maternal_age:=as.character(lapply(age, age_band_creation))]
-pregnancy_d3_mig[,year:=year(pregnancy_start_date)]
-pregnancy_d3_mig[,year_group:=as.character(lapply(year, year_group_creation))]
+#pregnancy_d3_mig<-readRDS(paste0(projectFolder,"/g_intermediate/pregnancy_d3/MIG_Pregnancy_D3.rds"))
+#pregnancy_d3_mig[,pregnancy_start_date:=as.IDate(pregnancy_start_date)][,pregnancy_end_date:=as.IDate(pregnancy_end_date)][,birth_date:=as.IDate(birth_date)][,death_date:=as.IDate(death_date)][,op_start_date_gdm_pe:=as.IDate(op_start_date_gdm_pe)][,op_end_date_gdm_pe:=as.IDate(op_end_date_gdm_pe)]
+#pregnancy_d3_mig[,age:=floor((pregnancy_start_date-birth_date)/365.25)]
+#pregnancy_d3_mig[,maternal_age:=as.character(lapply(age, age_band_creation))]
+#pregnancy_d3_mig[,year:=year(pregnancy_start_date)]
+#pregnancy_d3_mig[,year_group:=as.character(lapply(year, year_group_creation))]
 
-if("final_d3" %in% list.files(paste0(projectFolder,"/g_intermediate/migraine_algorithm/"))){
-  unlink(paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3"), recursive = T)
-}
+#if("final_d3" %in% list.files(paste0(projectFolder,"/g_intermediate/migraine_algorithm/"))){
+#  unlink(paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3"), recursive = T)
+#}
 # source(paste0(projectFolder,"/p_steps/Step_04_c_migraine_algorithms.R"))
 
 date_running_end_04<-Sys.Date()
