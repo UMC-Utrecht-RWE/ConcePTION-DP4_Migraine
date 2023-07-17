@@ -24,7 +24,10 @@ Demostrating solutions for studying intermittent medication exposures in disease
 |                   | pre_eclampsia_codelist.csv |
 | p_parameters     | additional_concepts.xlsx |
 
-# Work in progress
+# How to run
+1. Download the repository in your local setting
+2. Please avoid running multiple scripts at the same time in your server. This can make this repository take 10x times longer to produce results.
+3. Once the script has ran, please cross-check the reports generated
 
 ## License 
 [![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://opensource.org/licenses/)
