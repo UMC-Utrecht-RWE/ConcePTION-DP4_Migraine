@@ -26,8 +26,9 @@ Demostrating solutions for studying intermittent medication exposures in disease
 
 # How to run
 1. Download the repository in your local setting
-2. Please avoid running multiple scripts at the same time in your server. This can make this repository take 10x times longer to produce results.
-3. Once the script has ran, please cross-check the reports generated
+2. Run the to_run script. 
+3. Please avoid running multiple scripts at the same time in your server. This can make this repository take 10x times longer to produce results.
+4. Once the script has ran, please cross-check the reports generated
 
 ## License 
 [![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://opensource.org/licenses/)
