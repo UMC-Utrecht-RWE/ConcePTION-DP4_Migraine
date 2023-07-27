@@ -38,7 +38,7 @@ OBS_PER[is.na(op_end_date), op_end_date_max:= as.character(end_date_max)]
 
 #Check if DAP is Efemeris and then create one observation period per women
 DAP_name<-fread(paste0(path_dir, list.files(path_dir,"CDM_SOURCE")))[,data_access_provider_name]
-if(DAP_name=="EFEMERIS"){
+if(DAP_name=="CHUT"){
   #Find the minimum date for each subject
   OBS_PER[,min_start_date:=min(op_start_date), by="person_id"]
   OBS_PER[,max_end_date:=max(op_end_date_max), by="person_id"]
