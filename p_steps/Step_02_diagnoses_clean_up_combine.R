@@ -519,7 +519,7 @@ if(length(mg_status_files)>0){
 rm(mg_status_files)
 
 #OTHER_MG
-other_mg_files<-list.files(tmp, "_OTHER_MG_")
+other_mg_files<-list.files(tmp, "_MG_OTHER_")
 if(length(other_mg_files)>0){
   other_mg_dt<-lapply(paste0(tmp,other_mg_files), readRDS)
   other_mg_dt<-as.data.table(rbindlist(other_mg_dt, fill=T))
@@ -527,9 +527,9 @@ if(length(other_mg_files)>0){
   other_mg_dt[,comb:=paste0(person_id, "_", event_date, "_", condition)]
   dup<-other_mg_dt[duplicated(comb),.N]
   if(dup>0){
-    dup_dt_other_mg<-data.table(StudyVar="Migraine_diagnoses/OTHER_MG", removed_rec=dup)
+    dup_dt_other_mg<-data.table(StudyVar="Migraine_diagnoses/MG_OTHER", removed_rec=dup)
   }else{
-    dup_dt_other_mg<-data.table(StudyVar="Migraine_diagnoses/OTHER_MG", removed_rec=0)  
+    dup_dt_other_mg<-data.table(StudyVar="Migraine_diagnoses/MG_OTHER", removed_rec=0)  
   }
   rm(dup)
   other_mg_dt<-other_mg_dt[!duplicated(comb)]
@@ -537,11 +537,11 @@ if(length(other_mg_files)>0){
   #Summary of included records by event_code, meaning, condition, year
   sum_dt_other_mg<-other_mg_dt[,.N, by=c("condition", "meaning", "year")]
   setnames(sum_dt_other_mg,"N", "no_records")
-  #fwrite(sum,paste0(output_dir,"OTHER_MG and GDM algorithm/summary_gdm_diagnoses_pre_gd.csv"))
+  #fwrite(sum,paste0(output_dir,"MG_OTHER and GDM algorithm/summary_gdm_diagnoses_pre_gd.csv"))
   other_mg_dt[,event_code:=NULL][,meaning:=NULL][,year:=NULL][,event_vocabulary:=NULL][,prior_gdm_pe:=NULL][,prior_mig:=NULL][,prior_du:=NULL][,prior_saf:=NULL][,after_gdm_pe:=NULL][,after_mig:=NULL][,after_du:=NULL][,after_saf:=NULL][,code_no_dot:=NULL][,filter:=NULL]
   if("truncated_code" %in% names(other_mg_dt)){other_mg_dt[,truncated_code:=NULL]}
   #save data in g_intermediate/populations
-  saveRDS(other_mg_dt, paste0(g_intermediate,"migraine_algorithm/OTHER_MG.rds"))
+  saveRDS(other_mg_dt, paste0(g_intermediate,"migraine_algorithm/MG_OTHER.rds"))
   rm(other_mg_dt)
   #remove files
   #remove all gdm files from tmp
@@ -550,13 +550,13 @@ if(length(other_mg_files)>0){
   }
   
 }else{
-  dup_dt_other_mg<-data.table(StudyVar="Migraine_diagnoses/OTHER_MG", removed_rec="N/A")
+  dup_dt_other_mg<-data.table(StudyVar="Migraine_diagnoses/MG_OTHER", removed_rec="N/A")
   sum_dt_other_mg<-NULL
 }
 rm(other_mg_files)
 
 #UNSP_MG
-unsp_mg_files<-list.files(tmp, "_UNSP_MG_")
+unsp_mg_files<-list.files(tmp, "_MG_UNSP_")
 if(length(unsp_mg_files)>0){
   unsp_mg_dt<-lapply(paste0(tmp,unsp_mg_files), readRDS)
   unsp_mg_dt<-as.data.table(rbindlist(unsp_mg_dt, fill=T))
@@ -564,9 +564,9 @@ if(length(unsp_mg_files)>0){
   unsp_mg_dt[,comb:=paste0(person_id, "_", event_date, "_", condition)]
   dup<-unsp_mg_dt[duplicated(comb),.N]
   if(dup>0){
-    dup_dt_unsp_mg<-data.table(StudyVar="Migraine_diagnoses/UNSP_MG", removed_rec=dup)
+    dup_dt_unsp_mg<-data.table(StudyVar="Migraine_diagnoses/MG_UNSP", removed_rec=dup)
   }else{
-    dup_dt_unsp_mg<-data.table(StudyVar="Migraine_diagnoses/UNSP_MG", removed_rec=0)  
+    dup_dt_unsp_mg<-data.table(StudyVar="Migraine_diagnoses/MG_UNSP", removed_rec=0)  
   }
   rm(dup)
   unsp_mg_dt<-unsp_mg_dt[!duplicated(comb)]
@@ -579,7 +579,7 @@ if(length(unsp_mg_files)>0){
   if("truncated_code" %in% names(unsp_mg_dt)){unsp_mg_dt[,truncated_code:=NULL]}
   
   #save data in g_intermediate/populations
-  saveRDS(unsp_mg_dt, paste0(g_intermediate,"migraine_algorithm/UNSP_MG.rds"))
+  saveRDS(unsp_mg_dt, paste0(g_intermediate,"migraine_algorithm/MG_UNSP.rds"))
   rm(unsp_mg_dt)
   #remove files
   #remove all gdm files from tmp
@@ -588,13 +588,13 @@ if(length(unsp_mg_files)>0){
   }
   
 }else{
-  dup_dt_unsp_mg<-data.table(StudyVar="Migraine_diagnoses/UNSP_MG", removed_rec="N/A")
+  dup_dt_unsp_mg<-data.table(StudyVar="Migraine_diagnoses/MG_UNSP", removed_rec="N/A")
   sum_dt_unsp_mg<-NULL
 }
 rm(unsp_mg_files)
 
 #COMP_MG
-comp_mg_files<-list.files(tmp, "_COMP_MG_")
+comp_mg_files<-list.files(tmp, "_MG_COMP_")
 if(length(comp_mg_files)>0){
   comp_mg_dt<-lapply(paste0(tmp,comp_mg_files), readRDS)
   comp_mg_dt<-as.data.table(rbindlist(comp_mg_dt, fill=T))
@@ -602,9 +602,9 @@ if(length(comp_mg_files)>0){
   comp_mg_dt[,comb:=paste0(person_id, "_", event_date, "_", condition)]
   dup<-comp_mg_dt[duplicated(comb),.N]
   if(dup>0){
-    dup_dt_comp_mg<-data.table(StudyVar="Migraine_diagnoses/COMP_MG", removed_rec=dup)
+    dup_dt_comp_mg<-data.table(StudyVar="Migraine_diagnoses/MG_COMP", removed_rec=dup)
   }else{
-    dup_dt_comp_mg<-data.table(StudyVar="Migraine_diagnoses/COMP_MG", removed_rec=0)  
+    dup_dt_comp_mg<-data.table(StudyVar="Migraine_diagnoses/MG_COMP", removed_rec=0)  
   }
   rm(dup)
   comp_mg_dt<-comp_mg_dt[!duplicated(comb)]
@@ -617,7 +617,7 @@ if(length(comp_mg_files)>0){
   if("truncated_code" %in% names(comp_mg_dt)){comp_mg_dt[,truncated_code:=NULL]}
   
   #save data in g_intermediate/populations
-  saveRDS(comp_mg_dt, paste0(g_intermediate,"migraine_algorithm/COMP_MG.rds"))
+  saveRDS(comp_mg_dt, paste0(g_intermediate,"migraine_algorithm/MG_COMP.rds"))
   rm(comp_mg_dt)
   #remove files
   #remove all gdm files from tmp
@@ -626,7 +626,7 @@ if(length(comp_mg_files)>0){
   }
   
 }else{
-  dup_dt_comp_mg<-data.table(StudyVar="Migraine_diagnoses/COMP_MG", removed_rec="N/A")
+  dup_dt_comp_mg<-data.table(StudyVar="Migraine_diagnoses/MG_COMP", removed_rec="N/A")
   sum_dt_comp_mg<-NULL
 }
 rm(comp_mg_files)
