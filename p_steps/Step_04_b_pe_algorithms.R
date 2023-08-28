@@ -78,7 +78,7 @@ for(pe_fl in 1:length(pe_files)){
     if(pe_dt[,.N]>0){
       #create a summary of included records
       sum[[w]]<-data.table(StudyVar=names_events[pe_fl], no_records=pe_dt[!is.na(event_date),.N], no_pregnancies=pe_dt[!duplicated(pregnancy_id),.N])
-      fwrite(pe_dt, paste0(projectFolder,"/g_intermediate/pe_algorithm/final_d3/", names_events[pe_fl],"_pregnancy_D3.rds"),row.names = F)
+      saveRDS(pe_dt, paste0(projectFolder,"/g_intermediate/pe_algorithm/final_d3/", names_events[pe_fl],"_pregnancy_D3.rds"),row.names = F)
       cols<-c("person_id","pregnancy_id","pregnancy_start_date","pregnancy_end_date")
       pe_dt<-pe_dt[,cols,with=F]
       pe_dt[,names_events[pe_fl]:=1]
@@ -134,7 +134,7 @@ inc_col<-PE_1[TYPE=="AND",STUDY_VARIABLES]
 if(length(inc_col)>0){pregnancy_d3_gdm_pe[pregnancy_d3_gdm_pe[,Reduce("&" , lapply(.SD,`>=`, 1)),.SDcols=inc_col],include:=1]}else{pregnancy_d3_gdm_pe[,include:=NA]}
 #if(length(alt_col)>0){pregnancy_d3_gdm_pe[pregnancy_d3_gdm_pe[,Reduce("|" , lapply(.SD,`>=`, 1)),.SDcols=alt_col],alternative:=1]}else{pregnancy_d3_gdm_pe[,alternative:=1]}
 
-fwrite(pregnancy_d3_gdm_pe,paste0(projectFolder,"/g_intermediate/pe_algorithm/final_d3/PE_1_D3.rds"),row.names = F)
+saveRDS(pregnancy_d3_gdm_pe,paste0(projectFolder,"/g_intermediate/pe_algorithm/final_d3/PE_1_D3.rds"),row.names = F)
 #export PE_1
 PE_1_a<-data.table(algorithm="PE_1", no_diagnosed_pregnancies=pregnancy_d3_gdm_pe[include==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_gdm_pe[!duplicated(pregnancy_id),.N])
 PE_1_a[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
@@ -221,7 +221,7 @@ if(algorithm_template[NEW_STUDY_VARIABLES=="PE_2" & COMPLEXITY=="complex" & !is.
 if(length(inc_col)>0){pregnancy_d3_gdm_pe[pregnancy_d3_gdm_pe[,Reduce("&" , lapply(.SD, rule, value)),.SDcols=inc_col],include:=1]}else{pregnancy_d3_gdm_pe[,include:=NA]}
 #if(length(alt_col)>0){pregnancy_d3_gdm_pe[pregnancy_d3_gdm_pe[,Reduce("|" , lapply(.SD,`>=`, 1)),.SDcols=alt_col],alternative:=1]}else{pregnancy_d3_gdm_pe[,alternative:=1]}
 
-fwrite(pregnancy_d3_gdm_pe,paste0(projectFolder,"/g_intermediate/pe_algorithm/final_d3/PE_2_D3.rds"),row.names = F)
+saveRDS(pregnancy_d3_gdm_pe,paste0(projectFolder,"/g_intermediate/pe_algorithm/final_d3/PE_2_D3.rds"),row.names = F)
 
 #export PE_2
 PE_2_dt<-data.table(algorithm="PE_2", no_diagnosed_pregnancies=pregnancy_d3_gdm_pe[include==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_gdm_pe[!duplicated(pregnancy_id),.N])
@@ -304,7 +304,7 @@ alt_col<-PE_3[TYPE=="OR",STUDY_VARIABLES]
 # if(length(inc_col)>0){pregnancy_d3_gdm_pe[pregnancy_d3_gdm_pe[,Reduce("|" , lapply(.SD,`>=`, 1)),.SDcols=inc_col],include:=1]}else{pregnancy_d3_gdm_pe[,include:=NA]}
 if(length(alt_col)>0){pregnancy_d3_gdm_pe[pregnancy_d3_gdm_pe[,Reduce("|" , lapply(.SD,`>=`, 1)),.SDcols=alt_col],alternative:=1]}else{pregnancy_d3_gdm_pe[,alternative:=NA]}
 
-fwrite(pregnancy_d3_gdm_pe,paste0(projectFolder,"/g_intermediate/pe_algorithm/final_d3/PE_3_D3.rds"),row.names = F)
+saveRDS(pregnancy_d3_gdm_pe,paste0(projectFolder,"/g_intermediate/pe_algorithm/final_d3/PE_3_D3.rds"),row.names = F)
 
 #export PE_3
 PE_3_dt<-data.table(algorithm="PE_3", no_diagnosed_pregnancies=pregnancy_d3_gdm_pe[alternative==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_gdm_pe[!duplicated(pregnancy_id),.N])
@@ -441,7 +441,7 @@ rm(inc_col)
 pregnancy_d3_gdm_pe[,include:=ifelse(include_a==1|include_b==1|include_c==1|include_d==1|include_e==1|include_f==1,1,NA)]
 pregnancy_d3_gdm_pe[,include_a:=NULL][,include_b:=NULL][,include_c:=NULL][,include_d:=NULL][,include_e:=NULL][,include_f:=NULL]
 
-fwrite(pregnancy_d3_gdm_pe,paste0(projectFolder,"/g_intermediate/pe_algorithm/final_d3/PE_4_D3.rds"),row.names = F)
+saveRDS(pregnancy_d3_gdm_pe,paste0(projectFolder,"/g_intermediate/pe_algorithm/final_d3/PE_4_D3.rds"),row.names = F)
 rm(PE_4_a,PE_4_b,PE_4_c,PE_4_d,PE_4_e,PE_4_f) 
 
 PE_4_dt<-data.table(algorithm="PE_4", no_diagnosed_pregnancies=pregnancy_d3_gdm_pe[include==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_gdm_pe[!duplicated(pregnancy_id),.N])
@@ -520,7 +520,7 @@ inc_col<-PE_5[TYPE=="AND",STUDY_VARIABLES]
 if(length(inc_col)>0){pregnancy_d3_gdm_pe[pregnancy_d3_gdm_pe[,Reduce("&" , lapply(.SD,`>=`, 1)),.SDcols=inc_col],include:=1]}else{pregnancy_d3_gdm_pe[,include:=NA]}
 #if(length(alt_col)>0){pregnancy_d3_gdm_pe[pregnancy_d3_gdm_pe[,Reduce("|" , lapply(.SD,`>=`, 1)),.SDcols=alt_col],alternative:=1]}else{pregnancy_d3_gdm_pe[,alternative:=1]}
 
-fwrite(pregnancy_d3_gdm_pe,paste0(projectFolder,"/g_intermediate/pe_algorithm/final_d3/PE_5_D3.rds"),row.names = F)
+saveRDS(pregnancy_d3_gdm_pe,paste0(projectFolder,"/g_intermediate/pe_algorithm/final_d3/PE_5_D3.rds"),row.names = F)
 
 #export PE_5
 PE_5_dt<-data.table(algorithm="PE_5", no_diagnosed_pregnancies=pregnancy_d3_gdm_pe[include==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_gdm_pe[!duplicated(pregnancy_id),.N])
