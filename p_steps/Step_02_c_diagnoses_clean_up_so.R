@@ -269,15 +269,17 @@ if(sum(sum(so_gdm_diagnoses,so_pe_diagnoses,so_migraine_diagnoses)>0,
           
           if(df[prior_mig==0 & after_mig==0 & is.na(remove),.N]>0){
             if(so_migraine_diagnoses>0){
+              vocabularies_to_start_with<-c("ICD", "ICPC", "RCD")
               print(paste0("Filtering data for Migraine diagnoses:", actual_tables$SURVEY_OBSERVATIONS[y]))
               years_study_events<-sort(df[prior_mig==0 & after_mig==0 & is.na(remove)][!duplicated(year), year])#years present in this table
               
               #startWith for the event Migraine
-              if(sum(df[prior_mig==0 & after_mig==0 & is.na(remove)][!duplicated(event_vocabulary), event_vocabulary] %in% vocabularies_list_migraine_mg)>0){
-                for (i in 1:length(conditions_migraine[names(conditions_migraine)=="MG"])){
-                  for(j in 1:length(conditions_migraine[names(conditions_migraine)=="MG"][[i]])){
+              if(sum(sapply(vocabularies_to_start_with, function(start) any(startsWith(df[prior_mig==0 & after_mig==0][!duplicated(event_vocabulary), event_vocabulary], start))))>=1){
+              if(sum(df[prior_mig==0 & after_mig==0 & is.na(remove)][!duplicated(event_vocabulary), event_vocabulary] %in% vocabularies_list_migraine)>0){
+                for (i in 1:length(conditions_migraine)){
+                  for(j in 1:length(conditions_migraine[[i]])){
                     
-                    codes<-data.table(event_vocabulary=names(conditions_migraine[names(conditions_migraine)=="MG"][[i]])[j], truncated_code=conditions_migraine[names(conditions_migraine)=="MG"][[i]][[j]], filter=1)
+                    codes<-data.table(event_vocabulary=names(conditions_migraine[[i]])[j], truncated_code=conditions_migraine[[i]][[j]], filter=1)
                     for(codes_ind in 1:codes[,.N]){
                       length<-nchar(codes[codes_ind,truncated_code])
                       #create truncated code
@@ -288,7 +290,7 @@ if(sum(sum(so_gdm_diagnoses,so_pe_diagnoses,so_migraine_diagnoses)>0,
                       if(df[prior_mig==0 & after_mig==0 & filter==1 & is.na(remove),.N]>0){
                         years_this_event<-sort(df[prior_mig==0 & after_mig==0 & filter==1 & is.na(remove)][!duplicated(year),year])
                         for(year_ind in 1:length(years_this_event)){
-                          saveRDS(data.table(df[,cols, with=F][prior_mig==0 & after_mig==0 & filter==1 & is.na(remove) & year==years_this_event[year_ind]], condition=names(conditions_migraine[names(conditions_migraine)=="MG"][i])), paste0(tmp,years_this_event[year_ind],"_","Migraine_", names(conditions_migraine[names(conditions_migraine)=="MG"][i]), "_",actual_tables$SURVEY_OBSERVATIONS[y],"_", codes_ind, ".rds"))
+                          saveRDS(data.table(df[,cols, with=F][prior_mig==0 & after_mig==0 & filter==1 & is.na(remove) & year==years_this_event[year_ind]], condition=names(conditions_migraine[i])), paste0(tmp,years_this_event[year_ind],"_","Migraine_", names(conditions_migraine[i]), "_",actual_tables$SURVEY_OBSERVATIONS[y],"_", codes_ind, ".rds"))
                         }
                       } else {
                         years_this_event<-NULL}# new 01.06.2022
@@ -303,13 +305,14 @@ if(sum(sum(so_gdm_diagnoses,so_pe_diagnoses,so_migraine_diagnoses)>0,
                 }
                 
               }
-              
+              }
               #exact match for the other events related to migraine
+              if(sum(sapply(vocabularies_to_start_with, function(start) any(startsWith(df[prior_mig==0 & after_mig==0][!duplicated(event_vocabulary), event_vocabulary], start))))==0){
               if(sum(df[prior_mig==0 & after_mig==0 & is.na(remove)][!duplicated(event_vocabulary), event_vocabulary] %in% vocabularies_list_migraine)>0){
-                for (i in 1:length(conditions_migraine[names(conditions_migraine)!="MG"])){
-                  for(j in 1:length(conditions_migraine[names(conditions_migraine)!="MG"][[i]])){
+                for (i in 1:length(conditions_migraine)){
+                  for(j in 1:length(conditions_migraine[[i]])){
                     
-                    codes<-data.table(event_vocabulary=names(conditions_migraine[names(conditions_migraine)!="MG"][[i]])[j], code_no_dot=conditions_migraine[names(conditions_migraine)!="MG"][[i]][[j]], filter=1)
+                    codes<-data.table(event_vocabulary=names(conditions_migraine[[i]])[j], code_no_dot=conditions_migraine[[i]][[j]], filter=1)
                     for(codes_ind in 1:codes[,.N]){
                       #create truncated code
                       df<-merge.data.table(df,codes[codes_ind,],by=c("event_vocabulary","code_no_dot"),all.x = T,allow.cartesian = T)
@@ -317,7 +320,7 @@ if(sum(sum(so_gdm_diagnoses,so_pe_diagnoses,so_migraine_diagnoses)>0,
                       if(df[prior_mig==0 & after_mig==0 & filter==1 & is.na(remove),.N]>0){
                         years_this_event<-sort(df[prior_mig==0 & after_mig==0 & filter==1 & is.na(remove)][!duplicated(year),year])
                         for(year_ind in 1:length(years_this_event)){
-                          saveRDS(data.table(df[,cols, with=F][prior_mig==0 & after_mig==0 & filter==1 & is.na(remove) & year==years_this_event[year_ind]], condition=names(conditions_migraine[names(conditions_migraine)!="MG"][i])), paste0(tmp,years_this_event[year_ind],"_","Migraine_", names(conditions_migraine[names(conditions_migraine)!="MG"][i]), "_",actual_tables$SURVEY_OBSERVATIONS[y],"_", codes_ind, ".rds"))
+                          saveRDS(data.table(df[,cols, with=F][prior_mig==0 & after_mig==0 & filter==1 & is.na(remove) & year==years_this_event[year_ind]], condition=names(conditions_migraine[i])), paste0(tmp,years_this_event[year_ind],"_","Migraine_", names(conditions_migraine[i]), "_",actual_tables$SURVEY_OBSERVATIONS[y],"_", codes_ind, ".rds"))
                         }
                       } else {
                         years_this_event<-NULL}# new 01.06.2022
@@ -330,7 +333,8 @@ if(sum(sum(so_gdm_diagnoses,so_pe_diagnoses,so_migraine_diagnoses)>0,
                 }
                 
               }
-            }
+              }
+                }
           }
         }
       
