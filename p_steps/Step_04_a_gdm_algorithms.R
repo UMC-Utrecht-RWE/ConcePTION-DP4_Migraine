@@ -77,7 +77,7 @@ for(gdm_fl in 1:length(gdm_files)){
     if(gdm_dt[,.N]>0){
       #create a summary of included records
       sum[[w]]<-data.table(StudyVar=names_events[gdm_fl], no_records=gdm_dt[!is.na(event_date),.N], no_pregnancies=gdm_dt[!duplicated(pregnancy_id),.N])
-      saveRDS(gdm_dt, paste0(projectFolder,"/g_intermediate/gdm_algorithm/final_d3/", names_events[gdm_fl],"_pregnancy_D3.rds"),row.names = F)
+      saveRDS(gdm_dt, paste0(projectFolder,"/g_intermediate/gdm_algorithm/final_d3/", names_events[gdm_fl],"_pregnancy_D3.rds"))
       cols<-c("person_id","pregnancy_id","pregnancy_start_date","pregnancy_end_date")
       gdm_dt<-gdm_dt[,cols,with=F]
       gdm_dt[,names_events[gdm_fl]:=1]
@@ -248,7 +248,7 @@ inc_col<-GDM_1[TYPE=="AND",STUDY_VARIABLES]
 if(length(excl_col)>0){pregnancy_d3_gdm_pe[pregnancy_d3_gdm_pe[,Reduce("|" , lapply(.SD,`>=`, 1)),.SDcols=excl_col],exclude:=1]}else{pregnancy_d3_gdm_pe[,exclude:=NA]}
 if(length(inc_col)>0){pregnancy_d3_gdm_pe[pregnancy_d3_gdm_pe[,Reduce("&" , lapply(.SD,`>=`, 1)),.SDcols=inc_col],include:=1]}else{pregnancy_d3_gdm_pe[,include:=NA]}
 
-saveRDS(pregnancy_d3_gdm_pe,paste0(projectFolder,"/g_intermediate/gdm_algorithm/final_d3/GDM_1_D3.rds"),row.names = F)
+saveRDS(pregnancy_d3_gdm_pe,paste0(projectFolder,"/g_intermediate/gdm_algorithm/final_d3/GDM_1_D3.rds"))
 
 #export GDM_1
 GDM_1_dt<-data.table(algorithm="GDM_1", no_diagnosed_pregnancies=pregnancy_d3_gdm_pe[include==1 & is.na(exclude) & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_gdm_pe[!duplicated(pregnancy_id),.N])
@@ -331,7 +331,7 @@ alt_col<-GDM_2[TYPE=="OR",STUDY_VARIABLES]
 if(length(alt_col)>0){pregnancy_d3_gdm_pe[pregnancy_d3_gdm_pe[,Reduce("|" , lapply(.SD,`>=`, 1)),.SDcols=alt_col],alternative:=1]}else{pregnancy_d3_gdm_pe[,alternative:=NA]}
 if(length(excl_col)>0){pregnancy_d3_gdm_pe[pregnancy_d3_gdm_pe[,Reduce("|" , lapply(.SD,`>=`, 1)),.SDcols=excl_col],exclude:=1]}else{pregnancy_d3_gdm_pe[,exclude:=NA]}
 
-saveRDS(pregnancy_d3_gdm_pe,paste0(projectFolder,"/g_intermediate/gdm_algorithm/final_d3/GDM_2_D3.rds"),row.names = F)
+saveRDS(pregnancy_d3_gdm_pe,paste0(projectFolder,"/g_intermediate/gdm_algorithm/final_d3/GDM_2_D3.rds"))
 
 #export GDM_2
 GDM_2_dt<-data.table(algorithm="GDM_2", no_diagnosed_pregnancies=pregnancy_d3_gdm_pe[alternative==1 & is.na(exclude) & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_gdm_pe[!duplicated(pregnancy_id),.N])
@@ -419,7 +419,7 @@ if(algorithm_template[NEW_STUDY_VARIABLES=="GDM_3" & COMPLEXITY=="complex" & !is
 if(length(alt_col)>0){pregnancy_d3_gdm_pe[pregnancy_d3_gdm_pe[,Reduce("|" , lapply(.SD,rule, value)),.SDcols=alt_col],alternative:=1]}else{pregnancy_d3_gdm_pe[,alternative:=NA]}
 if(length(excl_col)>0){pregnancy_d3_gdm_pe[pregnancy_d3_gdm_pe[,Reduce("|" , lapply(.SD,`>=`, 1)),.SDcols=excl_col],exclude:=1]}else{pregnancy_d3_gdm_pe[,exclude:=NA]}
 
-saveRDS(pregnancy_d3_gdm_pe,paste0(projectFolder,"/g_intermediate/gdm_algorithm/final_d3/GDM_3_D3.rds"),row.names = F)
+saveRDS(pregnancy_d3_gdm_pe,paste0(projectFolder,"/g_intermediate/gdm_algorithm/final_d3/GDM_3_D3.csv"))
 
 #export GDM_3
 GDM_3_dt<-data.table(algorithm="GDM_3", no_diagnosed_pregnancies=pregnancy_d3_gdm_pe[alternative==1 & is.na(exclude) & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_gdm_pe[!duplicated(pregnancy_id),.N])
@@ -502,7 +502,7 @@ alt_col<-GDM_4[TYPE=="OR",STUDY_VARIABLES]
 if(length(alt_col)>0){pregnancy_d3_gdm_pe[pregnancy_d3_gdm_pe[,Reduce("|" , lapply(.SD,`>=`, 1)),.SDcols=alt_col],alternative:=1]}else{pregnancy_d3_gdm_pe[,alternative:=NA]}
 if(length(excl_col)>0){pregnancy_d3_gdm_pe[pregnancy_d3_gdm_pe[,Reduce("|" , lapply(.SD,`>=`, 1)),.SDcols=excl_col],exclude:=1]}else{pregnancy_d3_gdm_pe[,exclude:=NA]}
 
-saveRDS(pregnancy_d3_gdm_pe,paste0(projectFolder,"/g_intermediate/gdm_algorithm/final_d3/GDM_4_D3.rds"),row.names = F)
+fwrite(pregnancy_d3_gdm_pe,paste0(projectFolder,"/g_intermediate/gdm_algorithm/final_d3/GDM_4_D3.csv"),row.names = F)
 
 #export GDM_3
 GDM_4_dt<-data.table(algorithm="GDM_4", no_diagnosed_pregnancies=pregnancy_d3_gdm_pe[alternative==1 & is.na(exclude) & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_gdm_pe[!duplicated(pregnancy_id),.N])
@@ -580,7 +580,7 @@ alt_col<-GDM_5[TYPE=="OR",STUDY_VARIABLES]
 if(length(alt_col)>0){pregnancy_d3_gdm_pe[pregnancy_d3_gdm_pe[,Reduce("|" , lapply(.SD,`>=`, 1)),.SDcols=alt_col],alternative:=1]}else{pregnancy_d3_gdm_pe[,alternative:=NA]}
 if(length(excl_col)>0){pregnancy_d3_gdm_pe[pregnancy_d3_gdm_pe[,Reduce("|" , lapply(.SD,`>=`, 1)),.SDcols=excl_col],exclude:=1]}else{pregnancy_d3_gdm_pe[,exclude:=NA]}
 
-saveRDS(pregnancy_d3_gdm_pe,paste0(projectFolder,"/g_intermediate/gdm_algorithm/final_d3/GDM_5_D3.rds"),row.names = F)
+saveRDS(pregnancy_d3_gdm_pe,paste0(projectFolder,"/g_intermediate/gdm_algorithm/final_d3/GDM_5_D3.rds"))
 
 #export GDM_3
 GDM_5_dt<-data.table(algorithm="GDM_5", no_diagnosed_pregnancies=pregnancy_d3_gdm_pe[alternative==1 & is.na(exclude) & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_gdm_pe[!duplicated(pregnancy_id),.N])
@@ -655,7 +655,7 @@ inc_col<-GDM_8[TYPE=="AND",STUDY_VARIABLES]
 #pregnancy_d3_gdm_pe[pregnancy_d3_gdm_pe[,Reduce("|" , lapply(.SD,`==`, 1)),.SDcols=excl_col],exclude:=1]
 if(length(inc_col)>0){pregnancy_d3_gdm_pe[pregnancy_d3_gdm_pe[,Reduce("&" , lapply(.SD,`>=`, 1)),.SDcols=inc_col],include:=1]}else{pregnancy_d3_gdm_pe[,include:=1]}
 #export GDM_8
-saveRDS(pregnancy_d3_gdm_pe,paste0(projectFolder,"/g_intermediate/gdm_algorithm/final_d3/GDM_8_D3.rds"),row.names = F)
+saveRDS(pregnancy_d3_gdm_pe,paste0(projectFolder,"/g_intermediate/gdm_algorithm/final_d3/GDM_8_D3.rds"))
 
 #export GDM_8
 GDM_8_dt<-data.table(algorithm="GDM_8", no_diagnosed_pregnancies=pregnancy_d3_gdm_pe[include==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_gdm_pe[!duplicated(pregnancy_id),.N])
