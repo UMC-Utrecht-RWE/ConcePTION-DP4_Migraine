@@ -56,8 +56,7 @@ codelist_migraine<-codelist_migraine[,c("event_abbreviation", "coding_system", "
 codelist_migraine<-codelist_migraine[,coding_system:=gsub("/","",coding_system)]
 #Create variable code_no_dot by removing dot from all codes
 codelist_migraine[,code_no_dot:=gsub("\\.","",codelist_migraine[,code])]
-vocabularies_list_migraine_mg<-codelist_migraine[event_abbreviation=="MG"][!duplicated(coding_system), coding_system]
-vocabularies_list_migraine<-codelist_migraine[event_abbreviation!="MG"][!duplicated(coding_system), coding_system]
+vocabularies_list_migraine<-codelist_migraine[!duplicated(coding_system), coding_system]
 conditions_migraine<-vector(mode="list", length=length(unique(na.omit(codelist_migraine[,event_abbreviation]))))
 names(conditions_migraine)<-unique(na.omit(codelist_migraine[,event_abbreviation]))
 for (i in 1:length(conditions_migraine)){
