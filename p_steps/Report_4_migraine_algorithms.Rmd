@@ -1,0 +1,529 @@
+---
+title: "CONCEPTION - Demonstration project 4: Migraine"
+subtitle: "Migraine algorithm"
+output: 
+  html_document:
+    theme: spacelab
+    output_dir: output_dir
+---
+
+```{css,  echo = F}
+/*-- Specify div's for 'boxes', change color of TOC and center align titles: --*/
+div.box1 {background-color: #f5f5f0; border-radius: 5px; padding: 30px; margin-right: 0px}
+div.box2 {background-color: #d4e5d2; border-radius: 5px; padding: 30px; margin-right: 0px}
+
+div.box3 {border-style: solid; border-color: #f5f5f0; border-width: medium; border-radius: 30px; padding: 5px; margin-right: 0px; text-align: justify}
+
+.list-group-item.active, .list-group-item.active:focus, .list-group-item.active:hover {background-color: #76b82a; border-color: #76b82a}
+h1 {text-align: center; color: #3c7b8a}
+h2 {text-align: center; color: #76b82a}
+h3
+
+/*-- Add logo (based on https://rstudio4edu.github.io/rstudio4edu-book/rmd-fancy.html): --*/
+#TOC::before {content: ""; display: block; height: 60px; margin: 30px 10px 30px; background-image: url("conception_logo.png"); background-size: contain; background-position: center center; background-repeat: no-repeat}
+```
+
+```{r set_locale, include=FALSE}
+Sys.setlocale("LC_ALL", "C")
+`%!in%` = Negate(`%in%`)
+```
+
+
+<div class = 'box1'>
+General information:
+
+-   **Script directory:** `r projectFolder`
+-   **Date/time:** `r Sys.time()`
+-   **DAP:** `r data_access_provider_name`
+-   **Data source:** `r data_source_name`
+
+</div>
+
+<br>
+
+<div class = 'box2'>
+```{r time_log, echo=F}
+timelog<-fread(paste0(projectFolder,"/g_output/Time log/", "Step_04_time_log.csv" ))
+timelog_2<-fread(paste0(projectFolder,"/g_output/Time log/", "Step_04_c_time_log.csv" ))
+kable(timelog)
+kable(timelog_2)
+```
+
+```{r, echo=F}
+if("timelog" %in% ls()){rm(timelog)}
+if("timelog_2" %in% ls()){rm(timelog_2)}
+```
+
+</div>
+
+<br>
+
+<div class = 'box3'>
+Start and end study dates for all projects by DAP
+
+<br>
+
+![Study dates](images/study_dates.png)
+</div>
+
+<br>
+
+<div class = 'box3'>
+
+<img src="images/prevalence_calculations.png" alt= “” width="500" height="250">
+
+</div>
+
+<br>
+
+<div class = 'box3'>
+
+<br>
+
+**Study dates for the DAP of interest**\
+
+```{r ,echo=F}
+if("inclusion_dates_flowchart.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
+dates_flowchart<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/inclusion_dates_flowchart.csv"))
+datatable(dates_flowchart, options = list(scrollX=T))
+}else{
+  print("This table is missing in the folder g_output/Migraine algorithm or g_output/Migraine algorithm.")
+}
+```
+
+```{r, echo=F}
+if("dates_flowchart" %in% ls()){rm(dates_flowchart)}
+```
+
+</div>
+<br>
+
+
+<div class = 'box3'>
+
+**Observation period of interest for Migraine diagnoses**\
+
+`start_date`: The pregnancy start date\
+`lookback`: The time period before pregnancy start date\
+`end_date`: The pregnancy end date\
+`after`: The time period after pregnancy end date\
+
+<br>
+
+```{r ,echo=F}
+if("Step_04_observation_periods_migraine.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
+obs<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_observation_periods_migraine.csv"))
+}else{
+ obs<-NULL 
+}
+
+if(!is.null(obs)){datatable(obs, options = list(scrollX=T))}else{
+  print("This table is missing in the folder g_output/Migraine algorithm.")
+}
+```
+
+```{r, echo=F}
+if("obs" %in% ls()){rm(obs)}
+```
+
+</div>
+
+<br>
+
+<div class = 'box3'>
+
+**Excluded event records outside of time window of interest for Migraine diagnoses**\
+
+`original_records`: Total number of records after merging the pregnancy D3 with the diagnoses D3\
+`before_start`: Number of event/medicine records with event/medicine date before the start date of the window of interest (as calculated in the step above)\
+`after_end`: Number of event/medicine records with event/medicine date after the end date of the window of interest (as calculated in the step above)\
+
+<br>
+
+```{r ,echo=F}
+if("Step_04_excluded_records_migraine.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
+excl_rec<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_excluded_records_migraine.csv"))
+datatable(excl_rec, options = list(scrollX=T))
+}else{
+  print("This table is missing in the folder g_output/Migraine algorithm.")
+}
+```
+
+```{r, echo=F}
+if("excl_rec" %in% ls()){rm(excl_rec)}
+```
+
+<br>
+
+**Excluded pregnancies with onset Migraine in pregnancy**\
+
+All pregnancies with diagnoses of Migraine or a triptan prescription in pregnancy but not 12 months (3 months) prior to pregnancy are discarded.\
+
+<br>
+
+```{r ,echo=F}
+if("Step_04_excluded_pregnancies_onset_diag_med.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
+onset_rec<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_excluded_pregnancies_onset_diag_med.csv"))
+datatable(onset_rec, options = list(scrollX=T))
+}else{
+  print("This table is missing in the folder g_output/Migraine algorithm.")
+}
+```
+
+```{r, echo=F}
+if("onset_rec" %in% ls()){rm(onset_rec)}
+```
+
+</div>
+
+<br>
+
+<div class = 'box3'>
+
+## 1. Summary of included records for Migraine algorithm
+
+<br>
+
+**Step 1:** Load the Migraine_pregnancy D3 created in Step 1 (created by applying th exclusion criteria to the cleaned pregnancy D3 retrieved from the pregnancy algorithm).\
+**Step 2:** Load the Migraine D3 diagnoses files (created in Step 2 by filtering the EVENTS, MEDICAL OBSERVATIONS and SURVEY OBSERVATIONS tables using the Migraine codelist and additional concepts template).\
+**Step 3:** Merge the diagnoses D3 with the pregnancy D3 and keep only event records within the timeframe of interest. Indicate the included records for each event definition.\
+**Step 4:** Load the Migraine D3 medicines files (created in Step 3 by filtering the MEDICINES table using the Migraine medicines codelist).\
+**Step 5:** Merge the medicines D3 with the pregnancy D3 and keep only medicine records within the timeframe of interest. Indicate the included records.\
+**Step 6:** Identify and exclude all pregnancies with onset migraine(either a migraine diagnoses, as specified by the MG event codelist or a triptan prescription, as specified by the ATC code N02CC). Indicate the excluded records.\
+**Step 6:** Create the event finding algorithms MIG_Dx, MIG_Rx and MIG_DxRx by using two different lookback periods when available, 12 months and 3 months.\
+**Step 7:** Create the migraine type algorithms MIG_T1 till MIG_T6.\
+**Step 8:** Create the migraine severity algorithms MIG_S1 till MIG_S4.\
+
+
+<br>
+
+In this table only the number of pregnancies with events/medicines records is shown.\
+When number of records is higher than the number of pregnancies, there was more than one record per pregnancy.\
+
+```{r , echo=F}
+if("Step_04_summary_included_records_migraine.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
+summary<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_summary_included_records_migraine.csv"))
+datatable(summary, options = list(scrollX=T))
+}else{
+  print("This table is missing in the folder g_output/Migraine algorithm.")
+}
+```
+
+```{r, echo=F}
+if("summary" %in% ls()){rm(summary)}
+```
+
+</div>
+
+<br>
+
+<div class = 'box3'>
+
+## 2. Creation of the Migraine Algorithms
+
+If the prevalence is rounded to zero but the number of diagnosed pregnancies is higher than zero than the prevalence will be replaced with 0.0001.
+<br>
+
+### 2.1 Baseline Migraine Algorithm Overall
+
+
+```{r , echo=F}
+if("Step_04_MIG_Dx_a.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
+alg_1<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_Dx_a.csv"))
+}else{alg_1<-NULL}
+
+if("Step_04_MIG_Rx_a.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
+alg_2<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_Rx_a.csv"))
+}else{alg_2<-NULL}
+
+if("Step_04_MIG_DxRx_a.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
+alg_3<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_DxRx_a.csv"))
+}else{alg_3<-NULL}
+
+
+if("Step_04_MIG_Dx_b.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
+alg_4<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_Dx_b.csv"))
+}else{alg_4<-NULL}
+
+if("Step_04_MIG_Rx_b.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
+alg_5<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_Rx_b.csv"))
+}else{alg_5<-NULL}
+
+if("Step_04_MIG_DxRx_b.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
+alg_6<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_DxRx_b.csv"))
+}else{alg_6<-NULL}
+
+alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6)
+
+if(!is.null(alg)){
+  datatable(alg, options = list(scrollX=T))
+}else{
+  print("This table is missing in the folder g_output/Migraine algorithm.")
+}
+```
+
+```{r, echo=F}
+if(!is.null(alg)){
+  ggplotly(ggplot(alg) +
+  geom_col(aes(x = factor(algorithm,levels =c('MIG_Dx_a','MIG_Rx_a','MIG_DxRx_a','MIG_Dx_b','MIG_Rx_b', 'MIG_DxRx_b')),  
+               y = no_diagnosed_pregnancies), fill = "green", width = 0.3) +
+  geom_col(aes(x = algorithm, y = no_pregnancies), alpha = 0.3, fill = "#76b82a", width = 0.6) +
+      ggtitle("Migraine baseline prevalence rates")+
+xlab("Algorithm") +
+  ylab("Counts")+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1),
+        axis.title.x = element_text(colour = "#76b82a"),
+        axis.title.y = element_text(colour = "#76b82a"),
+        plot.title = element_text(colour = "#76b82a"))+
+  theme_classic()
+)
+}
+```
+
+```{r, echo=F}
+if("alg_1" %in% ls()){rm(alg_1)}
+if("alg_2" %in% ls()){rm(alg_2)}
+if("alg_3" %in% ls()){rm(alg_3)}
+if("alg_4" %in% ls()){rm(alg_4)}
+if("alg_5" %in% ls()){rm(alg_5)}
+if("alg_6" %in% ls()){rm(alg_6)}
+if("alg" %in% ls()){rm(alg)}
+```
+
+
+
+### 2.2 Baseline Migraine Algorithm by maternal age at start pregnancy
+
+```{r , echo=F}
+if("Step_04_MIG_Dx_a_age.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
+alg_1<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_Dx_a_age.csv"))
+}else{alg_1<-NULL}
+
+if("Step_04_MIG_Rx_a_age.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
+alg_2<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_Rx_a_age.csv"))
+}else{alg_2<-NULL}
+
+if("Step_04_MIG_DxRx_a_age.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
+alg_3<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_DxRx_a_age.csv"))
+}else{alg_3<-NULL}
+
+
+if("Step_04_MIG_Dx_b_age.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
+alg_4<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_Dx_b_age.csv"))
+}else{alg_4<-NULL}
+
+if("Step_04_MIG_Rx_b_age.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
+alg_5<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_Rx_b_age.csv"))
+}else{alg_5<-NULL}
+
+if("Step_04_MIG_DxRx_b_age.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
+alg_6<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_DxRx_b_age.csv"))
+}else{alg_6<-NULL}
+
+alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6)
+
+if(!is.null(alg)){
+  datatable(alg, options = list(scrollX=T))
+}else{
+  print("This table is missing in the folder g_output/Migraine algorithm.")
+}
+```
+
+```{r,echo=F}
+  alg[,prevalence_100_pregnancies:=as.numeric(prevalence_100_pregnancies)]
+  ggplotly(ggplot(alg, aes(x=maternal_age, y=prevalence_100_pregnancies, group=algorithm))+
+    geom_line(aes(color=algorithm))+
+    geom_point(aes(color=algorithm))+
+theme(axis.text.x = element_text(size = 8,angle = 45),
+      axis.title.x = element_text(colour = "#76b82a"),
+      axis.title.y = element_text(colour = "#76b82a"),
+      plot.title = element_text(colour = "#76b82a"))+
+  ggtitle("Migraine baseline prevalence rates")+
+  xlab("Maternal age") +
+  ylab("Prevalence_per_100_pregnancies")+
+  theme_classic()
+  )
+
+```
+
+```{r, echo=F}
+if("alg_1" %in% ls()){rm(alg_1)}
+if("alg_2" %in% ls()){rm(alg_2)}
+if("alg_3" %in% ls()){rm(alg_3)}
+if("alg_4" %in% ls()){rm(alg_4)}
+if("alg_5" %in% ls()){rm(alg_5)}
+if("alg_6" %in% ls()){rm(alg_6)}
+if("alg" %in% ls()){rm(alg)}
+```
+
+
+<br>
+
+
+### 2.3 Baseline Migraine Algorithm by year of start pregnancy
+
+```{r , echo=F}
+if("Step_04_MIG_Dx_a_year.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
+alg_1<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_Dx_a_year.csv"))
+}else{alg_1<-NULL}
+
+if("Step_04_MIG_Rx_a_year.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
+alg_2<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_Rx_a_year.csv"))
+}else{alg_2<-NULL}
+
+if("Step_04_MIG_DxRx_a_year.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
+alg_3<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_DxRx_a_year.csv"))
+}else{alg_3<-NULL}
+
+
+if("Step_04_MIG_Dx_b_year.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
+alg_4<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_Dx_b_year.csv"))
+}else{alg_4<-NULL}
+
+if("Step_04_MIG_Rx_b_year.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
+alg_5<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_Rx_b_year.csv"))
+}else{alg_5<-NULL}
+
+if("Step_04_MIG_DxRx_b_year.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
+alg_6<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_DxRx_b_year.csv"))
+}else{alg_6<-NULL}
+
+alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6)
+
+if(!is.null(alg)){
+  datatable(alg, options = list(scrollX=T))
+}else{
+  print("This table is missing in the folder g_output/Migraine algorithm.")
+}
+```
+
+```{r,echo=F}
+  alg[,prevalence_100_pregnancies:=as.numeric(prevalence_100_pregnancies)]
+  ggplotly(ggplot(alg, aes(x=year, y=prevalence_100_pregnancies, group=algorithm))+
+    geom_line(aes(color=algorithm))+
+    geom_point(aes(color=algorithm))+
+theme(axis.text.x = element_text(size = 8,angle = 45),
+      axis.title.x = element_text(colour = "#76b82a"),
+      axis.title.y = element_text(colour = "#76b82a"),
+      plot.title = element_text(colour = "#76b82a"))+
+  ggtitle("Baseline migraine prevalence rates")+
+  xlab("Year") +
+  ylab("Prevalence_per_100_pregnancies")+
+  theme_classic()
+  )
+
+```
+
+```{r, echo=F}
+if("alg_1" %in% ls()){rm(alg_1)}
+if("alg_2" %in% ls()){rm(alg_2)}
+if("alg_3" %in% ls()){rm(alg_3)}
+if("alg_4" %in% ls()){rm(alg_4)}
+if("alg_5" %in% ls()){rm(alg_5)}
+if("alg_6" %in% ls()){rm(alg_6)}
+if("alg" %in% ls()){rm(alg)}
+```
+
+
+<br>
+
+
+### 2.4 Baseline Migraine Algorithm by maternal age and year of start pregnancy
+
+```{r , echo=F}
+if("Step_04_MIG_Dx_a_year_age.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
+alg_1<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_Dx_a_year_age.csv"))
+}else{alg_1<-NULL}
+
+if("Step_04_MIG_Rx_a_year_age.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
+alg_2<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_Rx_a_year_age.csv"))
+}else{alg_2<-NULL}
+
+if("Step_04_MIG_DxRx_a_year_age.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
+alg_3<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_DxRx_a_year_age.csv"))
+}else{alg_3<-NULL}
+
+
+if("Step_04_MIG_Dx_b_year_age.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
+alg_4<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_Dx_b_year_age.csv"))
+}else{alg_4<-NULL}
+
+if("Step_04_MIG_Rx_b_year_age.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
+alg_5<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_Rx_b_year_age.csv"))
+}else{alg_5<-NULL}
+
+if("Step_04_MIG_DxRx_b_year_age.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
+alg_6<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_DxRx_b_year_age.csv"))
+}else{alg_6<-NULL}
+
+alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6)
+
+if(!is.null(alg)){
+  datatable(alg, options = list(scrollX=T))
+}else{
+  print("This table is missing in the folder g_output/Migraine algorithm.")
+}
+```
+
+```{r,echo=F}
+alg[,prevalence_100_pregnancies:=as.numeric(prevalence_100_pregnancies)]
+years<-unique(alg[,year_group])
+fig.1<-list()
+for(i in 1:length(years)){
+   fig.1[[i]]<-ggplotly(ggplot(alg[year_group==years[i]], aes(x=maternal_age,y=prevalence_100_pregnancies, group=algorithm)) +
+    geom_line(aes(color=algorithm))+
+    geom_point(aes(color=algorithm))+
+    #facet_wrap(~year_group, scales="fixed", ncol=1)+
+    theme(axis.text.x = element_text(size = 8,angle = 45),
+          axis.title.x = element_text(colour = "#76b82a"),
+          axis.title.y = element_text(colour = "#76b82a"),
+          plot.title = element_text(colour = "#76b82a"))+
+    ggtitle(paste0("Baseline migraine prevalence rates: ", years[i]))+
+    xlab("Maternal age") +
+    ylab("Prevalence_per_100_pregnancies")+
+    theme(panel.background=element_rect(color="lightgreen", linewidth = 1)))
+}
+```
+
+```{r, echo=F}
+htmltools::tagList(list(fig.1))
+```
+
+```{r, echo=F}
+if("alg_1" %in% ls()){rm(alg_1)}
+if("alg_2" %in% ls()){rm(alg_2)}
+if("alg_3" %in% ls()){rm(alg_3)}
+if("alg_4" %in% ls()){rm(alg_4)}
+if("alg_5" %in% ls()){rm(alg_5)}
+if("alg_6" %in% ls()){rm(alg_6)}
+if("alg" %in% ls()){rm(alg)}
+if("fig.1" %in% ls()){rm(fig.1)}
+```
+
+</div>
+
+<br>
+
+<div class = 'box3'>
+
+<br>
+
+**Migraine algorithms**
+
+* MIG_Dx_a: **At least one** diagnoses of Migraine (MG) recorded up to 12 months prior to LMP.\
+* MIG_Dx_b: **At least one** diagnoses of Migraine (MG) recorded up to 3 months prior to LMP.\
+* MIG_Rx_a: **At least one** triptan prescription of Migraine (N02CC) recorded up to 12 months prior to LMP.\
+* MIG_Rx_b: **At least one** triptan prescription of Migraine (N02CC) recorded up to 3 months prior to LMP.\
+* MIG_DxRx_a: **At least one** diagnoses of Migraine (MG) or **at least one** triptan prescription of Migraine (N02CC) recorded up to 12 months prior to LMP.\
+* MIG_DxRx_b: **At least one** diagnoses of Migraine (MG) or **at least one** triptan prescription of Migraine (N02CC) recorded up to 12 months prior to LMP.\
+
+</div>
+
+<br>
+
+<div class = 'box2'>
+Author: Vjola Hoxhaj Drs.\
+email: [v.hoxhaj\@umcutrecht.nl](mailto:v.hoxhaj@umcutrecht.nl){.email}\
+Organisation: UMC Utrecht, Utrecht, The Netherlands
+
+</div>
