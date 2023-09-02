@@ -40,5 +40,11 @@ PE_4_e;ECL;AND; simple;;;;;
 PE_4_e;HELLP;AND; simple;;;;;
 PE_4_f;HELLP;AND; complex;>=;2;;;
 PE_5;PE_checkbox;AND;simple;;;;;
-MIG_1_a;MG;AND;simple;;;;365.25;1
-MIG_1_b;MG;AND;simple;;;;365.25;1
+MIG_Dx_a;MG_baseline;AND;simple;;;;365.25;1
+MIG_Dx_b;MG_baseline_2;AND;simple;;;;365.25;1
+MIG_Rx_a;Migraine_medicines_baseline;AND;simple;;;;365.25;1
+MIG_Rx_b;Migraine_medicines_baseline_2;AND;simple;;;;365.25;1
+MIG_DxRx_a;MG_baseline;OR;simple;;;;;
+MIG_DxRx_a;Migraine_medicines_baseline;OR;simple;;;;;
+MIG_DxRx_b;MG_baseline_2;OR;simple;;;;;
+MIG_DxRx_b;Migraine_medicines_baseline_2;OR;simple;;;;;
