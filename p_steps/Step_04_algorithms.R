@@ -19,7 +19,7 @@ year_group_creation<-function(x){
   return(y)
 }
 
-
+#### GDM and PE ####
 #Load all gdm_algorithm file and combine with the pregnancy D3
 pregnancy_d3_gdm_pe<-readRDS(paste0(projectFolder,"/g_intermediate/pregnancy_d3/GDM_PE_Pregnancy_D3.rds"))
 pregnancy_d3_gdm_pe[,pregnancy_start_date:=as.IDate(pregnancy_start_date)][,pregnancy_end_date:=as.IDate(pregnancy_end_date)][,birth_date:=as.IDate(birth_date)][,death_date:=as.IDate(death_date)][,op_start_date_gdm_pe:=as.IDate(op_start_date_gdm_pe)][,op_end_date_gdm_pe:=as.IDate(op_end_date_gdm_pe)]
@@ -49,9 +49,10 @@ rm(sum,sum_gdm,sum_pe)
 rm(pregnancy_d3_gdm_pe)
 gc()
 
+#### Migraine ####
 #Load all migraine_algorithm file and combine with the pregnancy D3
 pregnancy_d3_mig<-readRDS(paste0(projectFolder,"/g_intermediate/pregnancy_d3/MIG_Pregnancy_D3.rds"))
-pregnancy_d3_mig[,pregnancy_start_date:=as.IDate(pregnancy_start_date)][,pregnancy_end_date:=as.IDate(pregnancy_end_date)][,birth_date:=as.IDate(birth_date)][,death_date:=as.IDate(death_date)][,op_start_date_gdm_pe:=as.IDate(op_start_date_gdm_pe)][,op_end_date_gdm_pe:=as.IDate(op_end_date_gdm_pe)]
+pregnancy_d3_mig[,pregnancy_start_date:=as.IDate(pregnancy_start_date)][,pregnancy_end_date:=as.IDate(pregnancy_end_date)][,birth_date:=as.IDate(birth_date)][,death_date:=as.IDate(death_date)][,op_start_date_mig:=as.IDate(op_start_date_mig)][,op_end_date_mig:=as.IDate(op_end_date_mig)]
 pregnancy_d3_mig[,age:=floor((pregnancy_start_date-birth_date)/365.25)]
 pregnancy_d3_mig[,maternal_age:=as.character(lapply(age, age_band_creation))]
 pregnancy_d3_mig[,year:=year(pregnancy_start_date)]
@@ -69,10 +70,10 @@ if("op_start_date_du" %in% names(pregnancy_d3_mig)){pregnancy_d3_mig[,op_start_d
 if("op_start_date_saf" %in% names(pregnancy_d3_mig)){pregnancy_d3_mig[,op_start_date_saf:=NULL]}
 if("sex_at_instance_creation" %in% names(pregnancy_d3_mig)){pregnancy_d3_mig[,sex_at_instance_creation:=NULL]}
 
-# if("final_d3" %in% list.files(paste0(projectFolder,"/g_intermediate/migraine_algorithm/"))){
-#  unlink(paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3"), recursive = T)
-# }
-# source(paste0(projectFolder,"/p_steps/Step_04_c_migraine_algorithms.R"))
+if("final_d3" %in% list.files(paste0(projectFolder,"/g_intermediate/migraine_algorithm/"))){
+ unlink(paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3"), recursive = T)
+}
+source(paste0(projectFolder,"/p_steps/Step_04_c_migraine_algorithms.R"))
 
 date_running_end_04<-Sys.Date()
 end_time_04<-Sys.time()
