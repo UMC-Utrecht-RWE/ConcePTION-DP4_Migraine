@@ -146,7 +146,7 @@ if("obs" %in% ls()){rm(obs)}
 
 **Excluded event records outside of time window of interest for GDM and PE diagnoses**\
 
-`original_records`: Total umber of records after merging the pregnancy D3 with the diagnoses D3\
+`original_records`: Total number of records after merging the pregnancy D3 with the diagnoses D3\
 `before_start`: Number of event/medicine records with event/medicine date before the start date of the window of interest (as calculated in the step above)\
 `after_end`: Number of event/medicine records with event/medicine date after the end date of the window of interest (as calculated in the step above)\
 
@@ -213,6 +213,8 @@ if("summary" %in% ls()){rm(summary)}
 <div class = 'box3'>
 
 ## 2. Creation of the GDM Algorithms
+
+If the prevalence is rounded to zero but the number of diagnosed pregnancies is higher than zero than the prevalence will be replaced with 0.0001.
 
 <br>
 
@@ -518,11 +520,12 @@ if("fig.1" %in% ls()){rm(fig.1)}
 <br>
 
 
-## 2. Creation of the PE Algorithms
+## 3. Creation of the PE Algorithms
 
+If the prevalence is rounded to zero but the number of diagnosed pregnancies is higher than zero than the prevalence will be replaced with 0.0001.
 <br>
 
-### 2.1 PE Algorithm Overall
+### 3.1 PE Algorithm Overall
 
 <br>
   
@@ -588,7 +591,7 @@ if("alg" %in% ls()){rm(alg)}
 <br>
 
 
-### 2.2 PE Algorithm by maternal age at start pregnancy
+### 3.2 PE Algorithm by maternal age at start pregnancy
 
 ```{r , echo=F}
 if("Step_04_PE_1_age.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
@@ -649,7 +652,7 @@ if("alg" %in% ls()){rm(alg)}
 <br>
 
   
-### 2.3 PE Algorithm by year of start pregnancy
+### 3.3 PE Algorithm by year of start pregnancy
   
 ```{r , echo=F}
 if("Step_04_PE_1_year.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
@@ -710,7 +713,7 @@ if("alg" %in% ls()){rm(alg)}
 
 <br>
 
-### 2.4 PE Algorithm by maternal age and year of start pregnancy
+### 3.4 PE Algorithm by maternal age and year of start pregnancy
   
 ```{r , echo=F}
 if("Step_04_PE_1_year_age.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
