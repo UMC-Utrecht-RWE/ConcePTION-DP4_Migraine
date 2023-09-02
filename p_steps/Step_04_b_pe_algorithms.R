@@ -139,6 +139,8 @@ saveRDS(pregnancy_d3_gdm_pe,paste0(projectFolder,"/g_intermediate/pe_algorithm/f
 PE_1_a<-data.table(algorithm="PE_1", no_diagnosed_pregnancies=pregnancy_d3_gdm_pe[include==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_gdm_pe[!duplicated(pregnancy_id),.N])
 PE_1_a[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
 PE_1_a[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
+PE_1_a[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
+
 #lower CI
 PE_1_a[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
 PE_1_a[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
@@ -157,6 +159,7 @@ PE_1_b<-PE_1_b[order(maternal_age)]
 rm(records,total)
 PE_1_b[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
 PE_1_b[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
+PE_1_b[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
 PE_1_b[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
 PE_1_b[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
@@ -174,6 +177,7 @@ PE_1_c<-PE_1_c[order(year)]
 rm(records,total)
 PE_1_c[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
 PE_1_c[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
+PE_1_c[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
 PE_1_c[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
 PE_1_c[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
@@ -194,6 +198,7 @@ rm(records,total)
 pregnancy_d3_gdm_pe[,include:=NULL]
 PE_1_d[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
 PE_1_d[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
+PE_1_d[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
 PE_1_d[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
 PE_1_d[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
@@ -227,6 +232,7 @@ saveRDS(pregnancy_d3_gdm_pe,paste0(projectFolder,"/g_intermediate/pe_algorithm/f
 PE_2_dt<-data.table(algorithm="PE_2", no_diagnosed_pregnancies=pregnancy_d3_gdm_pe[include==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_gdm_pe[!duplicated(pregnancy_id),.N])
 PE_2_dt[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
 PE_2_dt[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
+PE_2_dt[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
 PE_2_dt[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
 PE_2_dt[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
@@ -245,6 +251,7 @@ PE_2_b<-PE_2_b[order(maternal_age)]
 rm(records,total)
 PE_2_b[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
 PE_2_b[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
+PE_2_b[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
 PE_2_b[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
 PE_2_b[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
@@ -263,6 +270,7 @@ PE_2_c<-PE_2_c[order(year)]
 rm(records,total)
 PE_2_c[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
 PE_2_c[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
+PE_2_c[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
 PE_2_c[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
 PE_2_c[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
@@ -282,6 +290,7 @@ rm(records,total)
 pregnancy_d3_gdm_pe[,include:=NULL]
 PE_2_d[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
 PE_2_d[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
+PE_2_d[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
 PE_2_d[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
 PE_2_d[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
@@ -310,6 +319,7 @@ saveRDS(pregnancy_d3_gdm_pe,paste0(projectFolder,"/g_intermediate/pe_algorithm/f
 PE_3_dt<-data.table(algorithm="PE_3", no_diagnosed_pregnancies=pregnancy_d3_gdm_pe[alternative==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_gdm_pe[!duplicated(pregnancy_id),.N])
 PE_3_dt[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
 PE_3_dt[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
+PE_3_dt[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
 PE_3_dt[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
 PE_3_dt[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
@@ -328,6 +338,7 @@ PE_3_b<-PE_3_b[order(maternal_age)]
 rm(records,total)
 PE_3_b[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
 PE_3_b[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
+PE_3_b[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
 PE_3_b[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
 PE_3_b[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
@@ -345,6 +356,7 @@ PE_3_c<-PE_3_c[order(year)]
 rm(records,total)
 PE_3_c[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
 PE_3_c[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
+PE_3_c[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
 PE_3_c[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
 PE_3_c[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
@@ -364,6 +376,7 @@ rm(records,total)
 pregnancy_d3_gdm_pe[,alternative:=NULL]
 PE_3_d[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
 PE_3_d[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
+PE_3_d[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
 PE_3_d[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
 PE_3_d[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
@@ -447,6 +460,7 @@ rm(PE_4_a,PE_4_b,PE_4_c,PE_4_d,PE_4_e,PE_4_f)
 PE_4_dt<-data.table(algorithm="PE_4", no_diagnosed_pregnancies=pregnancy_d3_gdm_pe[include==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_gdm_pe[!duplicated(pregnancy_id),.N])
 PE_4_dt[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
 PE_4_dt[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
+PE_4_dt[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
 PE_4_dt[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
 PE_4_dt[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
@@ -465,6 +479,7 @@ PE_4_b<-PE_4_b[order(maternal_age)]
 rm(records,total)
 PE_4_b[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
 PE_4_b[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
+PE_4_b[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
 PE_4_b[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
 PE_4_b[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
@@ -483,6 +498,7 @@ PE_4_c<-PE_4_c[order(year)]
 rm(records,total)
 PE_4_c[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
 PE_4_c[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
+PE_4_c[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
 PE_4_c[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
 PE_4_c[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
@@ -502,6 +518,7 @@ rm(records,total)
 pregnancy_d3_gdm_pe[,include:=NULL]
 PE_4_d[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
 PE_4_d[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
+PE_4_d[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
 PE_4_d[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
 PE_4_d[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
@@ -526,6 +543,7 @@ saveRDS(pregnancy_d3_gdm_pe,paste0(projectFolder,"/g_intermediate/pe_algorithm/f
 PE_5_dt<-data.table(algorithm="PE_5", no_diagnosed_pregnancies=pregnancy_d3_gdm_pe[include==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_gdm_pe[!duplicated(pregnancy_id),.N])
 PE_5_dt[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
 PE_5_dt[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
+PE_5_dt[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
 PE_5_dt[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
 PE_5_dt[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
@@ -544,6 +562,7 @@ PE_5_b<-PE_5_b[order(maternal_age)]
 rm(records,total)
 PE_5_b[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
 PE_5_b[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
+PE_5_b[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
 PE_5_b[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
 PE_5_b[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
@@ -562,6 +581,7 @@ PE_5_c<-PE_5_c[order(year)]
 rm(records,total)
 PE_5_c[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
 PE_5_c[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
+PE_5_c[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
 PE_5_c[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
 PE_5_c[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
@@ -581,6 +601,7 @@ rm(records,total)
 pregnancy_d3_gdm_pe[,include:=NULL]
 PE_5_d[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
 PE_5_d[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
+PE_5_d[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
 PE_5_d[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
 PE_5_d[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
