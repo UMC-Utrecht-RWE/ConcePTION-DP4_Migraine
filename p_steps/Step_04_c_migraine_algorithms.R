@@ -1,5 +1,5 @@
-initial_time<-Sys.time()
-date_running_start<-Sys.Date()
+initial_time_04_c<-Sys.time()
+date_running_start_04_c<-Sys.Date()
 
 orig_mig<-pregnancy_d3_mig[,.N]
 ####Migraine DIAGNOSES FILES####
@@ -17,6 +17,13 @@ obs_period_diag<-data.table(StudyVar=c("MG","MG_NO_AURA","MG_AURA","MG_STATUS","
                        end_date=c(7*40,7*40,7*40,7*40,7*40,7*40,7*40),
                        after=c(0,0,0,0,0,0,0))
 }
+#trimester dates
+trimester_timepoint<-data.table(Indicator=c("first","second","third"),
+                                start=c(0,98,196),
+                                end=c(97,195,7*40))
+#start: pregnancy start date + start -1 will give the next window
+#end: pregnancy start date + start will give the previous window
+#example second trimester: start=pregnancy start date + 98 -1 end=pregnancy start date + end
 #mig files
 mig_files<-list.files(paste0(projectFolder,"/g_intermediate/migraine_algorithm/"))
 mig_files<-mig_files[!mig_files %in% "Migraine_medicines.rds"]
@@ -25,7 +32,7 @@ for(i in 1:length(mig_files)){
   names_events[[i]]<-unlist(str_split(mig_files[i],"[.]"))[1] 
 }
 names_events<-as.vector(do.call(rbind,names_events))
-
+names_events_extend<-c(paste0(names_events,"_baseline"),paste0(names_events,"_baseline_2"),paste0(names_events,"_during"),paste0(names_events,"_first"),paste0(names_events,"_second"),paste0(names_events,"_third"))
 #Add onset diagnoses and mendication variable to the pregnancy d3
 pregnancy_d3_mig[,onset_diag:=0][,onset_med:=0]
 ####Exclude all onset diagnoses of migraine####
@@ -33,7 +40,8 @@ pregnancy_d3_mig[,onset_diag:=0][,onset_med:=0]
 #Check only MG diagnoses files as it inlcuded all children codes
 files_mg<-mig_files[str_detect(mig_files,"MG.rds")]
 names_mg<-names_events[names_events %in% "MG"]
-    mig_dt<-readRDS(paste0(projectFolder,"/g_intermediate/migraine_algorithm/", files_mg))
+    
+  mig_dt<-readRDS(paste0(projectFolder,"/g_intermediate/migraine_algorithm/", files_mg))
     #merge with the pregnancy d3
     mig_dt<-merge.data.table(pregnancy_d3_mig, mig_dt, by="person_id", all.x=T, allow.cartesian = T)
     mig_dt<-mig_dt[!is.na(event_date)]
@@ -76,26 +84,27 @@ names_mg<-names_events[names_events %in% "MG"]
       if(mig_dt[,.N]>0){
         #Check for diagnoses before start date of pregnancy(12 months before start date)
         mig_dt[,min_date_diag:=pregnancy_start_date-obs_period_diag[StudyVar==names_mg,lookback]]
-        mig_dt[event_date>=min_date_diag & event_date<pregnancy_start_date,prior_diag:=1]
+        mig_dt[,prior_diag:=ifelse(event_date>=min_date_diag & event_date<pregnancy_start_date,1,0)]
         #Check for diagnoses in pregnancy
-        mig_dt[event_date>=pregnancy_start_date & event_date<=pregnancy_end_date,preg_diag:=1]
+        mig_dt[,preg_diag:=ifelse(event_date>=pregnancy_start_date & event_date<=pregnancy_end_date,1,0)]
         #add preg id
         mig_dt[,preg_diag:=as.numeric(preg_diag)][,prior_diag:=as.numeric(prior_diag)]
         prior_diag<-mig_dt[prior_diag==1,.N, by=c("person_id","pregnancy_id")]
         setnames(prior_diag,"N","prior_diag")
         preg_diag<-mig_dt[preg_diag==1,.N, by=c("person_id","pregnancy_id")]
         setnames(preg_diag,"N","preg_diag")
-        rm(mig_dt)
         prior_diag<-merge.data.table(prior_diag,preg_diag, all=T, by=c("person_id","pregnancy_id"))
-        prior_diag<-prior_diag[is.na(prior_diag) & !is.na(preg_diag)]
+        prior_diag[is.na(prior_diag),prior_diag:=0]
+        prior_diag[is.na(preg_diag),preg_diag:=0]
+        prior_diag<-prior_diag[prior_diag==0 & preg_diag>0]
         #Count the number of cases to exclude
         excluded_prior_diag<-data.table(event_definition=names_mg, excluded_records=prior_diag[,.N])
         prior_diag[,prior_diag:=NULL]
         #Add the identifier pregnancy id to the main pregnancy D3
         pregnancy_d3_mig<-merge.data.table(pregnancy_d3_mig,prior_diag, by=c("person_id","pregnancy_id"), all.x=T)
         #update the exclude variable
-        pregnancy_d3_mig[!is.na(preg_diag), onset_diag:=1]
-        pregnancy_d3_mig[,preg_diag:=NULL][,prior_diag:=NULL]
+        pregnancy_d3_mig[preg_diag>0, onset_diag:=1]
+        pregnancy_d3_mig[,preg_diag:=NULL]
         pregnancy_d3_mig[is.na(onset_diag), onset_diag:=0]
       }
     }
@@ -105,7 +114,7 @@ names_mg<-names_events[names_events %in% "MG"]
 ####Migraine MEDICINES files####
   print("Loading all Migraine medicines D3 and merge with the pregnancy D3.")
  
-    if (DAP_name %in% c("THL", "EFEMERIS")){
+    if (DAP_name %in% c("NIHW", "CHUT")){
       obs_period_med<-data.table(StudyVar=c("Migraine_medicines"),
                                  lookback=c(3*30.25),
                                  start_date=c(0),
@@ -169,9 +178,9 @@ names_mg<-names_events[names_events %in% "MG"]
   if(mig_med[,.N]>0){
     #Check for prescriptions before start date of pregnancy(12 months before start date)
     mig_med[,min_date_med:=pregnancy_start_date-obs_period_med[med_fl,lookback]]
-    mig_med[medicine_date>=min_date_med & medicine_date<pregnancy_start_date,prior_med:=1]
+    mig_med[,prior_med:=ifelse(medicine_date>=min_date_med & medicine_date<pregnancy_start_date,1,0)]
     #Check for prescriptions in pregnancy
-    mig_med[medicine_date>=pregnancy_start_date & medicine_date<=pregnancy_end_date,preg_med:=1]
+    mig_med[,preg_med:=ifelse(medicine_date>=pregnancy_start_date & medicine_date<=pregnancy_end_date,1,0)]
     #add preg id
   mig_med[,preg_med:=as.numeric(preg_med)]
   prior_med<-mig_med[prior_med==1,.N, by=c("person_id","pregnancy_id")]
@@ -180,7 +189,7 @@ names_mg<-names_events[names_events %in% "MG"]
   setnames(preg_med,"N","preg_med")
   rm(mig_med)
   prior_med<-merge.data.table(prior_med,preg_med, all=T, by=c("person_id","pregnancy_id"))
-  prior_med<-prior_med[is.na(prior_med) & !is.na(preg_med)]
+  prior_med<-prior_med[prior_med==0 & preg_med>0]
   
     #Count the number of cases to exclude
     excluded_prior_med<-data.table(event_definition="Triptan_prescription(N02CC)", excluded_records=prior_med[,.N])
@@ -188,10 +197,9 @@ names_mg<-names_events[names_events %in% "MG"]
     #Add the identifier pregnancy id to the main pregnancy D3
     pregnancy_d3_mig<-merge.data.table(pregnancy_d3_mig,prior_med, by=c("person_id","pregnancy_id"), all.x=T)
     #update the exclude variable
-    pregnancy_d3_mig[!is.na(preg_med), onset_med:=1]
+    pregnancy_d3_mig[preg_med>0, onset_med:=1]
     pregnancy_d3_mig[,preg_med:=NULL]
-    pregnancy_d3_mig[is.na(onset_med), onset_med:=0]
-    
+    pregnancy_d3_mig[is.na(onset_med),onset_med:=0]
   }
   }
   }else{print("There are no migraine medicines records.")}
@@ -289,17 +297,69 @@ for(mig_fl in 1:length(mig_files)){
       #create a summary of included records
       sum[[w]]<-data.table(StudyVar=names_events[mig_fl], no_records=mig_dt[!is.na(event_date),.N], no_pregnancies=mig_dt[!duplicated(pregnancy_id),.N])
       saveRDS(mig_dt, paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/", names_events[mig_fl],"_pregnancy_D3.rds"))
-      cols<-c("person_id","pregnancy_id","pregnancy_start_date","pregnancy_end_date")
+      cols<-c("person_id","pregnancy_id","pregnancy_start_date","pregnancy_end_date","event_date")
       mig_dt<-mig_dt[,cols,with=F]
-      mig_dt[,names_events[mig_fl]:=1]
-      mig_dt<-mig_dt[,lapply(.SD, sum),.SDcols = names_events[mig_fl], by=c("person_id","pregnancy_id","pregnancy_start_date","pregnancy_end_date")]
-      pregnancy_d3_mig<-merge.data.table(pregnancy_d3_mig,mig_dt,all.x=T, by=cols)
-      pregnancy_d3_mig[is.na(get(names_events[mig_fl])),names_events[mig_fl]:=0]
-    }else{
-      pregnancy_d3_mig[,names_events[mig_fl]:=0]
+      #Identify all baseline events
+      mig_dt[,dif:=event_date-pregnancy_start_date]
+      mig_dt[dif<0,paste0(names_events[mig_fl],"_baseline"):=1]
+      mig_baseline<-mig_dt[get(paste0(names_events[mig_fl],"_baseline"))==1,lapply(.SD, sum),.SDcols = paste0(names_events[mig_fl],"_baseline"), by=c("person_id","pregnancy_id","pregnancy_start_date","pregnancy_end_date")]
+      mig_dt[,dif:=NULL][,eval(paste0(names_events[mig_fl],"_baseline")):=NULL]
+      pregnancy_d3_mig<-merge.data.table(pregnancy_d3_mig,mig_baseline,all.x=T, by=cols[!cols %in% "event_date"])
+      pregnancy_d3_mig[is.na(get(paste0(names_events[mig_fl],"_baseline"))),eval(paste0(names_events[mig_fl],"_baseline")):=0]
+      #depending on the DAP
+      if(!DAP_name %in% c("NIHW", "CHUT")){
+        mig_dt[,start:=pregnancy_start_date - 3*30.25] 
+        mig_dt[event_date>=start & event_date<pregnancy_start_date,paste0(names_events[mig_fl],"_baseline_2"):=1]
+        mig_baseline_2<-mig_dt[get(paste0(names_events[mig_fl],"_baseline_2"))==1,lapply(.SD, sum),.SDcols = paste0(names_events[mig_fl],"_baseline_2"), by=c("person_id","pregnancy_id","pregnancy_start_date","pregnancy_end_date")]
+        mig_dt[,start:=NULL][,eval(paste0(names_events[mig_fl],"_baseline_2")):=NULL]
+        pregnancy_d3_mig<-merge.data.table(pregnancy_d3_mig,mig_baseline_2,all.x=T, by=cols[!cols %in% "event_date"])
+        pregnancy_d3_mig[is.na(get(paste0(names_events[mig_fl],"_baseline_2"))),eval(paste0(names_events[mig_fl],"_baseline_2")):=0]
+      }else{
+        pregnancy_d3_mig[,eval(paste0(names_events[mig_fl],"_baseline_2")):=get(paste0(names_events[mig_fl],"_baseline"))]
+      }
+      #during pregnancy
+      mig_dt[event_date>=pregnancy_start_date & event_date<pregnancy_end_date,paste0(names_events[mig_fl],"_during"):=1]
+      mig_during<-mig_dt[get(paste0(names_events[mig_fl],"_during"))==1,lapply(.SD, sum),.SDcols = paste0(names_events[mig_fl],"_during"), by=c("person_id","pregnancy_id","pregnancy_start_date","pregnancy_end_date")]
+      mig_dt[,eval(paste0(names_events[mig_fl],"_during")):=NULL]
+      pregnancy_d3_mig<-merge.data.table(pregnancy_d3_mig,mig_during,all.x=T, by=cols[!cols %in% "event_date"])
+      pregnancy_d3_mig[is.na(get(paste0(names_events[mig_fl],"_during"))),eval(paste0(names_events[mig_fl],"_during")):=0]
+      #first
+      mig_dt[,start:=pregnancy_start_date + trimester_timepoint[Indicator=="first",as.numeric(start)]][,end:=pregnancy_start_date + trimester_timepoint[Indicator=="first",as.numeric(end)]]
+      mig_dt[event_date>=start & event_date<=end,paste0(names_events[mig_fl],"_first"):=1]
+      mig_first<-mig_dt[get(paste0(names_events[mig_fl],"_first"))==1,lapply(.SD, sum),.SDcols = paste0(names_events[mig_fl],"_first"), by=c("person_id","pregnancy_id","pregnancy_start_date","pregnancy_end_date")]
+      mig_dt[,eval(paste0(names_events[mig_fl],"_first")):=NULL]
+      pregnancy_d3_mig<-merge.data.table(pregnancy_d3_mig,mig_first,all.x=T, by=cols[!cols %in% "event_date"])
+      pregnancy_d3_mig[is.na(get(paste0(names_events[mig_fl],"_first"))),eval(paste0(names_events[mig_fl],"_first")):=0]
+      #second
+      mig_dt[,start:=pregnancy_start_date + trimester_timepoint[Indicator=="second",as.numeric(start)]][,end:=pregnancy_start_date + trimester_timepoint[Indicator=="second",as.numeric(end)]]
+      mig_dt[event_date>=start & event_date<=end,paste0(names_events[mig_fl],"_second"):=1]
+      mig_second<-mig_dt[get(paste0(names_events[mig_fl],"_second"))==1,lapply(.SD, sum),.SDcols = paste0(names_events[mig_fl],"_second"), by=c("person_id","pregnancy_id","pregnancy_start_date","pregnancy_end_date")]
+      mig_dt[,eval(paste0(names_events[mig_fl],"_second")):=NULL]
+      pregnancy_d3_mig<-merge.data.table(pregnancy_d3_mig,mig_second,all.x=T, by=cols[!cols %in% "event_date"])
+      pregnancy_d3_mig[is.na(get(paste0(names_events[mig_fl],"_second"))),eval(paste0(names_events[mig_fl],"_second")):=0]
+      #third
+      mig_dt[,start:=pregnancy_start_date + trimester_timepoint[Indicator=="third",as.numeric(start)]][,end:=pregnancy_start_date + trimester_timepoint[Indicator=="third",as.numeric(end)]]
+      mig_dt[event_date>=start & event_date<=end,paste0(names_events[mig_fl],"_third"):=1]
+      mig_third<-mig_dt[get(paste0(names_events[mig_fl],"_third"))==1,lapply(.SD, sum),.SDcols = paste0(names_events[mig_fl],"_third"), by=c("person_id","pregnancy_id","pregnancy_start_date","pregnancy_end_date")]
+      mig_dt[,eval(paste0(names_events[mig_fl],"_third")):=NULL]
+      pregnancy_d3_mig<-merge.data.table(pregnancy_d3_mig,mig_third,all.x=T, by=cols[!cols %in% "event_date"])
+      pregnancy_d3_mig[is.na(get(paste0(names_events[mig_fl],"_third"))),eval(paste0(names_events[mig_fl],"_third")):=0]
+      
+      }else{
+      pregnancy_d3_mig[,eval(paste0(names_events[mig_fl],"_baseline")):=0]
+      pregnancy_d3_mig[,eval(paste0(names_events[mig_fl],"_baseline_2")):=0]
+      pregnancy_d3_mig[,eval(paste0(names_events[mig_fl],"_during")):=0]
+      pregnancy_d3_mig[,eval(paste0(names_events[mig_fl],"_first")):=0]
+      pregnancy_d3_mig[,eval(paste0(names_events[mig_fl],"_second")):=0]
+      pregnancy_d3_mig[,eval(paste0(names_events[mig_fl],"_third")):=0]
     }
   }else{
-    pregnancy_d3_mig[,names_events[mig_fl]:=0]
+    pregnancy_d3_mig[,eval(paste0(names_events[mig_fl],"_baseline")):=0]
+    pregnancy_d3_mig[,eval(paste0(names_events[mig_fl],"_baseline_2")):=0]
+    pregnancy_d3_mig[,eval(paste0(names_events[mig_fl],"_during")):=0]
+    pregnancy_d3_mig[,eval(paste0(names_events[mig_fl],"_first")):=0]
+    pregnancy_d3_mig[,eval(paste0(names_events[mig_fl],"_second")):=0]
+    pregnancy_d3_mig[,eval(paste0(names_events[mig_fl],"_third")):=0]
   }
   
   rm(mig_dt) 
@@ -323,13 +383,17 @@ setnames(removed_rec,"event_records","original_records")
 }else{
   removed_rec<-NULL    
 }
+
 #Pregnancies that had the event of interest not in the timeframe of study were excluded, this is why the number of pregnancies is different between different events
 sum_mig<-as.data.table(do.call(rbind,sum))
 rm(original,before,after,sum)
 rm(mig_files)
+fwrite(sum_mig,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_summary_included_records_migraine.csv"),row.names = F)
+rm(sum_mig)
 
+names_migraine<-c(paste0(names(conditions_migraine),"_baseline"),paste0(names(conditions_migraine),"_baseline_2"),paste0(names(conditions_migraine),"_during"),paste0(names(conditions_migraine),"_first"),paste0(names(conditions_migraine),"_second"),paste0(names(conditions_migraine),"_third"))
 #identify events that are not present from conditions_migraine
-not_present<-setdiff(names(conditions_migraine), names_events)
+not_present<-setdiff(names_migraine, names_events_extend)
 pregnancy_d3_mig[,eval(not_present):=list(0)]
 ####Migraine MEDICINES####
 print("Loading all Migraine medicines D3 and merge with the pregnancy D3.")
@@ -393,17 +457,70 @@ if(mig_med[,.N]>0){
     cols_to_exp<-c("person_id","pregnancy_id","pregnancy_start_date","pregnancy_end_date","year","birth_date","death_date","op_end_date_mig","op_start_date_mig","age","maternal_age","year_group","medicine_date","atc_code","condition","medicinal_product_group")
     saveRDS(mig_med[,cols_to_exp,with=F], paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/", obs_period_med[med_fl,StudyVar],"_pregnancy_D3.rds"))
     rm(cols_to_exp)
-    cols<-c("person_id","pregnancy_id","pregnancy_start_date","pregnancy_end_date")
+    cols<-c("person_id","pregnancy_id","pregnancy_start_date","pregnancy_end_date","medicine_date")
     mig_med<-mig_med[,cols,with=F]
-    mig_med[,obs_period_med[med_fl, StudyVar]:=1]
-    mig_med<-mig_med[,lapply(.SD,sum),by=cols,.SDcols=obs_period_med[med_fl, StudyVar]]
-    pregnancy_d3_mig<-merge.data.table(pregnancy_d3_mig,mig_med,all.x=T, by=cols)
-    pregnancy_d3_mig[is.na(get(obs_period_med[med_fl,StudyVar])),obs_period_med[med_fl,StudyVar]:=0]
+    #Identify all baseline prescriptions
+    mig_med[,dif:=medicine_date-pregnancy_start_date]
+    mig_med[dif<0,paste0(obs_period_med[med_fl, StudyVar],"_baseline"):=1]
+    mig_med_baseline<-mig_med[get(paste0(obs_period_med[med_fl, StudyVar],"_baseline"))==1,lapply(.SD, sum),.SDcols = paste0(obs_period_med[med_fl, StudyVar],"_baseline"), by=c("person_id","pregnancy_id","pregnancy_start_date","pregnancy_end_date")]
+    mig_med[,dif:=NULL][,eval(paste0(obs_period_med[med_fl, StudyVar],"_baseline")):=NULL]
+    pregnancy_d3_mig<-merge.data.table(pregnancy_d3_mig,mig_med_baseline,all.x=T, by=cols[!cols %in% "medicine_date"])
+    pregnancy_d3_mig[is.na(get(paste0(obs_period_med[med_fl, StudyVar],"_baseline"))),eval(paste0(obs_period_med[med_fl, StudyVar],"_baseline")):=0]
+    #depending on the DAP
+    if(!DAP_name %in% c("NIHW", "CHUT")){
+      mig_med[,start:=pregnancy_start_date - 3*30.25] 
+      mig_med[medicine_date>=start & medicine_date<pregnancy_start_date,paste0(obs_period_med[med_fl, StudyVar],"_baseline_2"):=1]
+      mig_baseline_2<-mig_med[get(paste0(obs_period_med[med_fl, StudyVar],"_baseline_2"))==1,lapply(.SD, sum),.SDcols = paste0(obs_period_med[med_fl, StudyVar],"_baseline_2"), by=c("person_id","pregnancy_id","pregnancy_start_date","pregnancy_end_date")]
+      mig_med[,start:=NULL][,eval(paste0(obs_period_med[med_fl, StudyVar],"_baseline_2")):=NULL]
+      pregnancy_d3_mig<-merge.data.table(pregnancy_d3_mig,mig_baseline_2,all.x=T, by=cols[!cols %in% "medicine_date"])
+      pregnancy_d3_mig[is.na(get(paste0(obs_period_med[med_fl, StudyVar],"_baseline_2"))),eval(paste0(obs_period_med[med_fl, StudyVar],"_baseline_2")):=0]
+    }else{
+      pregnancy_d3_mig[,eval(paste0(obs_period_med[med_fl, StudyVar],"_baseline_2")):=get(paste0(obs_period_med[med_fl, StudyVar],"_baseline"))]
+    }
+    #during pregnancy
+    mig_med[medicine_date>=pregnancy_start_date & medicine_date<pregnancy_end_date,paste0(obs_period_med[med_fl, StudyVar],"_during"):=1]
+    mig_med_during<-mig_med[get(paste0(obs_period_med[med_fl, StudyVar],"_during"))==1,lapply(.SD, sum),.SDcols = paste0(obs_period_med[med_fl, StudyVar],"_during"), by=c("person_id","pregnancy_id","pregnancy_start_date","pregnancy_end_date")]
+    mig_med[,eval(paste0(obs_period_med[med_fl, StudyVar],"_during")):=NULL]
+    pregnancy_d3_mig<-merge.data.table(pregnancy_d3_mig,mig_med_during,all.x=T, by=cols[!cols %in% "medicine_date"])
+    pregnancy_d3_mig[is.na(get(paste0(obs_period_med[med_fl, StudyVar],"_during"))),eval(paste0(obs_period_med[med_fl, StudyVar],"_during")):=0]
+    #first
+    mig_med[,start:=pregnancy_start_date + trimester_timepoint[Indicator=="first",as.numeric(start)]][,end:=pregnancy_start_date + trimester_timepoint[Indicator=="first",as.numeric(end)]]
+    mig_med[medicine_date>=start & medicine_date<=end,paste0(obs_period_med[med_fl, StudyVar],"_first"):=1]
+    mig_med_first<-mig_med[get(paste0(obs_period_med[med_fl, StudyVar],"_first"))==1,lapply(.SD, sum),.SDcols = paste0(obs_period_med[med_fl, StudyVar],"_first"), by=c("person_id","pregnancy_id","pregnancy_start_date","pregnancy_end_date")]
+    mig_med[,eval(paste0(obs_period_med[med_fl, StudyVar],"_first")):=NULL]
+    pregnancy_d3_mig<-merge.data.table(pregnancy_d3_mig,mig_med_first,all.x=T, by=cols[!cols %in% "medicine_date"])
+    pregnancy_d3_mig[is.na(get(paste0(obs_period_med[med_fl, StudyVar],"_first"))),eval(paste0(obs_period_med[med_fl, StudyVar],"_first")):=0]
+    #second
+    mig_med[,start:=pregnancy_start_date + trimester_timepoint[Indicator=="second",as.numeric(start)]][,end:=pregnancy_start_date + trimester_timepoint[Indicator=="second",as.numeric(end)]]
+    mig_med[medicine_date>=start & medicine_date<=end,paste0(obs_period_med[med_fl, StudyVar],"_second"):=1]
+    mig_med_second<-mig_med[get(paste0(obs_period_med[med_fl, StudyVar],"_second"))==1,lapply(.SD, sum),.SDcols = paste0(obs_period_med[med_fl, StudyVar],"_second"), by=c("person_id","pregnancy_id","pregnancy_start_date","pregnancy_end_date")]
+    mig_med[,eval(paste0(obs_period_med[med_fl, StudyVar],"_second")):=NULL]
+    pregnancy_d3_mig<-merge.data.table(pregnancy_d3_mig,mig_med_second,all.x=T, by=cols[!cols %in% "medicine_date"])
+    pregnancy_d3_mig[is.na(get(paste0(obs_period_med[med_fl, StudyVar],"_second"))),eval(paste0(obs_period_med[med_fl, StudyVar],"_second")):=0]
+    #third
+    mig_med[,start:=pregnancy_start_date + trimester_timepoint[Indicator=="third",as.numeric(start)]][,end:=pregnancy_start_date + trimester_timepoint[Indicator=="third",as.numeric(end)]]
+    mig_med[medicine_date>=start & medicine_date<=end,paste0(obs_period_med[med_fl, StudyVar],"_third"):=1]
+    mig_med_third<-mig_med[get(paste0(obs_period_med[med_fl, StudyVar],"_third"))==1,lapply(.SD, sum),.SDcols = paste0(obs_period_med[med_fl, StudyVar],"_third"), by=c("person_id","pregnancy_id","pregnancy_start_date","pregnancy_end_date")]
+    mig_med[,eval(paste0(obs_period_med[med_fl, StudyVar],"_third")):=NULL]
+    pregnancy_d3_mig<-merge.data.table(pregnancy_d3_mig,mig_med_third,all.x=T, by=cols[!cols %in% "medicine_date"])
+    pregnancy_d3_mig[is.na(get(paste0(obs_period_med[med_fl, StudyVar],"_third"))),eval(paste0(obs_period_med[med_fl, StudyVar],"_third")):=0]
+    
   }else{
-    pregnancy_d3_mig[,obs_period_med[med_fl,StudyVar]:=0]
+    pregnancy_d3_mig[,eval(paste0(obs_period_med[med_fl,StudyVar],"_baseline")):=0]
+    pregnancy_d3_mig[,eval(paste0(obs_period_med[med_fl,StudyVar],"_baseline_2")):=0]
+    pregnancy_d3_mig[,eval(paste0(obs_period_med[med_fl,StudyVar],"_during")):=0]
+    pregnancy_d3_mig[,eval(paste0(obs_period_med[med_fl,StudyVar],"_first")):=0]
+    pregnancy_d3_mig[,eval(paste0(obs_period_med[med_fl,StudyVar],"_second")):=0]
+    pregnancy_d3_mig[,eval(paste0(obs_period_med[med_fl,StudyVar],"_third")):=0]
   }
 }else{
-  pregnancy_d3_mig[,obs_period_med[med_fl,StudyVar]:=0]
+  pregnancy_d3_mig[,eval(paste0(obs_period_med[med_fl,StudyVar],"_baseline")):=0]
+  pregnancy_d3_mig[,eval(paste0(obs_period_med[med_fl,StudyVar],"_baseline_2")):=0]
+  pregnancy_d3_mig[,eval(paste0(obs_period_med[med_fl,StudyVar],"_during")):=0]
+  pregnancy_d3_mig[,eval(paste0(obs_period_med[med_fl,StudyVar],"_first")):=0]
+  pregnancy_d3_mig[,eval(paste0(obs_period_med[med_fl,StudyVar],"_second")):=0]
+  pregnancy_d3_mig[,eval(paste0(obs_period_med[med_fl,StudyVar],"_third")):=0]
+  
 }
 }
 rm(mig_med) 
@@ -417,7 +534,7 @@ removed_rec_med[is.na(before_start),before_start:="N/A"]
 removed_rec_med[is.na(after_end),after_end:="N/A"]
 
 removed_rec<-rbind(removed_rec,removed_rec_med)
-fwrite(removed_rec,paste0(projectFolder,"/g_output/PE and GDM algorithm/removed_rec_gdm.csv"),row.names = F)
+fwrite(removed_rec,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_excluded_records_migraine.csv"),row.names = F)
 rm(removed_rec)
 
 #Pregnancies that had the event of interest not in the timeframe of study were excluded, this is why the number of pregnancies is different between different events
@@ -425,334 +542,553 @@ sum_med<-as.data.table(do.call(rbind,sum))
 rm(original,before,after,sum)
 rm(mig_med_fl)
 
+names_medicines<-c(paste0(obs_period_med[,StudyVar],"_baseline"),paste0(obs_period_med[med_fl,StudyVar],"_baseline_2"),paste0(obs_period_med[med_fl,StudyVar],"_during"),paste0(obs_period_med[med_fl,StudyVar],"_first"),paste0(obs_period_med[med_fl,StudyVar],"_second"),paste0(obs_period_med[med_fl,StudyVar],"_third"))
 #identify events that are not present from conditions_migraine
-not_present<-setdiff(obs_period_diag[,StudyVar], names(pregnancy_d3_mig))
+not_present<-setdiff(names_medicines, names(pregnancy_d3_mig))
 if(length(not_present)>0){
 pregnancy_d3_mig[,eval(not_present):=list(0)]
 }
-rm(obs_period_diag)
+#rm(obs_period_med)
 
-print("Export GDM pregnancy D3")
+obs_period<-rbind(obs_period_diag,obs_period_med)
+fwrite(obs_period, paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_observation_periods_migraine.csv"),row.names = F)
+rm(obs_period,obs_period_diag,obs_period_med)
+
+print("Export Migraine pregnancy D3")
 fwrite(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/pregnancy_d3_migraine_algorithm.csv"),row.names = F)
 
 ####APPLY Migraine ALGORITHM####
 algorithm_template<-fread(paste0(projectFolder, "/p_steps/parameters/algorithms.csv"))
-####MIG_1_a:Prevalence of migraine at baseline when lookback==12 months####
-print("Create algorithm MIG_1_a.")
-MIG_1_a<-algorithm_template[NEW_STUDY_VARIABLES=="MIG_1_a"]
-excl_col<-MIG_1_a[TYPE=="AND_NOT",STUDY_VARIABLES]
-inc_col<-MIG_1_a[TYPE=="AND",STUDY_VARIABLES]
-start_date<-MIG_1_a[,START]
-end_date<-MIG_1_a[,END]
-#load the d3
-mig_dt<-readRDS(paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/",inc_col,"_pregnancy_D3.rds"))
-if("op_end_date_mig" %in% names(mig_dt)){mig_dt[,op_end_date_mig:=NULL]}
-if("op_start_date_mig" %in% names(mig_dt)){mig_dt[,op_start_date_mig:=NULL]}
-if("obs_min" %in% names(mig_dt)){mig_dt[,obs_min:=NULL]}
-if("obs_max" %in% names(mig_dt)){mig_dt[,obs_max:=NULL]}
-if("death_date" %in% names(mig_dt)){mig_dt[,death_date:=NULL]}
-if("keep" %in% names(mig_dt)){mig_dt[,keep:=NULL]}
-#identify all events at baseline
-mig_dt[,start:=pregnancy_start_date-start_date]
-mig_dt[,end:=pregnancy_start_date-end_date]
-mig_dt[event_date>=start & event_date<=end, include:=1]
+#### MIG_Dx_a:Prevalence of migraine at baseline when lookback==12 months(3 months) ####
+print("Create algorithm MIG_Dx_a")
+MIG_Dx_a<-algorithm_template[NEW_STUDY_VARIABLES=="MIG_Dx_a"]
+inc_col<-MIG_Dx_a[TYPE=="AND",STUDY_VARIABLES]
 
+if(length(inc_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("&" , lapply(.SD,`>=`, 1)),.SDcols=inc_col],include:=1]}else{pregnancy_d3_mig[,include:=NA]}
 
-saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/MIG_1_a_D3.rds"))
+saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/MIG_Dx_a_D3.rds"))
 
-#export Mig_1_a
-Mig_1_a_dt<-data.table(algorithm="MIG_1_a", no_diagnosed_pregnancies=mig_dt[include==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id),.N])
+#export MIG_Dx_a
+MIG_Dx_a_dt<-data.table(algorithm="MIG_Dx_a", no_diagnosed_pregnancies=pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id),.N])
+MIG_Dx_a_dt[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Dx_a_dt[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
+#lower CI
+MIG_Dx_a_dt[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
+MIG_Dx_a_dt[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
+MIG_Dx_a_dt[lower_95_CI<0,lower_95_CI:=0]
 
-pregnancy_d3_mig[,maternal_age:=as.character(maternal_age)]
-records<-pregnancy_d3_mig[include==1 & is.na(exclude) & !duplicated(pregnancy_id), .N, by=.(maternal_age)]
-names(records)<-c("maternal_age","no_diagnosed_pregnancies")
-total<-pregnancy_d3_mig[!duplicated(pregnancy_id), by="maternal_age",.N]
-names(total)<-c("maternal_age","no_pregnancies")
-records<-merge.data.table(records,total,by="maternal_age",all=T)
-GDM_1_b<-data.table(algorithm="GDM_1", records)
-GDM_1_b[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
-GDM_1_b<-GDM_1_b[order(maternal_age)]
-rm(records,total)
+fwrite(MIG_Dx_a_dt,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_Dx_a.csv"),row.names = F)
 
-records<-pregnancy_d3_mig[include==1 & is.na(exclude) & !duplicated(pregnancy_id),by="year", .N]
-names(records)<-c("year","no_diagnosed_pregnancies")
-total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by="year",.N]
-names(total)<-c("year","no_pregnancies")
-records<-merge.data.table(records,total,by="year",all=T)
-GDM_1_c<-data.table(algorithm="GDM_1", records)
-GDM_1_c[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
-GDM_1_c<-GDM_1_c[order(year)]
-rm(records,total)
-
-records<-pregnancy_d3_mig[include==1 & is.na(exclude) & !duplicated(pregnancy_id),by=c("year_group","maternal_age"), .N]
-names(records)<-c("year_group","maternal_age", "no_diagnosed_pregnancies")
-total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by=c("year_group","maternal_age"),.N]
-names(total)<-c("year_group","maternal_age","no_pregnancies")
-records<-merge.data.table(records,total,by=c("year_group","maternal_age"), all=T)
-GDM_1_d<-data.table(algorithm="GDM_1", records)
-GDM_1_d[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
-GDM_1_d<-GDM_1_d[order(year_group,maternal_age)]
-rm(records,total)
-pregnancy_d3_mig[,include:=NULL][,exclude:=NULL]
-
-####GDM_2####
-print("Create algorithm GDM_2.")
-GDM_2<-algorithm_template[NEW_STUDY_VARIABLES=="GDM_2"]
-excl_col<-GDM_2[TYPE=="AND_NOT",STUDY_VARIABLES]
-#inc_col<-GDM_2[TYPE=="AND",STUDY_VARIABLES]
-alt_col<-GDM_2[TYPE=="OR",STUDY_VARIABLES]
-
-if(length(alt_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("|" , lapply(.SD,`>=`, 1)),.SDcols=alt_col],alternative:=1]}else{pregnancy_d3_mig[,alternative:=NA]}
-if(length(excl_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("|" , lapply(.SD,`>=`, 1)),.SDcols=excl_col],exclude:=1]}else{pregnancy_d3_mig[,exclude:=NA]}
-
-saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/GDM_2_D3.rds"),row.names = F)
-
-#export GDM_2
-GDM_2_dt<-data.table(algorithm="GDM_2", no_diagnosed_pregnancies=pregnancy_d3_mig[alternative==1 & is.na(exclude) & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id),.N])
-
-pregnancy_d3_mig[,maternal_age:=as.character(maternal_age)]
-records<-pregnancy_d3_mig[alternative==1 & is.na(exclude) & !duplicated(pregnancy_id), .N, by=.(maternal_age)]
-names(records)<-c("maternal_age","no_diagnosed_pregnancies")
-total<-pregnancy_d3_mig[!duplicated(pregnancy_id), by="maternal_age",.N]
-names(total)<-c("maternal_age","no_pregnancies")
-records<-merge.data.table(records,total,by="maternal_age",all=T)
-GDM_2_b<-data.table(algorithm="GDM_2", records)
-GDM_2_b[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
-GDM_2_b<-GDM_2_b[order(maternal_age)]
-rm(records,total)
-
-records<-pregnancy_d3_mig[alternative==1 & is.na(exclude) & !duplicated(pregnancy_id),by="year", .N]
-names(records)<-c("year","no_diagnosed_pregnancies")
-total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by="year",.N]
-names(total)<-c("year","no_pregnancies")
-records<-merge.data.table(records,total,by="year",all=T)
-GDM_2_c<-data.table(algorithm="GDM_2", records)
-GDM_2_c[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
-GDM_2_c<-GDM_2_c[order(year)]
-rm(records,total)
-
-records<-pregnancy_d3_mig[alternative==1 & is.na(exclude) & !duplicated(pregnancy_id),by=c("year_group","maternal_age"), .N]
-names(records)<-c("year_group","maternal_age", "no_diagnosed_pregnancies")
-total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by=c("year_group","maternal_age"),.N]
-names(total)<-c("year_group","maternal_age","no_pregnancies")
-records<-merge.data.table(records,total,by=c("year_group","maternal_age"), all=T)
-GDM_2_d<-data.table(algorithm="GDM_2", records)
-GDM_2_d[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
-GDM_2_d<-GDM_2_d[order(year_group,maternal_age)]
-rm(records,total)
-pregnancy_d3_mig[,alternative:=NULL][,exclude:=NULL]
-
-####GDM_3####
-print("Create algorithm GDM_3.")
-GDM_3<-algorithm_template[NEW_STUDY_VARIABLES=="GDM_3"]
-excl_col<-GDM_3[TYPE=="AND_NOT",STUDY_VARIABLES]
-#inc_col<-GDM_2[TYPE=="AND",STUDY_VARIABLES]
-alt_col<-GDM_3[TYPE=="OR",STUDY_VARIABLES]
-if(algorithm_template[NEW_STUDY_VARIABLES=="GDM_3" & COMPLEXITY=="complex" & !is.na(RULE),.N]>0){
-  rule<-unique(algorithm_template[NEW_STUDY_VARIABLES=="GDM_3" & COMPLEXITY=="complex",RULE])
-  value<-unique(algorithm_template[NEW_STUDY_VARIABLES=="GDM_3" & COMPLEXITY=="complex",VALUE])
-}else{
-  script<-algorithm_template[NEW_STUDY_VARIABLES=="GDM_3" & COMPLEXITY=="complex",SCRIPT]
-}
-
-if(length(alt_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("|" , lapply(.SD,rule, value)),.SDcols=alt_col],alternative:=1]}else{pregnancy_d3_mig[,alternative:=NA]}
-if(length(excl_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("|" , lapply(.SD,`>=`, 1)),.SDcols=excl_col],exclude:=1]}else{pregnancy_d3_mig[,exclude:=NA]}
-
-saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/GDM_3_D3.rds"),row.names = F)
-
-#export GDM_3
-GDM_3_dt<-data.table(algorithm="GDM_3", no_diagnosed_pregnancies=pregnancy_d3_mig[alternative==1 & is.na(exclude) & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id),.N])
-
-pregnancy_d3_mig[,maternal_age:=as.character(maternal_age)]
-records<-pregnancy_d3_mig[alternative==1 & is.na(exclude) & !duplicated(pregnancy_id), .N, by=.(maternal_age)]
-names(records)<-c("maternal_age","no_diagnosed_pregnancies")
-total<-pregnancy_d3_mig[!duplicated(pregnancy_id), by="maternal_age",.N]
-names(total)<-c("maternal_age","no_pregnancies")
-records<-merge.data.table(records,total,by="maternal_age",all=T)
-GDM_3_b<-data.table(algorithm="GDM_3", records)
-GDM_3_b[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
-GDM_3_b<-GDM_3_b[order(maternal_age)]
-rm(records,total)
-
-records<-pregnancy_d3_mig[alternative==1 & is.na(exclude) & !duplicated(pregnancy_id),by="year", .N]
-names(records)<-c("year","no_diagnosed_pregnancies")
-total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by="year",.N]
-names(total)<-c("year","no_pregnancies")
-records<-merge.data.table(records,total,by="year",all=T)
-GDM_3_c<-data.table(algorithm="GDM_3", records)
-GDM_3_c[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
-GDM_3_c<-GDM_3_c[order(year)]
-rm(records,total)
-
-records<-pregnancy_d3_mig[alternative==1 & is.na(exclude) & !duplicated(pregnancy_id),by=c("year_group","maternal_age"), .N]
-names(records)<-c("year_group","maternal_age", "no_diagnosed_pregnancies")
-total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by=c("year_group","maternal_age"),.N]
-names(total)<-c("year_group","maternal_age","no_pregnancies")
-records<-merge.data.table(records,total,by=c("year_group","maternal_age"), all=T)
-GDM_3_d<-data.table(algorithm="GDM_3", records)
-GDM_3_d[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
-GDM_3_d<-GDM_3_d[order(year_group,maternal_age)]
-rm(records,total)
-pregnancy_d3_mig[,alternative:=NULL][,exclude:=NULL]
-
-####GDM_4####
-print("Create algorithm GDM_4.")
-GDM_4<-algorithm_template[NEW_STUDY_VARIABLES=="GDM_4"]
-excl_col<-GDM_4[TYPE=="AND_NOT",STUDY_VARIABLES]
-#inc_col<-GDM_2[TYPE=="AND",STUDY_VARIABLES]
-alt_col<-GDM_4[TYPE=="OR",STUDY_VARIABLES]
-
-if(length(alt_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("|" , lapply(.SD,`>=`, 1)),.SDcols=alt_col],alternative:=1]}else{pregnancy_d3_mig[,alternative:=NA]}
-if(length(excl_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("|" , lapply(.SD,`>=`, 1)),.SDcols=excl_col],exclude:=1]}else{pregnancy_d3_mig[,exclude:=NA]}
-
-saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/GDM_4_D3.rds"),row.names = F)
-
-#export GDM_3
-GDM_4_dt<-data.table(algorithm="GDM_4", no_diagnosed_pregnancies=pregnancy_d3_mig[alternative==1 & is.na(exclude) & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id),.N])
-
-pregnancy_d3_mig[,maternal_age:=as.character(maternal_age)]
-records<-pregnancy_d3_mig[alternative==1 & is.na(exclude) & !duplicated(pregnancy_id), .N, by=.(maternal_age)]
-names(records)<-c("maternal_age","no_diagnosed_pregnancies")
-total<-pregnancy_d3_mig[!duplicated(pregnancy_id), by="maternal_age",.N]
-names(total)<-c("maternal_age","no_pregnancies")
-records<-merge.data.table(records,total,by="maternal_age",all=T)
-GDM_4_b<-data.table(algorithm="GDM_4", records)
-GDM_4_b[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
-GDM_4_b<-GDM_4_b[order(maternal_age)]
-rm(records,total)
-
-records<-pregnancy_d3_mig[alternative==1 & is.na(exclude) & !duplicated(pregnancy_id),by="year", .N]
-names(records)<-c("year","no_diagnosed_pregnancies")
-total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by="year",.N]
-names(total)<-c("year","no_pregnancies")
-records<-merge.data.table(records,total,by="year",all=T)
-GDM_4_c<-data.table(algorithm="GDM_4", records)
-GDM_4_c[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
-GDM_4_c<-GDM_4_c[order(year)]
-rm(records,total)
-
-records<-pregnancy_d3_mig[alternative==1 & is.na(exclude) & !duplicated(pregnancy_id),by=c("year_group","maternal_age"), .N]
-names(records)<-c("year_group","maternal_age", "no_diagnosed_pregnancies")
-total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by=c("year_group","maternal_age"),.N]
-names(total)<-c("year_group","maternal_age","no_pregnancies")
-records<-merge.data.table(records,total,by=c("year_group","maternal_age"), all=T)
-GDM_4_d<-data.table(algorithm="GDM_4", records)
-GDM_4_d[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
-GDM_4_d<-GDM_4_d[order(year_group,maternal_age)]
-rm(records,total)
-pregnancy_d3_mig[,alternative:=NULL][,exclude:=NULL]
-
-####GDM_5####
-print("Create algorithm GDM_5.")
-GDM_5<-algorithm_template[NEW_STUDY_VARIABLES=="GDM_5"]
-excl_col<-GDM_5[TYPE=="AND_NOT",STUDY_VARIABLES]
-#inc_col<-GDM_2[TYPE=="AND",STUDY_VARIABLES]
-alt_col<-GDM_5[TYPE=="OR",STUDY_VARIABLES]
-
-if(length(alt_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("|" , lapply(.SD,`>=`, 1)),.SDcols=alt_col],alternative:=1]}else{pregnancy_d3_mig[,alternative:=NA]}
-if(length(excl_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("|" , lapply(.SD,`>=`, 1)),.SDcols=excl_col],exclude:=1]}else{pregnancy_d3_mig[,exclude:=NA]}
-
-saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/GDM_5_D3.rds"),row.names = F)
-
-#export GDM_3
-GDM_5_dt<-data.table(algorithm="GDM_5", no_diagnosed_pregnancies=pregnancy_d3_mig[alternative==1 & is.na(exclude) & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id),.N])
-
-pregnancy_d3_mig[,maternal_age:=as.character(maternal_age)]
-records<-pregnancy_d3_mig[alternative==1 & is.na(exclude) & !duplicated(pregnancy_id), .N, by=.(maternal_age)]
-names(records)<-c("maternal_age","no_diagnosed_pregnancies")
-total<-pregnancy_d3_mig[!duplicated(pregnancy_id), by="maternal_age",.N]
-names(total)<-c("maternal_age","no_pregnancies")
-records<-merge.data.table(records,total,by="maternal_age",all=T)
-GDM_5_b<-data.table(algorithm="GDM_5", records)
-GDM_5_b[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
-GDM_5_b<-GDM_5_b[order(maternal_age)]
-rm(records,total)
-
-records<-pregnancy_d3_mig[alternative==1 & is.na(exclude) & !duplicated(pregnancy_id),by="year", .N]
-names(records)<-c("year","no_diagnosed_pregnancies")
-total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by="year",.N]
-names(total)<-c("year","no_pregnancies")
-records<-merge.data.table(records,total,by="year",all=T)
-GDM_5_c<-data.table(algorithm="GDM_5", records)
-GDM_5_c[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
-GDM_5_c<-GDM_5_c[order(year)]
-rm(records,total)
-
-records<-pregnancy_d3_mig[alternative==1 & is.na(exclude) & !duplicated(pregnancy_id),by=c("year_group","maternal_age"), .N]
-names(records)<-c("year_group","maternal_age", "no_diagnosed_pregnancies")
-total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by=c("year_group","maternal_age"),.N]
-names(total)<-c("year_group","maternal_age","no_pregnancies")
-records<-merge.data.table(records,total,by=c("year_group","maternal_age"), all=T)
-GDM_5_d<-data.table(algorithm="GDM_5", records)
-GDM_5_d[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
-GDM_5_d<-GDM_5_d[order(year_group,maternal_age)]
-rm(records,total)
-pregnancy_d3_mig[,alternative:=NULL][,exclude:=NULL]
-
-###GDM_8###
-GDM_8<-algorithm_template[NEW_STUDY_VARIABLES=="GDM_8"]
-#excl_col<-GDM_8[TYPE=="AND_NOT",STUDY_VARIABLES]
-inc_col<-GDM_8[TYPE=="AND",STUDY_VARIABLES]
-
-#pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("|" , lapply(.SD,`==`, 1)),.SDcols=excl_col],exclude:=1]
-pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("&" , lapply(.SD,`>=`, 1)),.SDcols=inc_col],include:=1]
-#export GDM_8
-GDM_8_dt<-data.table(algorithm="GDM_8", no_diagnosed_pregnancies=pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id),.N])
-
-saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/GDM_8_D3.rds"),row.names = F)
-
-#export GDM_8
-GDM_8_dt<-data.table(algorithm="GDM_8", no_diagnosed_pregnancies=pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id),.N])
-
+#by maternal age
 pregnancy_d3_mig[,maternal_age:=as.character(maternal_age)]
 records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id), .N, by=.(maternal_age)]
 names(records)<-c("maternal_age","no_diagnosed_pregnancies")
 total<-pregnancy_d3_mig[!duplicated(pregnancy_id), by="maternal_age",.N]
 names(total)<-c("maternal_age","no_pregnancies")
 records<-merge.data.table(records,total,by="maternal_age",all=T)
-GDM_8_b<-data.table(algorithm="GDM_8", records)
-GDM_8_b[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
-GDM_8_b<-GDM_8_b[order(maternal_age)]
+MIG_Dx_a_1<-data.table(algorithm="MIG_Dx_a", records)
+MIG_Dx_a_1[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
+MIG_Dx_a_1<-MIG_Dx_a_1[order(maternal_age)]
 rm(records,total)
+MIG_Dx_a_1[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Dx_a_1[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
+MIG_Dx_a_1[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
+#lower CI
+MIG_Dx_a_1[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
+MIG_Dx_a_1[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
+MIG_Dx_a_1[lower_95_CI<0,lower_95_CI:=0]
 
+fwrite(MIG_Dx_a_1,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_Dx_a_age.csv"),row.names = F)
+rm(MIG_Dx_a_1)
+
+#by year
 records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by="year", .N]
 names(records)<-c("year","no_diagnosed_pregnancies")
 total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by="year",.N]
 names(total)<-c("year","no_pregnancies")
 records<-merge.data.table(records,total,by="year",all=T)
-GDM_8_c<-data.table(algorithm="GDM_8", records)
-GDM_8_c[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
-GDM_8_c<-GDM_8_c[order(year)]
+MIG_Dx_a_2<-data.table(algorithm="MIG_Dx_a", records)
+MIG_Dx_a_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
+MIG_Dx_a_2<-MIG_Dx_a_2[order(year)]
 rm(records,total)
+MIG_Dx_a_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Dx_a_2[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
+MIG_Dx_a_2[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
+#lower CI
+MIG_Dx_a_2[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
+MIG_Dx_a_2[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
+MIG_Dx_a_2[lower_95_CI<0,lower_95_CI:=0]
+fwrite(MIG_Dx_a_2,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_Dx_a_year.csv"),row.names = F)
+rm(MIG_Dx_a_2)
 
+#by year group and maternal age
 records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by=c("year_group","maternal_age"), .N]
 names(records)<-c("year_group","maternal_age", "no_diagnosed_pregnancies")
 total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by=c("year_group","maternal_age"),.N]
 names(total)<-c("year_group","maternal_age","no_pregnancies")
 records<-merge.data.table(records,total,by=c("year_group","maternal_age"), all=T)
-GDM_8_d<-data.table(algorithm="GDM_8", records)
-GDM_8_d[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
-GDM_8_d<-GDM_8_d[order(year_group,maternal_age)]
+MIG_Dx_a_3<-data.table(algorithm="MIG_Dx_a", records)
+MIG_Dx_a_3[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
+MIG_Dx_a_3<-MIG_Dx_a_3[order(year_group,maternal_age)]
 rm(records,total)
+MIG_Dx_a_3[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Dx_a_3[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
+MIG_Dx_a_3[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
+#lower CI
+MIG_Dx_a_3[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
+MIG_Dx_a_3[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
+MIG_Dx_a_3[lower_95_CI<0,lower_95_CI:=0]
 pregnancy_d3_mig[,include:=NULL]
+rm(MIG_Dx_a)
+fwrite(MIG_Dx_a_3,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_Dx_a_year_age.csv"),row.names = F)
+rm(MIG_Dx_a_3)
 
-if("DM" %in% names(pregnancy_d3_mig)){pregnancy_d3_mig[,DM:=NULL]}
-if("GD" %in% names(pregnancy_d3_mig)){pregnancy_d3_mig[,GD:=NULL]}
-if("GDM_checkbox" %in% names(pregnancy_d3_mig)){pregnancy_d3_mig[,GDM_checkbox:=NULL]}
-if("PRE_GD" %in% names(pregnancy_d3_mig)){pregnancy_d3_mig[,PRE_GD:=NULL]}
-if("UNK_GD" %in% names(pregnancy_d3_mig)){pregnancy_d3_mig[,UNK_GD:=NULL]}
-if("DM_PREG" %in% names(pregnancy_d3_mig)){pregnancy_d3_mig[,DM_PREG:=NULL]}
-if("GD_med" %in% names(pregnancy_d3_mig)){pregnancy_d3_mig[,GD_med:=NULL]}
-if("PRE_GD_med" %in% names(pregnancy_d3_mig)){pregnancy_d3_mig[,PRE_GD_med:=NULL]}
+#### MIG_Dx_b:Prevalence of migraine at baseline when lookback==3 months ####
+print("Create algorithm MIG_Dx_b")
+MIG_Dx_b<-algorithm_template[NEW_STUDY_VARIABLES=="MIG_Dx_b"]
+inc_col<-MIG_Dx_b[TYPE=="AND",STUDY_VARIABLES]
 
-date_running_end<-Sys.Date()
-end_time<-Sys.time()
+if(length(inc_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("&" , lapply(.SD,`>=`, 1)),.SDcols=inc_col],include:=1]}else{pregnancy_d3_mig[,include:=NA]}
 
-time_log<-data.table(DAP=data_access_provider_name,
-                     Script="Step_04_c_migraine_algorithms.R", 
-                     Start_date=date_running_start, 
-                     End_date=date_running_end,
-                     Time_elaspsed=format(end_time-initial_time, digits=2))
-fwrite(time_log,paste0(output_dir,"/Time log/Step_04_c_time_log.csv"),row.names = F)
+saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/MIG_Dx_b_D3.rds"))
+
+
+#export MIG_Dx_b
+MIG_Dx_b_dt<-data.table(algorithm="MIG_Dx_b", no_diagnosed_pregnancies=pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id),.N])
+MIG_Dx_b_dt[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Dx_b_dt[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
+#lower CI
+MIG_Dx_b_dt[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
+MIG_Dx_b_dt[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
+MIG_Dx_b_dt[lower_95_CI<0,lower_95_CI:=0]
+
+fwrite(MIG_Dx_b_dt,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_Dx_b.csv"),row.names = F)
+
+#by maternal age
+pregnancy_d3_mig[,maternal_age:=as.character(maternal_age)]
+records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id), .N, by=.(maternal_age)]
+names(records)<-c("maternal_age","no_diagnosed_pregnancies")
+total<-pregnancy_d3_mig[!duplicated(pregnancy_id), by="maternal_age",.N]
+names(total)<-c("maternal_age","no_pregnancies")
+records<-merge.data.table(records,total,by="maternal_age",all=T)
+MIG_Dx_b_1<-data.table(algorithm="MIG_Dx_b", records)
+MIG_Dx_b_1[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
+MIG_Dx_b_1<-MIG_Dx_b_1[order(maternal_age)]
+rm(records,total)
+MIG_Dx_b_1[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Dx_b_1[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
+MIG_Dx_b_1[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
+#lower CI
+MIG_Dx_b_1[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
+MIG_Dx_b_1[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
+MIG_Dx_b_1[lower_95_CI<0,lower_95_CI:=0]
+fwrite(MIG_Dx_b_1,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_Dx_b_age.csv"),row.names = F)
+rm(MIG_Dx_b_1)
+
+
+#by year
+records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by="year", .N]
+names(records)<-c("year","no_diagnosed_pregnancies")
+total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by="year",.N]
+names(total)<-c("year","no_pregnancies")
+records<-merge.data.table(records,total,by="year",all=T)
+MIG_Dx_b_2<-data.table(algorithm="MIG_Dx_b", records)
+MIG_Dx_b_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
+MIG_Dx_b_2<-MIG_Dx_b_2[order(year)]
+rm(records,total)
+MIG_Dx_b_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Dx_b_2[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
+MIG_Dx_b_2[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
+#lower CI
+MIG_Dx_b_2[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
+MIG_Dx_b_2[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
+MIG_Dx_b_2[lower_95_CI<0,lower_95_CI:=0]
+fwrite(MIG_Dx_b_2,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_Dx_b_year.csv"),row.names = F)
+rm(MIG_Dx_b_2)
+
+
+#by year group and maternal age
+records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by=c("year_group","maternal_age"), .N]
+names(records)<-c("year_group","maternal_age", "no_diagnosed_pregnancies")
+total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by=c("year_group","maternal_age"),.N]
+names(total)<-c("year_group","maternal_age","no_pregnancies")
+records<-merge.data.table(records,total,by=c("year_group","maternal_age"), all=T)
+MIG_Dx_b_3<-data.table(algorithm="MIG_Dx_b", records)
+MIG_Dx_b_3[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
+MIG_Dx_b_3<-MIG_Dx_b_3[order(year_group,maternal_age)]
+rm(records,total)
+MIG_Dx_b_3[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Dx_b_3[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
+MIG_Dx_b_3[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
+#lower CI
+MIG_Dx_b_3[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
+MIG_Dx_b_3[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
+MIG_Dx_b_3[lower_95_CI<0,lower_95_CI:=0]
+pregnancy_d3_mig[,include:=NULL]
+fwrite(MIG_Dx_b_3,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_Dx_b_year_age.csv"),row.names = F)
+rm(MIG_Dx_b_3)
+
+
+#### MIG_Rx_a:Prevalence of migraine at baseline when lookback==12 months(3 months) ####
+print("Create algorithm MIG_Rx_a")
+MIG_Rx_a<-algorithm_template[NEW_STUDY_VARIABLES=="MIG_Rx_a"]
+inc_col<-MIG_Rx_a[TYPE=="AND",STUDY_VARIABLES]
+
+if(length(inc_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("&" , lapply(.SD,`>=`, 1)),.SDcols=inc_col],include:=1]}else{pregnancy_d3_mig[,include:=NA]}
+
+saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/MIG_Rx_a_D3.rds"))
+
+#export MIG_Rx_a
+MIG_Rx_a_dt<-data.table(algorithm="MIG_Rx_a", no_diagnosed_pregnancies=pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id),.N])
+MIG_Rx_a_dt[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Rx_a_dt[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
+#lower CI
+MIG_Rx_a_dt[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
+MIG_Rx_a_dt[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
+MIG_Rx_a_dt[lower_95_CI<0,lower_95_CI:=0]
+
+fwrite(MIG_Rx_a_dt,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_Rx_a.csv"),row.names = F)
+
+#by maternal age
+pregnancy_d3_mig[,maternal_age:=as.character(maternal_age)]
+records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id), .N, by=.(maternal_age)]
+names(records)<-c("maternal_age","no_diagnosed_pregnancies")
+total<-pregnancy_d3_mig[!duplicated(pregnancy_id), by="maternal_age",.N]
+names(total)<-c("maternal_age","no_pregnancies")
+records<-merge.data.table(records,total,by="maternal_age",all=T)
+MIG_Rx_a_1<-data.table(algorithm="MIG_Rx_a", records)
+MIG_Rx_a_1[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
+MIG_Rx_a_1<-MIG_Rx_a_1[order(maternal_age)]
+rm(records,total)
+MIG_Rx_a_1[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Rx_a_1[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
+MIG_Rx_a_1[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
+#lower CI
+MIG_Rx_a_1[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
+MIG_Rx_a_1[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
+MIG_Rx_a_1[lower_95_CI<0,lower_95_CI:=0]
+
+fwrite(MIG_Rx_a_1,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_Rx_a_age.csv"),row.names = F)
+rm(MIG_Rx_a_1)
+
+
+#by year
+records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by="year", .N]
+names(records)<-c("year","no_diagnosed_pregnancies")
+total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by="year",.N]
+names(total)<-c("year","no_pregnancies")
+records<-merge.data.table(records,total,by="year",all=T)
+MIG_Rx_a_2<-data.table(algorithm="MIG_Rx_a", records)
+MIG_Rx_a_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
+MIG_Rx_a_2<-MIG_Rx_a_2[order(year)]
+rm(records,total)
+MIG_Rx_a_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Rx_a_2[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
+MIG_Rx_a_2[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
+#lower CI
+MIG_Rx_a_2[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
+MIG_Rx_a_2[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
+MIG_Rx_a_2[lower_95_CI<0,lower_95_CI:=0]
+fwrite(MIG_Rx_a_2,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_Rx_a_year.csv"),row.names = F)
+rm(MIG_Rx_a_2)
+
+
+#by year group and maternal age
+records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by=c("year_group","maternal_age"), .N]
+names(records)<-c("year_group","maternal_age", "no_diagnosed_pregnancies")
+total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by=c("year_group","maternal_age"),.N]
+names(total)<-c("year_group","maternal_age","no_pregnancies")
+records<-merge.data.table(records,total,by=c("year_group","maternal_age"), all=T)
+MIG_Rx_a_3<-data.table(algorithm="MIG_Rx_a", records)
+MIG_Rx_a_3[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
+MIG_Rx_a_3<-MIG_Rx_a_3[order(year_group,maternal_age)]
+rm(records,total)
+MIG_Rx_a_3[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Rx_a_3[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
+MIG_Rx_a_3[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
+#lower CI
+MIG_Rx_a_3[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
+MIG_Rx_a_3[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
+MIG_Rx_a_3[lower_95_CI<0,lower_95_CI:=0]
+
+pregnancy_d3_mig[,include:=NULL]
+fwrite(MIG_Rx_a_3,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_Rx_a_year_age.csv"),row.names = F)
+rm(MIG_Rx_a_3)
+
+#### MIG_Rx_b:Prevalence of migraine at baseline when lookback==3 months ####
+print("Create algorithm MIG_Rx_b")
+MIG_Rx_b<-algorithm_template[NEW_STUDY_VARIABLES=="MIG_Rx_b"]
+inc_col<-MIG_Rx_b[TYPE=="AND",STUDY_VARIABLES]
+
+if(length(inc_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("&" , lapply(.SD,`>=`, 1)),.SDcols=inc_col],include:=1]}else{pregnancy_d3_mig[,include:=NA]}
+
+saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/MIG_Rx_b_D3.rds"))
+
+#export MIG_Dx_a
+MIG_Rx_b_dt<-data.table(algorithm="MIG_Rx_b", no_diagnosed_pregnancies=pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id),.N])
+MIG_Rx_b_dt[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Rx_b_dt[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
+#lower CI
+MIG_Rx_b_dt[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
+MIG_Rx_b_dt[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
+MIG_Rx_b_dt[lower_95_CI<0,lower_95_CI:=0]
+
+fwrite(MIG_Rx_b_dt,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_Rx_b.csv"),row.names = F)
+
+#by maternal age
+pregnancy_d3_mig[,maternal_age:=as.character(maternal_age)]
+records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id), .N, by=.(maternal_age)]
+names(records)<-c("maternal_age","no_diagnosed_pregnancies")
+total<-pregnancy_d3_mig[!duplicated(pregnancy_id), by="maternal_age",.N]
+names(total)<-c("maternal_age","no_pregnancies")
+records<-merge.data.table(records,total,by="maternal_age",all=T)
+MIG_Rx_b_1<-data.table(algorithm="MIG_Rx_b", records)
+MIG_Rx_b_1[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
+MIG_Rx_b_1<-MIG_Rx_b_1[order(maternal_age)]
+rm(records,total)
+MIG_Rx_b_1[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Rx_b_1[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
+MIG_Rx_b_1[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
+#lower CI
+MIG_Rx_b_1[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
+MIG_Rx_b_1[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
+MIG_Rx_b_1[lower_95_CI<0,lower_95_CI:=0]
+
+fwrite(MIG_Rx_b_1,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_Rx_b_age.csv"),row.names = F)
+rm(MIG_Rx_b_1)
+
+
+#by year
+records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by="year", .N]
+names(records)<-c("year","no_diagnosed_pregnancies")
+total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by="year",.N]
+names(total)<-c("year","no_pregnancies")
+records<-merge.data.table(records,total,by="year",all=T)
+MIG_Rx_b_2<-data.table(algorithm="MIG_Rx_b", records)
+MIG_Rx_b_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
+MIG_Rx_b_2<-MIG_Rx_b_2[order(year)]
+rm(records,total)
+MIG_Rx_b_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Rx_b_2[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
+MIG_Rx_b_2[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
+#lower CI
+MIG_Rx_b_2[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
+MIG_Rx_b_2[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
+MIG_Rx_b_2[lower_95_CI<0,lower_95_CI:=0]
+
+fwrite(MIG_Rx_b_2,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_Rx_b_year.csv"),row.names = F)
+rm(MIG_Rx_b_2)
+
+
+#by year group and maternal age
+records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by=c("year_group","maternal_age"), .N]
+names(records)<-c("year_group","maternal_age", "no_diagnosed_pregnancies")
+total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by=c("year_group","maternal_age"),.N]
+names(total)<-c("year_group","maternal_age","no_pregnancies")
+records<-merge.data.table(records,total,by=c("year_group","maternal_age"), all=T)
+MIG_Rx_b_3<-data.table(algorithm="MIG_Rx_b", records)
+MIG_Rx_b_3[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
+MIG_Rx_b_3<-MIG_Rx_b_3[order(year_group,maternal_age)]
+rm(records,total)
+MIG_Rx_b_3[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Rx_b_3[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
+MIG_Rx_b_3[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
+#lower CI
+MIG_Rx_b_3[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
+MIG_Rx_b_3[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
+MIG_Rx_b_3[lower_95_CI<0,lower_95_CI:=0]
+
+pregnancy_d3_mig[,include:=NULL]
+fwrite(MIG_Rx_b_3,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_Rx_b_year_age.csv"),row.names = F)
+rm(MIG_Rx_b_3)
+
+
+#### MIG_DxRx_a:Prevalence of migraine at baseline when lookback==12 months(3 months) ####
+print("Create algorithm MIG_DxRx_a")
+MIG_DxRx_a<-algorithm_template[NEW_STUDY_VARIABLES=="MIG_DxRx_a"]
+alt_col<-MIG_DxRx_a[TYPE=="OR",STUDY_VARIABLES]
+
+if(length(alt_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("|" , lapply(.SD,`>=`, 1)),.SDcols=alt_col],alternative:=1]}else{pregnancy_d3_mig[,alternative:=NA]}
+
+saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/MIG_DxRx_a_D3.rds"))
+
+#export MIG_Dx_a
+MIG_DxRx_a_dt<-data.table(algorithm="MIG_DxRx_a", no_diagnosed_pregnancies=pregnancy_d3_mig[alternative==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id),.N])
+MIG_DxRx_a_dt[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_DxRx_a_dt[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
+#lower CI
+MIG_DxRx_a_dt[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
+MIG_DxRx_a_dt[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
+MIG_DxRx_a_dt[lower_95_CI<0,lower_95_CI:=0]
+
+fwrite(MIG_DxRx_a_dt,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_DxRx_a.csv"),row.names = F)
+
+#by maternal age
+pregnancy_d3_mig[,maternal_age:=as.character(maternal_age)]
+records<-pregnancy_d3_mig[alternative==1 & !duplicated(pregnancy_id), .N, by=.(maternal_age)]
+names(records)<-c("maternal_age","no_diagnosed_pregnancies")
+total<-pregnancy_d3_mig[!duplicated(pregnancy_id), by="maternal_age",.N]
+names(total)<-c("maternal_age","no_pregnancies")
+records<-merge.data.table(records,total,by="maternal_age",all=T)
+MIG_DxRx_a_1<-data.table(algorithm="MIG_DxRx_a", records)
+MIG_DxRx_a_1[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
+MIG_DxRx_a_1<-MIG_DxRx_a_1[order(maternal_age)]
+rm(records,total)
+MIG_DxRx_a_1[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_DxRx_a_1[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
+MIG_DxRx_a_1[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
+#lower CI
+MIG_DxRx_a_1[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
+MIG_DxRx_a_1[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
+MIG_DxRx_a_1[lower_95_CI<0,lower_95_CI:=0]
+
+fwrite(MIG_DxRx_a_1,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_DxRx_a_age.csv"),row.names = F)
+rm(MIG_DxRx_a_1)
+
+#by year
+records<-pregnancy_d3_mig[alternative==1 & !duplicated(pregnancy_id),by="year", .N]
+names(records)<-c("year","no_diagnosed_pregnancies")
+total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by="year",.N]
+names(total)<-c("year","no_pregnancies")
+records<-merge.data.table(records,total,by="year",all=T)
+MIG_DxRx_a_2<-data.table(algorithm="MIG_DxRx_a", records)
+MIG_DxRx_a_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
+MIG_DxRx_a_2<-MIG_DxRx_a_2[order(year)]
+rm(records,total)
+MIG_DxRx_a_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_DxRx_a_2[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
+MIG_DxRx_a_2[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
+#lower CI
+MIG_DxRx_a_2[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
+MIG_DxRx_a_2[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
+MIG_DxRx_a_2[lower_95_CI<0,lower_95_CI:=0]
+
+fwrite(MIG_DxRx_a_2,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_DxRx_a_year.csv"),row.names = F)
+rm(MIG_DxRx_a_2)
+
+
+#by year group and maternal age
+records<-pregnancy_d3_mig[alternative==1 & !duplicated(pregnancy_id),by=c("year_group","maternal_age"), .N]
+names(records)<-c("year_group","maternal_age", "no_diagnosed_pregnancies")
+total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by=c("year_group","maternal_age"),.N]
+names(total)<-c("year_group","maternal_age","no_pregnancies")
+records<-merge.data.table(records,total,by=c("year_group","maternal_age"), all=T)
+MIG_DxRx_a_3<-data.table(algorithm="MIG_DxRx_a", records)
+MIG_DxRx_a_3[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
+MIG_DxRx_a_3<-MIG_DxRx_a_3[order(year_group,maternal_age)]
+rm(records,total)
+MIG_DxRx_a_3[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_DxRx_a_3[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
+MIG_DxRx_a_3[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
+#lower CI
+MIG_DxRx_a_3[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
+MIG_DxRx_a_3[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
+MIG_DxRx_a_3[lower_95_CI<0,lower_95_CI:=0]
+
+pregnancy_d3_mig[,alternative:=NULL]
+fwrite(MIG_DxRx_a_3,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_DxRx_a_year_age.csv"),row.names = F)
+rm(MIG_DxRx_a_3)
+
+
+#### MIG_DxRx_b:Prevalence of migraine at baseline when lookback==3 months ####
+print("Create algorithm MIG_DxRx_b")
+MIG_DxRx_b<-algorithm_template[NEW_STUDY_VARIABLES=="MIG_DxRx_b"]
+alt_col<-MIG_DxRx_b[TYPE=="OR",STUDY_VARIABLES]
+
+if(length(alt_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("|" , lapply(.SD,`>=`, 1)),.SDcols=alt_col],alternative:=1]}else{pregnancy_d3_mig[,alternative:=NA]}
+
+saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/MIG_DxRx_b_D3.rds"))
+
+#export MIG_Dx_a
+MIG_DxRx_b_dt<-data.table(algorithm="MIG_DxRx_b", no_diagnosed_pregnancies=pregnancy_d3_mig[alternative==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id),.N])
+MIG_DxRx_b_dt[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_DxRx_b_dt[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
+#lower CI
+MIG_DxRx_b_dt[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
+MIG_DxRx_b_dt[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
+MIG_DxRx_b_dt[lower_95_CI<0,lower_95_CI:=0]
+
+fwrite(MIG_DxRx_b_dt,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_DxRx_b.csv"),row.names = F)
+
+#by maternal age
+pregnancy_d3_mig[,maternal_age:=as.character(maternal_age)]
+records<-pregnancy_d3_mig[alternative==1 & !duplicated(pregnancy_id), .N, by=.(maternal_age)]
+names(records)<-c("maternal_age","no_diagnosed_pregnancies")
+total<-pregnancy_d3_mig[!duplicated(pregnancy_id), by="maternal_age",.N]
+names(total)<-c("maternal_age","no_pregnancies")
+records<-merge.data.table(records,total,by="maternal_age",all=T)
+MIG_DxRx_b_1<-data.table(algorithm="MIG_DxRx_b", records)
+MIG_DxRx_b_1[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
+MIG_DxRx_b_1<-MIG_DxRx_b_1[order(maternal_age)]
+rm(records,total)
+MIG_DxRx_b_1[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_DxRx_b_1[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
+MIG_DxRx_b_1[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
+#lower CI
+MIG_DxRx_b_1[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
+MIG_DxRx_b_1[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
+MIG_DxRx_b_1[lower_95_CI<0,lower_95_CI:=0]
+fwrite(MIG_DxRx_b_1,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_DxRx_b_age.csv"),row.names = F)
+rm(MIG_DxRx_b_1)
+
+
+#by year
+records<-pregnancy_d3_mig[alternative==1 & !duplicated(pregnancy_id),by="year", .N]
+names(records)<-c("year","no_diagnosed_pregnancies")
+total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by="year",.N]
+names(total)<-c("year","no_pregnancies")
+records<-merge.data.table(records,total,by="year",all=T)
+MIG_DxRx_b_2<-data.table(algorithm="MIG_DxRx_b", records)
+MIG_DxRx_b_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
+MIG_DxRx_b_2<-MIG_DxRx_b_2[order(year)]
+rm(records,total)
+MIG_DxRx_b_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_DxRx_b_2[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
+MIG_DxRx_b_2[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
+#lower CI
+MIG_DxRx_b_2[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
+MIG_DxRx_b_2[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
+MIG_DxRx_b_2[lower_95_CI<0,lower_95_CI:=0]
+
+fwrite(MIG_DxRx_b_2,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_DxRx_b_year.csv"),row.names = F)
+rm(MIG_DxRx_b_2)
+
+
+#by year group and maternal age
+records<-pregnancy_d3_mig[alternative==1 & !duplicated(pregnancy_id),by=c("year_group","maternal_age"), .N]
+names(records)<-c("year_group","maternal_age", "no_diagnosed_pregnancies")
+total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by=c("year_group","maternal_age"),.N]
+names(total)<-c("year_group","maternal_age","no_pregnancies")
+records<-merge.data.table(records,total,by=c("year_group","maternal_age"), all=T)
+MIG_DxRx_b_3<-data.table(algorithm="MIG_DxRx_b", records)
+MIG_DxRx_b_3[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
+MIG_DxRx_b_3<-MIG_DxRx_b_3[order(year_group,maternal_age)]
+rm(records,total)
+MIG_DxRx_b_3[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_DxRx_b_3[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
+MIG_DxRx_b_3[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
+#lower CI
+MIG_DxRx_b_3[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
+MIG_DxRx_b_3[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
+MIG_DxRx_b_3[lower_95_CI<0,lower_95_CI:=0]
+
+pregnancy_d3_mig[,alternative:=NULL]
+fwrite(MIG_DxRx_b_3,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_DxRx_b_year_age.csv"),row.names = F)
+rm(MIG_DxRx_b_3)
+
+
+
+
+
+date_running_end_04_c<-Sys.Date()
+end_time_04_c<-Sys.time()
+
+time_log_04_c<-data.table(DAP=data_access_provider_name,
+                          Script="Step_04_c_migraine_algorithms.R", 
+                          Start_date=date_running_start_04_c, 
+                          End_date=date_running_end_04_c,
+                          Time_elaspsed=format(end_time_04_c-initial_time_04_c, digits=2))
+fwrite(time_log_04_c,paste0(output_dir,"/Time log/Step_04_c_time_log.csv"),row.names = F)
+rm(time_log_04_c)
 
 
