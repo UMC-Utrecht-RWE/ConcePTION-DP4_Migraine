@@ -81,7 +81,11 @@ Removed records with quality other than green
 ```{r preg_excl_criteria_same, echo=F}
 if("Step_00_other_quality_records_removed.csv" %in% list.files(paste0(projectFolder,"/g_output/Pregnancy algorithm/"))){
 removed_rec<-fread(paste0(projectFolder,"/g_output/Pregnancy algorithm/Step_00_other_quality_records_removed.csv"))
-datatable(removed_rec, options = list(scrollX=T))
+datatable(removed_rec, extensions = "Buttons", options = list(scrollX=T,
+                                                                    dom = "Blfrtip",
+                                                                    buttons = c("copy", "csv","excel", "pdf", "print"),
+                                                                                lengthMenu = list(c(10,25,50,-1),
+                                                                                                  c(10,25,50,"All"))))
 }else{
   print("This table is missing in the folder g_output/Pregnancy algorithm.")
 }
@@ -104,7 +108,11 @@ Below all indicators and number of removed records is explained.
 ```{r removed_rec, echo=F}
 if("Step_00_issues_flowchart_pregnancy_D3.csv" %in% list.files(paste0(projectFolder,"/g_output/Pregnancy algorithm/"))){
 excl_criteria_same<-fread(paste0(projectFolder,"/g_output/Pregnancy algorithm/Step_00_issues_flowchart_pregnancy_D3.csv"))
-datatable(excl_criteria_same, options = list(scrollX=T))
+datatable(excl_criteria_same, extensions = "Buttons", options = list(scrollX=T,
+                                                                    dom = "Blfrtip",
+                                                                    buttons = c("copy", "csv","excel", "pdf", "print"),
+                                                                                lengthMenu = list(c(10,25,50,-1),
+                                                                                                  c(10,25,50,"All"))))
 }else{
   print("This table is missing in the folder g_output/Pregnancy algorithm.")
 }
@@ -125,7 +133,11 @@ if("excl_criteria_same" %in% ls()){rm(excl_criteria_same)}
 ```{r gdm_pe_flowchart, echo=F}
 if("Step_00_issues_GDM_PE_flowchart_pregnancy_D3.csv" %in% list.files(paste0(projectFolder,"/g_output/Pregnancy algorithm/"))){
 excl_criteria_gdm_pe<-fread(paste0(projectFolder,"/g_output/Pregnancy algorithm/Step_00_issues_GDM_PE_flowchart_pregnancy_D3.csv"))
-datatable(excl_criteria_gdm_pe, options = list(scrollX=T))
+datatable(excl_criteria_gdm_pe, extensions = "Buttons", options = list(scrollX=T,
+                                                                    dom = "Blfrtip",
+                                                                    buttons = c("copy", "csv","excel", "pdf", "print"),
+                                                                                lengthMenu = list(c(10,25,50,-1),
+                                                                                                  c(10,25,50,"All"))))
 }else{
   print("This table is missing in the folder g_output/Pregnancy algorithm.")
 }
@@ -146,7 +158,11 @@ if("excl_criteria_gdm_pe" %in% ls()){rm(excl_criteria_gdm_pe)}
 ```{r mig_flowchart, echo=F}
 if("Step_00_issues_Migraine_flowchart_pregnancy_D3.csv" %in% list.files(paste0(projectFolder,"/g_output/Pregnancy algorithm/"))){
 excl_criteria_mig<-fread(paste0(projectFolder,"/g_output/Pregnancy algorithm/Step_00_issues_Migraine_flowchart_pregnancy_D3.csv"))
-datatable(excl_criteria_mig, options = list(scrollX=T))
+datatable(excl_criteria_mig, extensions = "Buttons", options = list(scrollX=T,
+                                                                    dom = "Blfrtip",
+                                                                    buttons = c("copy", "csv","excel", "pdf", "print"),
+                                                                                lengthMenu = list(c(10,25,50,-1),
+                                                                                                  c(10,25,50,"All"))))
 }else{
   print("This table is missing in the folder g_output/Pregnancy algorithm.")
 }
@@ -167,7 +183,11 @@ if("excl_criteria_mig" %in% ls()){rm(excl_criteria_mig)}
 ```{r du_flowchart, echo=F}
 if("Step_00_issues_DU_flowchart_pregnancy_D3.csv" %in% list.files(paste0(projectFolder,"/g_output/Pregnancy algorithm/"))){
 excl_criteria_du<-fread(paste0(projectFolder,"/g_output/Pregnancy algorithm/Step_00_issues_DU_flowchart_pregnancy_D3.csv"))
-datatable(excl_criteria_du, options = list(scrollX=T))
+datatable(excl_criteria_du, extensions = "Buttons", options = list(scrollX=T,
+                                                                    dom = "Blfrtip",
+                                                                    buttons = c("copy", "csv","excel", "pdf", "print"),
+                                                                                lengthMenu = list(c(10,25,50,-1),
+                                                                                                  c(10,25,50,"All"))))
 }else{
   print("This table is missing in the folder g_output/Pregnancy algorithm.")
 }
@@ -188,7 +208,11 @@ if("excl_criteria_du" %in% ls()){rm(excl_criteria_du)}
 ```{r saf_flowchart, echo=F}
 if("Step_00_issues_Safety_flowchart_pregnancy_D3.csv" %in% list.files(paste0(projectFolder,"/g_output/Pregnancy algorithm/"))){
 excl_criteria_saf<-fread(paste0(projectFolder,"/g_output/Pregnancy algorithm/Step_00_issues_Safety_flowchart_pregnancy_D3.csv"))
-datatable(excl_criteria_saf, options = list(scrollX=T))
+datatable(excl_criteria_saf, extensions = "Buttons", options = list(scrollX=T,
+                                                                    dom = "Blfrtip",
+                                                                    buttons = c("copy", "csv","excel", "pdf", "print"),
+                                                                                lengthMenu = list(c(10,25,50,-1),
+                                                                                                  c(10,25,50,"All"))))
 }else{
   print("This table is missing in the folder g_output/Pregnancy algorithm.")
 }
@@ -209,7 +233,11 @@ if("excl_criteria_saf" %in% ls()){rm(excl_criteria_saf)}
 ```{r included_rec, echo=F}
 if("Step_00_included_records_pregnancy_D3.csv" %in% list.files(paste0(projectFolder,"/g_output/Pregnancy algorithm/"))){
 incl_rec<-fread(paste0(projectFolder,"/g_output/Pregnancy algorithm/Step_00_included_records_pregnancy_D3.csv"))
-datatable(incl_rec, options = list(scrollX=T))
+datatable(incl_rec, extensions = "Buttons", options = list(scrollX=T,
+                                                                    dom = "Blfrtip",
+                                                                    buttons = c("copy", "csv","excel", "pdf", "print"),
+                                                                                lengthMenu = list(c(10,25,50,-1),
+                                                                                                  c(10,25,50,"All"))))
 }else{
   print("This table is missing in the folder g_output/Pregnancy algorithm.")
 }
