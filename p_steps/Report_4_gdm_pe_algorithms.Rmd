@@ -89,7 +89,11 @@ Start and end study dates for all projects by DAP
 ```{r ,echo=F}
 if("inclusion_dates_flowchart.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
 dates_flowchart<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/inclusion_dates_flowchart.csv"))
-datatable(dates_flowchart, options = list(scrollX=T))
+datatable(dates_flowchart, extensions = "Buttons", options = list(scrollX=T,
+                                                                    dom = "Blfrtip",
+                                                                    buttons = c("copy", "csv","excel", "pdf", "print"),
+                                                                                lengthMenu = list(c(10,25,50,-1),
+                                                                                                  c(10,25,50,"All"))))
 }else{
   print("This table is missing in the folder g_output/PE and GDM algorithm or g_output/Migraine algorithm.")
 }
@@ -127,7 +131,11 @@ obs_period_pe<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_0
 }
 obs<-rbind(obs_period,obs_period_pe)
 
-if(!is.null(obs)){datatable(obs, options = list(scrollX=T))}else{
+if(!is.null(obs)){datatable(obs, extensions = "Buttons", options = list(scrollX=T,
+                                                                    dom = "Blfrtip",
+                                                                    buttons = c("copy", "csv","excel", "pdf", "print"),
+                                                                                lengthMenu = list(c(10,25,50,-1),
+                                                                                                  c(10,25,50,"All"))))}else{
   print("This table is missing in the folder g_output/PE and GDM algorithm.")
 }
 ```
@@ -155,7 +163,11 @@ if("obs" %in% ls()){rm(obs)}
 ```{r ,echo=F}
 if("Step_04_excluded_records_gdm_pe.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
 excl_rec<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_excluded_records_gdm_pe.csv"))
-datatable(excl_rec, options = list(scrollX=T))
+datatable(excl_rec, extensions = "Buttons", options = list(scrollX=T,
+                                                                    dom = "Blfrtip",
+                                                                    buttons = c("copy", "csv","excel", "pdf", "print"),
+                                                                                lengthMenu = list(c(10,25,50,-1),
+                                                                                                  c(10,25,50,"All"))))
 }else{
   print("This table is missing in the folder g_output/PE and GDM algorithm.")
 }
@@ -196,7 +208,11 @@ When number of records is higher than the number of pregnancies, there was more 
 ```{r , echo=F}
 if("Step_04_summary_included_records_gdm_pe.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
 summary<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_summary_included_records_gdm_pe.csv"))
-datatable(summary, options = list(scrollX=T))
+datatable(summary, extensions = "Buttons", options = list(scrollX=T,
+                                                                    dom = "Blfrtip",
+                                                                    buttons = c("copy", "csv","excel", "pdf", "print"),
+                                                                                lengthMenu = list(c(10,25,50,-1),
+                                                                                                  c(10,25,50,"All"))))
 }else{
   print("This table is missing in the folder g_output/PE and GDM algorithm.")
 }
@@ -250,7 +266,11 @@ alg_8<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_GDM_8.
 alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_8)
 
 if(!is.null(alg)){
-  datatable(alg, options = list(scrollX=T))
+  datatable(alg, extensions = "Buttons", options = list(scrollX=T,
+                                                                    dom = "Blfrtip",
+                                                                    buttons = c("copy", "csv","excel", "pdf", "print"),
+                                                                                lengthMenu = list(c(10,25,50,-1),
+                                                                                                  c(10,25,50,"All"))))
 }else{
   print("This table is missing in the folder g_output/PE and GDM algorithm.")
 }
@@ -317,7 +337,11 @@ alg_8<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_GDM_8_
 alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_8)
 
 if(!is.null(alg)){
-  datatable(alg, options = list(scrollX=T))
+  datatable(alg, extensions = "Buttons", options = list(scrollX=T,
+                                                                    dom = "Blfrtip",
+                                                                    buttons = c("copy", "csv","excel", "pdf", "print"),
+                                                                                lengthMenu = list(c(10,25,50,-1),
+                                                                                                  c(10,25,50,"All"))))
 }else{
   print("This table is missing in the folder g_output/PE and GDM algorithm.")
 }
@@ -385,7 +409,11 @@ alg_8<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_GDM_8_
 alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_8)
 
 if(!is.null(alg)){
-  datatable(alg, options = list(scrollX=T))
+  datatable(alg, extensions = "Buttons", options = list(scrollX=T,
+                                                                    dom = "Blfrtip",
+                                                                    buttons = c("copy", "csv","excel", "pdf", "print"),
+                                                                                lengthMenu = list(c(10,25,50,-1),
+                                                                                                  c(10,25,50,"All"))))
 }else{
   print("This table is missing in the folder g_output/PE and GDM algorithm.")
 }
@@ -453,7 +481,11 @@ alg_8<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_GDM_8_
 alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_8)
 
 if(!is.null(alg)){
-  datatable(alg, options = list(scrollX=T))
+  datatable(alg, extensions = "Buttons", options = list(scrollX=T,
+                                                                    dom = "Blfrtip",
+                                                                    buttons = c("copy", "csv","excel", "pdf", "print"),
+                                                                                lengthMenu = list(c(10,25,50,-1),
+                                                                                                  c(10,25,50,"All"))))
 }else{
   print("This table is missing in the folder g_output/PE and GDM algorithm.")
 }
@@ -555,7 +587,11 @@ if("Step_04_PE_5.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM
 alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5)
 
 if(!is.null(alg)){
-  datatable(alg, options = list(scrollX=T))
+  datatable(alg, extensions = "Buttons", options = list(scrollX=T,
+                                                                    dom = "Blfrtip",
+                                                                    buttons = c("copy", "csv","excel", "pdf", "print"),
+                                                                                lengthMenu = list(c(10,25,50,-1),
+                                                                                                  c(10,25,50,"All"))))
 }else{
   print("This table is missing in the folder g_output/PE and GDM algorithm.")
 }
@@ -617,7 +653,11 @@ if("Step_04_PE_5_age.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and
 alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5)
 
 if(!is.null(alg)){
-  datatable(alg, options = list(scrollX=T))
+  datatable(alg, extensions = "Buttons", options = list(scrollX=T,
+                                                                    dom = "Blfrtip",
+                                                                    buttons = c("copy", "csv","excel", "pdf", "print"),
+                                                                                lengthMenu = list(c(10,25,50,-1),
+                                                                                                  c(10,25,50,"All"))))
 }else{
   print("This table is missing in the folder g_output/PE and GDM algorithm.")
 }
@@ -679,7 +719,11 @@ if("Step_04_PE_5_year.csv" %in% list.files(paste0(projectFolder,"/g_output/PE an
 alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5)
 
 if(!is.null(alg)){
-  datatable(alg, options = list(scrollX=T))
+  datatable(alg, extensions = "Buttons", options = list(scrollX=T,
+                                                                    dom = "Blfrtip",
+                                                                    buttons = c("copy", "csv","excel", "pdf", "print"),
+                                                                                lengthMenu = list(c(10,25,50,-1),
+                                                                                                  c(10,25,50,"All"))))
 }else{
   print("This table is missing in the folder g_output/PE and GDM algorithm.")
 }
@@ -740,7 +784,11 @@ if("Step_04_PE_5_year_age.csv" %in% list.files(paste0(projectFolder,"/g_output/P
 alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5)
 
 if(!is.null(alg)){
-  datatable(alg, options = list(scrollX=T))
+  datatable(alg, extensions = "Buttons", options = list(scrollX=T,
+                                                                    dom = "Blfrtip",
+                                                                    buttons = c("copy", "csv","excel", "pdf", "print"),
+                                                                                lengthMenu = list(c(10,25,50,-1),
+                                                                                                  c(10,25,50,"All"))))
 }else{
   print("This table is missing in the folder g_output/PE and GDM algorithm.")
 }
