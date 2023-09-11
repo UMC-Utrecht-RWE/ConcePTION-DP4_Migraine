@@ -75,7 +75,11 @@ Flowchart of creating the pregnancy study population
 ```{r ,echo=F}
 if("inclusion_dates_flowchart.csv" %in% list.files(paste0(projectFolder,"/g_output/Pregnancy study population/"))){
 dates_flowchart<-fread(paste0(projectFolder,"/g_output/Pregnancy study population/inclusion_dates_flowchart.csv"))
-datatable(dates_flowchart, options = list(scrollX=T))
+datatable(dates_flowchart, extensions = "Buttons", options = list(scrollX=T,
+                                                                    dom = "Blfrtip",
+                                                                    buttons = c("copy", "csv","excel", "pdf", "print"),
+                                                                                lengthMenu = list(c(10,25,50,-1),
+                                                                                                  c(10,25,50,"All"))))
 }else{
   print("This table is missing in the folder g_output/Pregnancy study population.")
 }
@@ -93,7 +97,11 @@ Overview of the number of observation periods
 ```{r spell_overview, echo=F}
 if("Step_01_spells_overview.csv" %in% list.files(paste0(projectFolder,"/g_output/Pregnancy study population/"))){
 spells_overview<-fread(paste0(projectFolder,"/g_output/Pregnancy study population/Step_01_spells_overview.csv"))
-datatable(spells_overview, options = list(scrollX=T))
+datatable(spells_overview, extensions = "Buttons", options = list(scrollX=T,
+                                                                    dom = "Blfrtip",
+                                                                    buttons = c("copy", "csv","excel", "pdf", "print"),
+                                                                                lengthMenu = list(c(10,25,50,-1),
+                                                                                                  c(10,25,50,"All"))))
 }else{
   print("This table is missing in the folder g_output/Pregnancy study population.")
 }
@@ -122,7 +130,11 @@ Below all indicators and number of removed records is explained.
 ```{r std_pop_excl_criteria_same, echo=F}
 if("Step_01_flowchart_same_criteria_study_population.csv" %in% list.files(paste0(projectFolder,"/g_output/Pregnancy study population/"))){
 removed_rec_same<-fread(paste0(projectFolder,"/g_output/Pregnancy study population/Step_01_flowchart_same_criteria_study_population.csv"))
-datatable(removed_rec_same, options = list(scrollX=T))
+datatable(removed_rec_same, extensions = "Buttons", options = list(scrollX=T,
+                                                                    dom = "Blfrtip",
+                                                                    buttons = c("copy", "csv","excel", "pdf", "print"),
+                                                                                lengthMenu = list(c(10,25,50,-1),
+                                                                                                  c(10,25,50,"All"))))
 }else{
   print("This table is missing in the folder g_output/Pregnancy study population.")
 }
@@ -159,7 +171,11 @@ Below all indicators and number of removed records is explained.
 ```{r std_pop_excl_criteria_specific, echo=F}
 if("Step_01_flowchart_specific_criteria_study_population.csv" %in% list.files(paste0(projectFolder,"/g_output/Pregnancy study population/"))){
 removed_rec<-fread(paste0(projectFolder,"/g_output/Pregnancy study population/Step_01_flowchart_specific_criteria_study_population.csv"))
-datatable(removed_rec, options = list(scrollX=T))
+datatable(removed_rec, extensions = "Buttons", options = list(scrollX=T,
+                                                                    dom = "Blfrtip",
+                                                                    buttons = c("copy", "csv","excel", "pdf", "print"),
+                                                                                lengthMenu = list(c(10,25,50,-1),
+                                                                                                  c(10,25,50,"All"))))
 }else{
   print("This table is missing in the folder g_output/Pregnancy study population.")
 }
@@ -180,7 +196,11 @@ if("removed_rec" %in% ls()){rm(removed_rec)}
 ```{r included_rec, echo=F}
 if("Step_01_included_records_study_pop_pregnancy_D3.csv" %in% list.files(paste0(projectFolder,"/g_output/Pregnancy study population/"))){
 incl_rec<-fread(paste0(projectFolder,"/g_output/Pregnancy study population/Step_01_included_records_study_pop_pregnancy_D3.csv"))
-datatable(incl_rec, options = list(scrollX=T))
+datatable(incl_rec, extensions = "Buttons", options = list(scrollX=T,
+                                                                    dom = "Blfrtip",
+                                                                    buttons = c("copy", "csv","excel", "pdf", "print"),
+                                                                                lengthMenu = list(c(10,25,50,-1),
+                                                                                                  c(10,25,50,"All"))))
 }else{
   print("This table is missing in the folder g_output/Pregnancy study population.")
 }
