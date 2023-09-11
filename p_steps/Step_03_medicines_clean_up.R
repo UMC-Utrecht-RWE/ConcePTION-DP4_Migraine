@@ -41,6 +41,32 @@ migraine_start[,condition:="Migraine_medicines"]
 migraine_exact<-migraine_med_codelist[mechanism=="exact"]
 migraine_exact[,condition:="Migraine_medicines"]
 
+#Clean up data: If exact with is part of start with, remove it from the list
+#GDM
+gdm_start[,remove:=1]
+gdm_start[,check:=atc_code]
+for (gdm_start_ind in 1:length(gdm_start)){
+  length_var<-nchar(gdm_start[gdm_start_ind,atc_code])
+  gdm_exact[,check:=substr(atc_code,1,length_var)]
+  gdm_exact<-merge.data.table(gdm_exact,gdm_start[,c("check","remove")], all.x = T, by="check")
+  gdm_exact<-gdm_exact[is.na(remove)]
+  gdm_exact[,remove:=NULL][,check:=NULL]
+}
+gdm_start[,remove:=NULL][,check:=NULL]
+
+#Migraine
+migraine_start[,remove:=1]
+migraine_start[,check:=atc_code]
+for (migraine_start_ind in 1:length(migraine_start)){
+  length_var<-nchar(migraine_start[migraine_start_ind,atc_code])
+  migraine_exact[,check:=substr(atc_code,1,length_var)]
+  migraine_exact<-merge.data.table(migraine_exact,migraine_start[,c("check","remove")], all.x = T, by="check")
+  migraine_exact<-migraine_exact[is.na(remove)]
+  migraine_exact[,remove:=NULL][,check:=NULL]
+}
+migraine_start[,remove:=NULL][,check:=NULL]
+
+
 start_med<-rbind(gdm_start,migraine_start)
 rm(gdm_start,migraine_start)
 exact_med<-rbind(gdm_exact,migraine_exact)
