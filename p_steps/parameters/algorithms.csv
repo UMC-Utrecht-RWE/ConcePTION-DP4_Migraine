@@ -48,3 +48,22 @@ MIG_DxRx_a;MG_baseline;OR;simple;;;;;
 MIG_DxRx_a;Migraine_medicines_baseline;OR;simple;;;;;
 MIG_DxRx_b;MG_baseline_2;OR;simple;;;;;
 MIG_DxRx_b;Migraine_medicines_baseline_2;OR;simple;;;;;
+MIG_Dx_during;MG_during;AND;simple;;;;365.25;1
+MIG_Rx_during;Migraine_medicines_during;AND;simple;;;;365.25;1
+MIG_DxRx_during; MG_during;OR;simple;;;;;
+MIG_DxRx_during; Migraine_medicines_during;OR;simple;;;;;
+MIG_Dx_first;MG_first;AND;simple;;;;365.25;1
+MIG_Rx_first;Migraine_medicines_first;AND;simple;;;;365.25;1
+MIG_DxRx_first; MG_first;OR;simple;;;;;
+MIG_DxRx_first; Migraine_medicines_first;OR;simple;;;;;
+MIG_Dx_second;MG_second;AND;simple;;;;365.25;1
+MIG_Rx_second;Migraine_medicines_second;AND;simple;;;;365.25;1
+MIG_DxRx_second; MG_second;OR;simple;;;;;
+MIG_DxRx_second; Migraine_medicines_second;OR;simple;;;;;
+MIG_Dx_third;MG_third;AND;simple;;;;365.25;1
+MIG_Rx_third;Migraine_medicines_third;AND;simple;;;;365.25;1
+MIG_DxRx_third; MG_third;OR;simple;;;;;
+MIG_DxRx_third; Migraine_medicines_third;OR;simple;;;;;
+
+
+
