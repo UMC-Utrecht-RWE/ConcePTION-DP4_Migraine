@@ -84,7 +84,11 @@ Start and end study dates for all projects by DAP
 ```{r flowchart_gdm_pe, echo=F}
 if("Step_03_flowchart_medicines_gdm_pe.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
 flowchart<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_03_flowchart_medicines_gdm_pe.csv"))
-datatable(flowchart, options = list(scrollX=T))
+datatable(flowchart, extensions = "Buttons", options = list(scrollX=T,
+                                                                    dom = "Blfrtip",
+                                                                    buttons = c("copy", "csv","excel", "pdf", "print"),
+                                                                                lengthMenu = list(c(10,25,50,-1),
+                                                                                                  c(10,25,50,"All"))))
 }else{
   print("This table is missing in the folder g_output/PE and GDM algorithm.")
 }
@@ -114,7 +118,11 @@ if("flowchart" %in% ls()){rm(flowchart)}
 ```{r flowchart_mig, echo=F}
 if("Step_03_flowchart_medicines_mig.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
 flowchart<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_03_flowchart_medicines_mig.csv"))
-datatable(flowchart, options = list(scrollX=T))
+datatable(flowchart, extensions = "Buttons", options = list(scrollX=T,
+                                                                    dom = "Blfrtip",
+                                                                    buttons = c("copy", "csv","excel", "pdf", "print"),
+                                                                                lengthMenu = list(c(10,25,50,-1),
+                                                                                                  c(10,25,50,"All"))))
 }else{
   print("This table is missing in the folder g_output/Migraine algorithm.")
 }
@@ -135,7 +143,11 @@ if("flowchart" %in% ls()){rm(flowchart)}
 ```{r included_rec, echo=F}
 if("Step_03_summary_gdm_medicines.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
 incl_rec<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_03_summary_gdm_medicines.csv"))
-datatable(incl_rec, options = list(scrollX=T))
+datatable(incl_rec, extensions = "Buttons", options = list(scrollX=T,
+                                                                    dom = "Blfrtip",
+                                                                    buttons = c("copy", "csv","excel", "pdf", "print"),
+                                                                                lengthMenu = list(c(10,25,50,-1),
+                                                                                                  c(10,25,50,"All"))))
 }else{
   print("This table is missing in the folder g_output/PE and GDM algorithm.")
 }
@@ -156,7 +168,11 @@ if("incl_rec" %in% ls()){rm(incl_rec)}
 ```{r , echo=F}
 if("Step_03_summary_migraine_medicines.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
 incl_rec<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_03_summary_migraine_medicines.csv"))
-datatable(incl_rec, options = list(scrollX=T))
+datatable(incl_rec, extensions = "Buttons", options = list(scrollX=T,
+                                                                    dom = "Blfrtip",
+                                                                    buttons = c("copy", "csv","excel", "pdf", "print"),
+                                                                                lengthMenu = list(c(10,25,50,-1),
+                                                                                                  c(10,25,50,"All"))))
 }else{
   print("This table is missing in the folder g_output/Migraine algorithm.")
 }
