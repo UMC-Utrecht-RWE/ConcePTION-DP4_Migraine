@@ -2,9 +2,9 @@
 
 gestational_age_gdm<-140 #minimum length of pregnancies to be considered in the gdm algorithm
 
-min_start_date_gdm<-"20050101"
-max_end_date_gdm<-"20190301"
-lookback_period_pregnancy<-3*365.25 #3 months of lookback before start of pregnancy(will be retrieved from the observation periods table)
+#min_start_date_gdm<-"20050101"
+#max_end_date_gdm<-"20190301"
+#lookback_period_pregnancy<-3*365.25 #3 months of lookback before start of pregnancy(will be retrieved from the observation periods table)
 
 max_follow_up_preg<-42*7 #42 weeks of follow up from start date of pregnancy(difference between start date of pregnancy and op_end_date from OBS PER table)
 follow_up_after_delivery<-7 #op end date should be after or equal to delivery date + 7 days
