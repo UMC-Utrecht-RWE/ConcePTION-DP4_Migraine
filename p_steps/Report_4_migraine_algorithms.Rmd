@@ -1156,16 +1156,16 @@ if("fig.1" %in% ls()){rm(fig.1)}
 * MIG_DxRx_b: **At least one** diagnoses of Migraine (MG) or **at least one** triptan prescription of Migraine (N02CC) recorded up to 12 months prior to LMP.\
 * MIG_Dx_during: **At least one** diagnoses of Migraine (MG) recorded between LMP and end of pregnancy date.\
 * MIG_Rx_during: **At least one** triptan prescription of Migraine (N02CC) recorded between LMP and end of pregnancy date.\
-* MIG_DxRx_a: **At least one** diagnoses of Migraine (MG) or **at least one** triptan prescription of Migraine (N02CC) recorded between LMP and end of pregnancy date.\
-* MIG_Dx_first: **At least one** diagnoses of Migraine (MG) recorded between LMP and the 97th day of pregnancies. The denominator contains only pregnancies where the duration of pregnancy is at least 1 day.\
-* MIG_Rx_first: **At least one** triptan prescription of Migraine (N02CC) recorded between LMP and the 97th day of pregnancies. The denominator contains only pregnancies where the duration of pregnancy is at least 1 day.\
-* MIG_DxRx_first: **At least one** diagnoses of Migraine (MG) or **at least one** triptan prescription of Migraine (N02CC) recorded between LMP and the 97th day of pregnancies. The denominator contains only pregnancies where the duration of pregnancy is at least 1 day.\
-* MIG_Dx_second: **At least one** diagnoses of Migraine (MG) recorded between 97th day of pregnancy and the 195th day of pregnancies. The denominator contains only pregnancies where the duration of pregnancy is at least 98 days.\
-* MIG_Rx_second: **At least one** triptan prescription of Migraine (N02CC) recorded between 97th day of pregnancy and the 195th day of pregnancies. The denominator contains only pregnancies where the duration of pregnancy is at least 98 days.\
-* MIG_DxRx_second: **At least one** diagnoses of Migraine (MG) or **at least one** triptan prescription of Migraine (N02CC) recorded between 97th day of pregnancy and the 195th day of pregnancies. The denominator contains only pregnancies where the duration of pregnancy is at least 98 days.\
-* MIG_Dx_third: **At least one** diagnoses of Migraine (MG) recorded between 196th day of pregnancy and the end of pregnancy date. The denominator contains only pregnancies where the duration of pregnancy is at least 196 days.\
-* MIG_Rx_third: **At least one** triptan prescription of Migraine (N02CC) recorded between 196th day of pregnancy and the the end of pregnancy date. The denominator contains only pregnancies where the duration of pregnancy is at least 196 days.\
-* MIG_DxRx_third: **At least one** diagnoses of Migraine (MG) or **at least one** triptan prescription of Migraine (N02CC) recorded between 196th day of pregnancy and the the end of pregnancy date. The denominator contains only pregnancies where the duration of pregnancy is at least 196 days.\
+* MIG_DxRx_during: **At least one** diagnoses of Migraine (MG) or **at least one** triptan prescription of Migraine (N02CC) recorded between LMP and end of pregnancy date.\
+* MIG_Dx_first: **At least one** diagnoses of Migraine (MG) recorded between LMP and the 97th day of pregnancies. The denominator contains only pregnancies where the duration of pregnancy is at least 97 days.\
+* MIG_Rx_first: **At least one** triptan prescription of Migraine (N02CC) recorded between LMP and the 97th day of pregnancies. The denominator contains only pregnancies where the duration of pregnancy is at least 97 days.\
+* MIG_DxRx_first: **At least one** diagnoses of Migraine (MG) or **at least one** triptan prescription of Migraine (N02CC) recorded between LMP and the 97th day of pregnancies. The denominator contains only pregnancies where the duration of pregnancy is at least 97 days.\
+* MIG_Dx_second: **At least one** diagnoses of Migraine (MG) recorded between 97th day of pregnancy and the 195th day of pregnancies. The denominator contains only pregnancies where the duration of pregnancy is at least 195 days.\
+* MIG_Rx_second: **At least one** triptan prescription of Migraine (N02CC) recorded between 97th day of pregnancy and the 195th day of pregnancies. The denominator contains only pregnancies where the duration of pregnancy is at least 195 days.\
+* MIG_DxRx_second: **At least one** diagnoses of Migraine (MG) or **at least one** triptan prescription of Migraine (N02CC) recorded between 97th day of pregnancy and the 195th day of pregnancies. The denominator contains only pregnancies where the duration of pregnancy is at least 195 days.\
+* MIG_Dx_third: **At least one** diagnoses of Migraine (MG) recorded between 196th day of pregnancy and the end of pregnancy date. The denominator contains only pregnancies where the duration of pregnancy is at least 280 days.\
+* MIG_Rx_third: **At least one** triptan prescription of Migraine (N02CC) recorded between 196th day of pregnancy and the the end of pregnancy date. The denominator contains only pregnancies where the duration of pregnancy is at least 280 days.\
+* MIG_DxRx_third: **At least one** diagnoses of Migraine (MG) or **at least one** triptan prescription of Migraine (N02CC) recorded between 196th day of pregnancy and the the end of pregnancy date. The denominator contains only pregnancies where the duration of pregnancy is at least 280 days.\
 
 
 
