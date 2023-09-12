@@ -5,13 +5,13 @@ orig_mig<-pregnancy_d3_mig[,.N]
 ####Migraine DIAGNOSES FILES####
 print("Loading all Migraine diagnoses D3 and merge with the pregnancy D3.")
 if(DAP_name %in% c("CHUT")){
-  obs_period_diag<-data.table(StudyVar=c("MG","MG_NO_AURA","MG_AURA","MG_STATUS","MG_OTHER","MG_UNSP","MG_COMP"),
+  obs_period_diag<-data.table(StudyVar=c("MG","MG_NO_AURA","MG_AURA","MG_STACOMP","MG_OTHER","MG_UNSP","MG_UPC"),
                               lookback=c(3*30.25,3*30.25,3*30.25,3*30.25,3*30.25,3*30.25,3*30.25),
                               start_date=c(0,0,0,0,0,0,0),
                               end_date=c(7*40,7*40,7*40,7*40,7*40,7*40,7*40),
                               after=c(0,0,0,0,0,0,0))  
 }else{
-obs_period_diag<-data.table(StudyVar=c("MG","MG_NO_AURA","MG_AURA","MG_STATUS","MG_OTHER","MG_UNSP","MG_COMP"),
+obs_period_diag<-data.table(StudyVar=c("MG","MG_NO_AURA","MG_AURA","MG_OTHER","MG_UNSP","MG_STACOMP","MG_UPC"),
                        lookback=c(365.25,365.25,365.25,365.25,365.25,365.25,365.25),
                        start_date=c(0,0,0,0,0,0,0),
                        end_date=c(7*40,7*40,7*40,7*40,7*40,7*40,7*40),
@@ -1342,9 +1342,9 @@ rm(MIG_DxRx_during_3)
 
 #### Select the trimester timepoint ####
 pregnancy_d3_mig[,dif:=pregnancy_end_date-pregnancy_start_date]
-pregnancy_d3_mig[dif>=0, trimester:=1]
-pregnancy_d3_mig[dif>=98, trimester:=2]
-pregnancy_d3_mig[dif>=196, trimester:=3]
+pregnancy_d3_mig[dif>=97, trimester:=1]
+pregnancy_d3_mig[dif>=195, trimester:=2]
+pregnancy_d3_mig[dif>=280, trimester:=3]
 pregnancy_d3_mig[,dif:=NULL]
 #### MIG_Dx_first:Prevalence of migraine during pregnancy when lookback==12 months(3 months) ####
 print("Create algorithm MIG_Dx_first")
