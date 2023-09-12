@@ -171,16 +171,16 @@ dates_persons <- c("year_of_birth", "month_of_birth","day_of_birth","year_of_dea
 invisible(lapply(dates_persons, function (x) if (class(PERSONS[[x]]) != "integer") PERSONS[, eval(x) := as.integer(get(x)) ]))
 #impute day only:birth
 impt_day_birth<-PERSONS[!is.na(month_of_birth) & !is.na(year_of_birth)][is.na(day_of_birth) ,.N]
-PERSONS<-PERSONS[!is.na(month_of_birth) & !is.na(year_of_birth)][is.na(day_of_birth), day_of_birth:=1]
+PERSONS[!is.na(month_of_birth) & !is.na(year_of_birth)][is.na(day_of_birth), day_of_birth:=1]
 #impute day only:death
 impt_day_death<-PERSONS[!is.na(month_of_death) & !is.na(year_of_death)][is.na(day_of_death),.N]
-PERSONS<-PERSONS[!is.na(month_of_death) & !is.na(year_of_death)][is.na(day_of_death), day_of_death:=1]
+PERSONS[!is.na(month_of_death) & !is.na(year_of_death)][is.na(day_of_death), day_of_death:=1]
 #impute day and month:birth
 impt_dm_birth<-PERSONS[!is.na(year_of_birth)][is.na(day_of_birth) & is.na(month_of_birth),.N]
-PERSONS<-PERSONS[!is.na(year_of_birth)][is.na(day_of_birth) & is.na(month_of_birth), c("day_of_birth","month_of_birth"):=c(1,7)]
+PERSONS[!is.na(year_of_birth)][is.na(day_of_birth) & is.na(month_of_birth), c("day_of_birth","month_of_birth"):=c(1,7)]
 #impute day and month:death
 impt_dm_death<-PERSONS[!is.na(year_of_death)][is.na(day_of_death) & is.na(month_of_death),.N]
-PERSONS<-PERSONS[!is.na(year_of_death)][is.na(day_of_death) & is.na(month_of_death), c("day_of_death","month_of_death"):=c(1,7)]
+PERSONS[!is.na(year_of_death)][is.na(day_of_death) & is.na(month_of_death), c("day_of_death","month_of_death"):=c(1,7)]
 
 #Create birth date and death date
 PERSONS[!is.na(day_of_birth) & !is.na(month_of_birth) & !is.na(year_of_birth),birth_date := as.IDate(paste0(year_of_birth, sprintf("%02d",month_of_birth),sprintf("%02d",day_of_birth)),"%Y%m%d")]
