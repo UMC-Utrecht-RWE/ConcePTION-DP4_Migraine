@@ -114,7 +114,7 @@ names_mg<-names_events[names_events %in% "MG"]
 ####Migraine MEDICINES files####
   print("Loading all Migraine medicines D3 and merge with the pregnancy D3.")
  
-    if (DAP_name %in% c("NIHW", "CHUT")){
+    if (DAP_name %in% c("THL", "CHUT")){
       obs_period_med<-data.table(StudyVar=c("Migraine_medicines"),
                                  lookback=c(3*30.25),
                                  start_date=c(0),
@@ -474,7 +474,7 @@ if(mig_med[,.N]>0){
     pregnancy_d3_mig<-merge.data.table(pregnancy_d3_mig,mig_med_baseline,all.x=T, by=cols[!cols %in% "medicine_date"])
     pregnancy_d3_mig[is.na(get(paste0(obs_period_med[med_fl, StudyVar],"_baseline"))),eval(paste0(obs_period_med[med_fl, StudyVar],"_baseline")):=0]
     #depending on the DAP
-    if(!DAP_name %in% c("NIHW", "CHUT")){
+    if(!DAP_name %in% c("THL", "CHUT")){
       mig_med[,start:=pregnancy_start_date - 3*30.25] 
       mig_med[medicine_date>=start & medicine_date<pregnancy_start_date,paste0(obs_period_med[med_fl, StudyVar],"_baseline_2"):=1]
       mig_baseline_2<-mig_med[get(paste0(obs_period_med[med_fl, StudyVar],"_baseline_2"))==1,lapply(.SD, sum),.SDcols = paste0(obs_period_med[med_fl, StudyVar],"_baseline_2"), by=c("person_id","pregnancy_id","pregnancy_start_date","pregnancy_end_date")]
