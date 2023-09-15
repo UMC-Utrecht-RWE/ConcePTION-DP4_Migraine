@@ -49,16 +49,26 @@ rm(dates_flowchart)
 #The information about GDM diagnoses is saved in 
 #codesheet_diagnoses_migraine
 events_gdm_diagnoses<-ifelse("EVENTS" %in% codesheet_diagnoses_gdm[,table],1,0)
-mo_gdm_diagnoses<-ifelse("MEDICAL_OBSERVATIONS" %in% c(codesheet_diagnoses_gdm[,table],codesheet_diagnoses_gdm_cat[,table]),1,0)
+mo_gdm_diagnoses<-ifelse("MEDICAL_OBSERVATIONS" %in% codesheet_diagnoses_gdm[,table],1,0)
 so_gdm_diagnoses<-ifelse("SURVEY_OBSERVATIONS" %in% c(codesheet_diagnoses_gdm[,table],codesheet_diagnoses_gdm_cat[,table]),1,0)
 
 events_pe_diagnoses<-ifelse("EVENTS" %in% codesheet_diagnoses_pe[,table],1,0)
-mo_pe_diagnoses<-ifelse("MEDICAL_OBSERVATIONS" %in% c(codesheet_diagnoses_pe[,table],codesheet_diagnoses_pe_cat[,table]),1,0)
-so_pe_diagnoses<-ifelse("SURVEY_OBSERVATIONS" %in% c(codesheet_diagnoses_pe[,table],codesheet_diagnoses_pe_cat[,table]),1,0)
+mo_pe_diagnoses<-ifelse("MEDICAL_OBSERVATIONS" %in% codesheet_diagnoses_pe[,table],1,0)
+so_pe_diagnoses<-ifelse("SURVEY_OBSERVATIONS" %in% codesheet_diagnoses_pe[,table],1,0)
 
 events_migraine_diagnoses<-ifelse("EVENTS" %in% codesheet_diagnoses_migraine[,table],1,0)
-mo_migraine_diagnoses<-ifelse("MEDICAL_OBSERVATIONS" %in% c(codesheet_diagnoses_migraine[,table],codesheet_diagnoses_migraine_cat[,table]),1,0)
-so_migraine_diagnoses<-ifelse("SURVEY_OBSERVATIONS" %in% c(codesheet_diagnoses_migraine[,table],codesheet_diagnoses_migraine_cat[,table]),1,0)
+mo_migraine_diagnoses<-ifelse("MEDICAL_OBSERVATIONS" %in% codesheet_diagnoses_migraine[,table],1,0)
+so_migraine_diagnoses<-ifelse("SURVEY_OBSERVATIONS" %in% codesheet_diagnoses_migraine[,table],1,0)
+
+#Birth registry data
+mo_gdm_diagnoses_cat<-ifelse("MEDICAL_OBSERVATIONS" %in% codesheet_diagnoses_gdm_cat[,table],1,0)
+so_gdm_diagnoses_cat<-ifelse("SURVEY_OBSERVATIONS" %in% codesheet_diagnoses_gdm_cat[,table],1,0)
+
+mo_pe_diagnoses_cat<-ifelse("MEDICAL_OBSERVATIONS" %in% codesheet_diagnoses_pe_cat[,table],1,0)
+so_pe_diagnoses_cat<-ifelse("SURVEY_OBSERVATIONS" %in% codesheet_diagnoses_pe_cat[,table],1,0)
+
+mo_migraine_diagnoses_cat<-ifelse("MEDICAL_OBSERVATIONS" %in% codesheet_diagnoses_migraine_cat[,table],1,0)
+so_migraine_diagnoses_cat<-ifelse("SURVEY_OBSERVATIONS" %in% codesheet_diagnoses_migraine_cat[,table],1,0)
 
 ####EVENTS####
 source(paste0(pre_dir,"Step_02_a_diagnoses_clean_up_events.R"))
