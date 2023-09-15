@@ -79,6 +79,85 @@ if(length(pe_checkbox_files)>0){
 }
 rm(pe_checkbox_files)
 # dup_dt_pe<-data.table(StudyVar="PE_checkbox", removed_rec=dup)
+
+###GDM diagnoses category####
+#GDM diagnoses category files
+print("Combine files about categorical diagnoses GDM")
+gdm_cat_diag_files<-list.files(tmp, "_GDMcat_")
+if(length(gdm_cat_diag_files)>0){
+  gdm_cat_diag<-lapply(paste0(tmp, gdm_cat_diag_files), readRDS)
+  gdm_cat_diag<-as.data.table(do.call(rbind,gdm_cat_diag))
+  #remove duplicates(same person id, date and condition)
+  gdm_cat_diag[,comb:=paste0(person_id, "_", event_date)]
+  dup<-gdm_cat_diag[duplicated(comb),.N]
+  if(dup>0){
+    dup_dt_gdm_cat<-data.table(StudyVar="GDM_category", removed_rec=dup)
+  }else{
+    dup_dt_gdm_cat<-data.table(StudyVar="GDM_category", removed_rec=0)  
+  }
+  rm(dup)
+  gdm_cat_diag<-gdm_cat_diag[!duplicated(comb)]
+  gdm_cat_diag[,comb:=NULL]
+  gdm_cat_diag[,condition:="GDM_category"]
+  #Summary of included records by event_code, meaning, condition, year
+  sum_gdm_cat<-gdm_cat_diag[,.N, by=c("condition", "meaning", "year")]
+  setnames(sum_gdm_cat,"N", "no_records")
+  #fwrite(sum,paste0(output_dir,"PE and GDM algorithm/summary_gdm_checkbox.csv"))
+  gdm_cat_diag[,event_code:=NULL][,meaning:=NULL][,year:=NULL]
+  #save data in g_intermediate/populations
+  saveRDS(gdm_cat_diag[,c("event_date","person_id","condition")], paste0(g_intermediate,"gdm_algorithm/GDM_checkbox_cat.rds"))
+  rm(gdm_cat_diag)
+  #remove files
+  #remove all gdm files from tmp
+  for (i in 1:length(gdm_cat_diag_files)){
+    file.remove(paste0(tmp,gdm_cat_diag_files[[i]]))
+  }
+  
+}else{
+  dup_dt_gdm_cat<-data.table(StudyVar="GDM_category", removed_rec="N/A")
+  sum_gdm_cat<-NULL
+}
+rm(gdm_cat_diag_files)
+
+###PE diagnoses category####
+#PE diagnoses category files
+print("Combine files about categorical diagnoses PE")
+pe_cat_diag_files<-list.files(tmp, "_PEcat_")
+if(length(pe_cat_diag_files)>0){
+  pe_cat_diag<-lapply(paste0(tmp, pe_cat_diag_files), readRDS)
+  pe_cat_diag<-as.data.table(do.call(rbind,pe_cat_diag))
+  #remove duplicates(same person id, date and condition)
+  pe_cat_diag[,comb:=paste0(person_id, "_", event_date)]
+  dup<-pe_cat_diag[duplicated(comb),.N]
+  if(dup>0){
+    dup_dt_pe_cat<-data.table(StudyVar="PE_category", removed_rec=dup)
+  }else{
+    dup_dt_pe_cat<-data.table(StudyVar="PE_category", removed_rec=0)  
+  }
+  rm(dup)
+  pe_cat_diag<-pe_cat_diag[!duplicated(comb)]
+  pe_cat_diag[,comb:=NULL]
+  pe_cat_diag[,condition:="PE_category"]
+  #Summary of included records by event_code, meaning, condition, year
+  sum_pe_cat<-pe_cat_diag[,.N, by=c("condition", "meaning", "year")]
+  setnames(sum_pe_cat,"N", "no_records")
+  #fwrite(sum,paste0(output_dir,"PE and PE algorithm/summary_pe_checkbox.csv"))
+  pe_cat_diag[,event_code:=NULL][,meaning:=NULL][,year:=NULL]
+  #save data in g_intermediate/populations
+  saveRDS(pe_cat_diag[,c("event_date","person_id","condition")], paste0(g_intermediate,"pe_algorithm/PE_checkbox_cat.rds"))
+  rm(pe_cat_diag)
+  #remove files
+  #remove all pe files from tmp
+  for (i in 1:length(pe_cat_diag_files)){
+    file.remove(paste0(tmp,pe_cat_diag_files[[i]]))
+  }
+  
+}else{
+  dup_dt_pe_cat<-data.table(StudyVar="PE_category", removed_rec="N/A")
+  sum_pe_cat<-NULL
+}
+rm(pe_cat_diag_files)
+
 ####GDM diagnoses####
 
 #Diagnostic files
@@ -264,16 +343,16 @@ rm(gdm_files)
 
 
 #Combine dup results
-if(sum(!is.null(dup_dt_dm_preg),!is.null(dup_dt_unk_gd),!is.null(dup_dt_pre_gd),!is.null(dup_dt_gd),!is.null(dup_dt_dm),!is.null(dup_dt_gdm))){
-  dup_gdm_diag<-rbind(dup_dt_dm_preg,dup_dt_unk_gd,dup_dt_pre_gd,dup_dt_gd,dup_dt_dm,dup_dt_gdm)
-  rm(dup_dt_dm_preg,dup_dt_unk_gd,dup_dt_pre_gd,dup_dt_gd,dup_dt_dm,dup_dt_gdm)
+if(sum(!is.null(dup_dt_dm_preg),!is.null(dup_dt_unk_gd),!is.null(dup_dt_pre_gd),!is.null(dup_dt_gd),!is.null(dup_dt_dm),!is.null(dup_dt_gdm),!is.null(dup_dt_gdm_cat))){
+  dup_gdm_diag<-rbind(dup_dt_dm_preg,dup_dt_unk_gd,dup_dt_pre_gd,dup_dt_gd,dup_dt_dm,dup_dt_gdm,dup_dt_gdm_cat)
+  rm(dup_dt_dm_preg,dup_dt_unk_gd,dup_dt_pre_gd,dup_dt_gd,dup_dt_dm,dup_dt_gdm,dup_dt_gdm_cat)
 }else{
   dup_gdm_diag<-NULL 
 }
 
 #Combine sum results
-if(sum(!is.null(sum_gdm_dm_preg),!is.null(sum_gdm_unk_gd),!is.null(sum_gdm_pre_gd),!is.null(sum_gdm_gd),!is.null(sum_gdm_dm),!is.null(sum_gdm))){
-  sum<-rbind(sum_gdm_dm_preg,sum_gdm_unk_gd,sum_gdm_pre_gd,sum_gdm_gd,sum_gdm_dm,sum_gdm)
+if(sum(!is.null(sum_gdm_dm_preg),!is.null(sum_gdm_unk_gd),!is.null(sum_gdm_pre_gd),!is.null(sum_gdm_gd),!is.null(sum_gdm_dm),!is.null(sum_gdm),!is.null(sum_gdm_cat))){
+  sum<-rbind(sum_gdm_dm_preg,sum_gdm_unk_gd,sum_gdm_pre_gd,sum_gdm_gd,sum_gdm_dm,sum_gdm,sum_gdm_cat)
   fwrite(sum,paste0(output_dir,"PE and GDM algorithm/Step_02_summary_gdm_icluded_record.csv"),row.names = F)
   rm(sum,sum_gdm_dm_preg,sum_gdm_unk_gd,sum_gdm_pre_gd,sum_gdm_gd,sum_gdm_dm,sum_gdm)
 }
@@ -389,19 +468,58 @@ if(length(pe_files)>0){
 rm(pe_files)
 
 #Combine dup results
-if(sum(!is.null(dup_dt_hellp),!is.null(dup_dt_ecl),!is.null(dup_dt_pe),!is.null(dup_gdm_diag))){
-  dup<-rbind(dup_gdm_diag,dup_dt_hellp,dup_dt_ecl,dup_dt_pe)
-  rm(dup_gdm_diag,dup_dt_hellp,dup_dt_ecl,dup_dt_pe)
+if(sum(!is.null(dup_gdm_diag), !is.null(dup_dt_hellp),!is.null(dup_dt_ecl),!is.null(dup_dt_pe),!is.null(dup_pe),!is.null(dup_dt_pe_cat))){
+  dup<-rbind(dup_gdm_diag,dup_dt_hellp,dup_dt_ecl,dup_dt_pe,dup_pe,dup_dt_pe_cat)
+  rm(dup_gdm_diag,dup_dt_hellp,dup_dt_ecl,dup_dt_pe,dup_pe,dup_dt_pe_cat)
   fwrite(dup,paste0(output_dir,"PE and GDM algorithm/Step_02_gdm_pe_duplicated_diagnoses_removed.csv"),row.names = F)
   rm(dup)
 }
 
 #Combine sum results
-if(sum(!is.null(sum_hellp),!is.null(sum_ecl),!is.null(sum_dt_pe),!is.null(sum_pe))){
-  sum<-rbind(sum_hellp,sum_ecl,sum_dt_pe,sum_pe)
+if(sum(!is.null(sum_hellp),!is.null(sum_ecl),!is.null(sum_dt_pe),!is.null(sum_pe),!is.null(sum_pe_cat))){
+  sum<-rbind(sum_hellp,sum_ecl,sum_dt_pe,sum_pe,sum_pe_cat)
   fwrite(sum,paste0(output_dir,"PE and GDM algorithm/Step_02_summary_pe_icluded_record.csv"),row.names = F)
-  rm(sum,sum_hellp,sum_ecl,sum_dt_pe,sum_pe)
+  rm(sum,sum_hellp,sum_ecl,sum_dt_pe,sum_pe,sum_pe_cat)
 }
+
+###Migraine diagnoses category####
+#Migraine diagnoses category files
+print("Combine files about categorical diagnoses Migraine")
+mig_cat_diag_files<-list.files(tmp, "_Migrainecat_")
+if(length(mig_cat_diag_files)>0){
+  mig_cat_diag<-lapply(paste0(tmp, mig_cat_diag_files), readRDS)
+  mig_cat_diag<-as.data.table(do.call(rbind,mig_cat_diag))
+  #remove duplicates(same migrson id, date and condition)
+  mig_cat_diag[,comb:=paste0(migrson_id, "_", event_date)]
+  dup<-mig_cat_diag[duplicated(comb),.N]
+  if(dup>0){
+    dup_dt_mig_cat<-data.table(StudyVar="Migraine_category", removed_rec=dup)
+  }else{
+    dup_dt_mig_cat<-data.table(StudyVar="Migraine_category", removed_rec=0)  
+  }
+  rm(dup)
+  mig_cat_diag<-mig_cat_diag[!duplicated(comb)]
+  mig_cat_diag[,comb:=NULL]
+  mig_cat_diag[,condition:="Migraine_category"]
+  #Summary of included records by event_code, meaning, condition, year
+  sum_mig_cat<-mig_cat_diag[,.N, by=c("condition", "meaning", "year")]
+  setnames(sum_mig_cat,"N", "no_records")
+  #fwrite(sum,paste0(output_dir,"Migraine and Migraine algorithm/summary_mig_checkbox.csv"))
+  mig_cat_diag[,event_code:=NULL][,meaning:=NULL][,year:=NULL]
+  #save data in g_intermediate/populations
+  saveRDS(mig_cat_diag, paste0(g_intermediate,"mig_algorithm/Migraine_checkbox.rds"))
+  rm(mig_cat_diag)
+  #remove files
+  #remove all mig files from tmp
+  for (i in 1:length(mig_cat_diag_files)){
+    file.remove(paste0(tmp,mig_cat_diag_files[[i]]))
+  }
+  
+}else{
+  dup_dt_mig_cat<-data.table(StudyVar="Migraine_category", removed_rec="N/A")
+  sum_mig_cat<-NULL
+}
+rm(mig_cat_diag_files)
 
 ####Migraine####
 #MG_NO_AURA
@@ -670,18 +788,18 @@ if(length(mg_files)>0){
 rm(mg_files)
 
 #Combine dup results
-if(sum(!is.null(dup_dt_mg_no_aura),!is.null(dup_dt_mg_aura),!is.null(dup_dt_mg_status),!is.null(dup_dt_other_mg),!is.null(dup_dt_unsp_mg),!is.null(dup_dt_comp_mg),!is.null(dup_dt_mg))){
-  dup<-rbind(dup_dt_mg_no_aura,dup_dt_mg_aura,dup_dt_mg_status,dup_dt_other_mg,dup_dt_unsp_mg,dup_dt_comp_mg,dup_dt_mg)
-  rm(dup_dt_mg_no_aura,dup_dt_mg_aura,dup_dt_mg_status,dup_dt_other_mg,dup_dt_unsp_mg,dup_dt_comp_mg,dup_dt_mg)
+if(sum(!is.null(dup_dt_mg_no_aura),!is.null(dup_dt_mg_aura),!is.null(dup_dt_mg_status),!is.null(dup_dt_other_mg),!is.null(dup_dt_unsp_mg),!is.null(dup_dt_comp_mg),!is.null(dup_dt_mg),!is.null(dup_dt_mig_cat))){
+  dup<-rbind(dup_dt_mg_no_aura,dup_dt_mg_aura,dup_dt_mg_status,dup_dt_other_mg,dup_dt_unsp_mg,dup_dt_comp_mg,dup_dt_mg,dup_dt_mig_cat)
+  rm(dup_dt_mg_no_aura,dup_dt_mg_aura,dup_dt_mg_status,dup_dt_other_mg,dup_dt_unsp_mg,dup_dt_comp_mg,dup_dt_mg,dup_dt_mig_cat)
   fwrite(dup,paste0(output_dir,"Migraine algorithm/Step_02_mig_duplicated_diagnoses_removed.csv"),row.names = F)
   rm(dup)
 }
 
 #Combine sum results
-if(sum(!is.null(sum_dt_mg_no_aura),!is.null(sum_dt_mg_aura),!is.null(sum_dt_mg_status),!is.null(sum_dt_other_mg),!is.null(sum_dt_unsp_mg),!is.null(sum_dt_comp_mg),!is.null(sum_dt_mg))){
-  sum<-rbind(sum_dt_mg_no_aura,sum_dt_mg_aura,sum_dt_mg_status,sum_dt_other_mg,sum_dt_unsp_mg,sum_dt_comp_mg,sum_dt_mg)
+if(sum(!is.null(sum_dt_mg_no_aura),!is.null(sum_dt_mg_aura),!is.null(sum_dt_mg_status),!is.null(sum_dt_other_mg),!is.null(sum_dt_unsp_mg),!is.null(sum_dt_comp_mg),!is.null(sum_dt_mg),!is.null(sum_mig_cat))){
+  sum<-rbind(sum_dt_mg_no_aura,sum_dt_mg_aura,sum_dt_mg_status,sum_dt_other_mg,sum_dt_unsp_mg,sum_dt_comp_mg,sum_dt_mg,sum_mig_cat)
   fwrite(sum,paste0(output_dir,"Migraine algorithm/Step_02_summary_mig_icluded_record.csv"),row.names = F)
-  rm(sum,sum_dt_mg_no_aura,sum_dt_mg_aura,sum_dt_mg_status,sum_dt_other_mg,sum_dt_unsp_mg,sum_dt_comp_mg,sum_dt_mg)
+  rm(sum,sum_dt_mg_no_aura,sum_dt_mg_aura,sum_dt_mg_status,sum_dt_other_mg,sum_dt_unsp_mg,sum_dt_comp_mg,sum_dt_mg,sum_mig_cat)
 }
 
 date_running_end_02_c<-Sys.Date()
