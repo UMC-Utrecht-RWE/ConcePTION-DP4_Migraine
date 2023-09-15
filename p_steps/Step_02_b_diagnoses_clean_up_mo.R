@@ -126,6 +126,13 @@ if(sum(sum(mo_gdm_diagnoses,mo_pe_diagnoses,mo_migraine_diagnoses)>0,
         setnames(df, code_var,"event_code")
         setnames(df, voc_var,"event_vocabulary")
         setnames(df,"mo_meaning","meaning")
+        #remove uneccessary columns
+        if("mo_source_table" %in% names(df)){df[,mo_source_table:=NULL]}
+        if("mo_source_column" %in% names(df)){df[,mo_source_column:=NULL]}
+        if("mo_source_value" %in% names(df)){df[,mo_source_value:=NULL]}
+        if("mo_unit" %in% names(df)){df[,mo_unit:=NULL]}
+        if("mo_code" %in% names(df)){df[,mo_code:=NULL]}
+        if("mo_record_vocabulary" %in% names(df)){df[,mo_record_vocabulary:=NULL]}
         original_rows_gdm_pe[[w]]<-df[,.N]
         original_rows_mig[[w]]<-df[,.N]
         #remove empty dates
@@ -216,7 +223,7 @@ if(sum(sum(mo_gdm_diagnoses,mo_pe_diagnoses,mo_migraine_diagnoses)>0,
                       if(df[prior_gdm_pe==0 & after_gdm_pe==0 & filter==1 & is.na(remove),.N]>0){
                         years_this_event<-sort(df[prior_gdm_pe==0 & after_gdm_pe==0 & filter==1 & is.na(remove)][!duplicated(year),year])
                         for(year_ind in 1:length(years_this_event)){
-                          saveRDS(data.table(df[,cols, with=F][prior_gdm_pe==0 & after_gdm_pe==0 & is.na(remove) & filter==1 & year==years_this_event[year_ind]], condition=names(conditions_gdm[i])), paste0(tmp,years_this_event[year_ind],"_","GDM_", names(conditions_gdm[i]), "_",actual_tables$MEDICAL_OBSERVATIONS[y],"_", codes_ind, ".rds"))
+                          saveRDS(data.table(df[prior_gdm_pe==0 & after_gdm_pe==0 & is.na(remove) & filter==1 & year==years_this_event[year_ind]], condition=names(conditions_gdm[i])), paste0(tmp,years_this_event[year_ind],"_","GDM_", names(conditions_gdm[i]), "_",actual_tables$MEDICAL_OBSERVATIONS[y],"_", codes_ind, ".rds"))
                         }
                       } else {
                         years_this_event<-NULL}# new 01.06.2022
@@ -251,7 +258,7 @@ if(sum(sum(mo_gdm_diagnoses,mo_pe_diagnoses,mo_migraine_diagnoses)>0,
                       if(df[prior_gdm_pe==0 & after_gdm_pe==0 & filter==1 & is.na(remove),.N]>0){
                         years_this_event<-sort(df[prior_gdm_pe==0 & after_gdm_pe==0 & filter==1 & is.na(remove)][!duplicated(year),year])
                         for(year_ind in 1:length(years_this_event)){
-                          saveRDS(data.table(df[,cols, with=F][prior_gdm_pe==0 & after_gdm_pe==0 & is.na(remove) & filter==1 & year==years_this_event[year_ind]], condition=names(conditions_pe[i])), paste0(tmp,years_this_event[year_ind],"_","PE_", names(conditions_pe[i]), "_",actual_tables$MEDICAL_OBSERVATIONS[y],"_", codes_ind, ".rds"))
+                          saveRDS(data.table(df[prior_gdm_pe==0 & after_gdm_pe==0 & is.na(remove) & filter==1 & year==years_this_event[year_ind]], condition=names(conditions_pe[i])), paste0(tmp,years_this_event[year_ind],"_","PE_", names(conditions_pe[i]), "_",actual_tables$MEDICAL_OBSERVATIONS[y],"_", codes_ind, ".rds"))
                         }
                       } else {
                         years_this_event<-NULL}# new 01.06.2022
@@ -292,7 +299,7 @@ if(sum(sum(mo_gdm_diagnoses,mo_pe_diagnoses,mo_migraine_diagnoses)>0,
                       if(df[prior_mig==0 & after_mig==0 & filter==1 & is.na(remove),.N]>0){
                         years_this_event<-sort(df[prior_mig==0 & after_mig==0 & filter==1 & is.na(remove)][!duplicated(year),year])
                         for(year_ind in 1:length(years_this_event)){
-                          saveRDS(data.table(df[,cols, with=F][prior_mig==0 & after_mig==0 & filter==1 & is.na(remove) & year==years_this_event[year_ind]], condition=names(conditions_migraine[i])), paste0(tmp,years_this_event[year_ind],"_","Migraine_", names(conditions_migraine[i]), "_",actual_tables$MEDICAL_OBSERVATIONS[y],"_", codes_ind, ".rds"))
+                          saveRDS(data.table(df[prior_mig==0 & after_mig==0 & filter==1 & is.na(remove) & year==years_this_event[year_ind]], condition=names(conditions_migraine[i])), paste0(tmp,years_this_event[year_ind],"_","Migraine_", names(conditions_migraine[i]), "_",actual_tables$MEDICAL_OBSERVATIONS[y],"_", codes_ind, ".rds"))
                         }
                       } else {
                         years_this_event<-NULL}# new 01.06.2022
@@ -323,7 +330,7 @@ if(sum(sum(mo_gdm_diagnoses,mo_pe_diagnoses,mo_migraine_diagnoses)>0,
                       if(df[prior_mig==0 & after_mig==0 & filter==1 & is.na(remove),.N]>0){
                         years_this_event<-sort(df[prior_mig==0 & after_mig==0 & filter==1 & is.na(remove)][!duplicated(year),year])
                         for(year_ind in 1:length(years_this_event)){
-                          saveRDS(data.table(df[,cols, with=F][prior_mig==0 & after_mig==0 & filter==1 & is.na(remove) & year==years_this_event[year_ind]], condition=names(conditions_migraine[i])), paste0(tmp,years_this_event[year_ind],"_","Migraine_", names(conditions_migraine[i]), "_",actual_tables$MEDICAL_OBSERVATIONS[y],"_", codes_ind, ".rds"))
+                          saveRDS(data.table(df[prior_mig==0 & after_mig==0 & filter==1 & is.na(remove) & year==years_this_event[year_ind]], condition=names(conditions_migraine[i])), paste0(tmp,years_this_event[year_ind],"_","Migraine_", names(conditions_migraine[i]), "_",actual_tables$MEDICAL_OBSERVATIONS[y],"_", codes_ind, ".rds"))
                         }
                       } else {
                         years_this_event<-NULL}# new 01.06.2022
