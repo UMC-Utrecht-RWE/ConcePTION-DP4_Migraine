@@ -27,3 +27,5 @@ g_intermediate/migraine_algorithm/
 DMpregnancy_D3.rds
 g_output/
 g_intermediate/tmp/
+g_intermediate/environment.RData
+g_intermediate/pregnancy_d3/obs_period_hint.rds
