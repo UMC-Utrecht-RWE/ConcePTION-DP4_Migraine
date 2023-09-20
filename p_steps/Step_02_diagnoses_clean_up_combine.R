@@ -490,7 +490,7 @@ if(length(mig_cat_diag_files)>0){
   mig_cat_diag<-lapply(paste0(tmp, mig_cat_diag_files), readRDS)
   mig_cat_diag<-as.data.table(do.call(rbind,mig_cat_diag))
   #remove duplicates(same migrson id, date and condition)
-  mig_cat_diag[,comb:=paste0(migrson_id, "_", event_date)]
+  mig_cat_diag[,comb:=paste0(person_id, "_", event_date)]
   dup<-mig_cat_diag[duplicated(comb),.N]
   if(dup>0){
     dup_dt_mig_cat<-data.table(StudyVar="Migraine_category", removed_rec=dup)
@@ -507,7 +507,7 @@ if(length(mig_cat_diag_files)>0){
   #fwrite(sum,paste0(output_dir,"Migraine and Migraine algorithm/summary_mig_checkbox.csv"))
   mig_cat_diag[,event_code:=NULL][,meaning:=NULL][,year:=NULL]
   #save data in g_intermediate/populations
-  saveRDS(mig_cat_diag, paste0(g_intermediate,"mig_algorithm/Migraine_checkbox.rds"))
+  saveRDS(mig_cat_diag, paste0(g_intermediate,"migraine_algorithm/Migraine_checkbox.rds"))
   rm(mig_cat_diag)
   #remove files
   #remove all mig files from tmp
