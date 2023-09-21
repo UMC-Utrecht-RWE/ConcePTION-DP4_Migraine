@@ -1,6 +1,27 @@
 initial_time_04_b<-Sys.time()
 date_running_start_04_b<-Sys.Date()
 
+#### PE check box clean up: Combine data from PE_checkbox and PE_checkbox_cat ####
+pe_checkbox_files<-list.files(paste0(projectFolder,"/g_intermediate/pe_algorithm/"),"PE_checkbox")
+if(length(pe_checkbox_files)>0){
+  pe_checkbox<-lapply(paste0(projectFolder,"/g_intermediate/pe_algorithm/", pe_checkbox_files), readRDS)
+  pe_checkbox<-as.data.table(do.call(rbind,pe_checkbox))
+  #Change conditio to PE for all
+  pe_checkbox[,condition:="PE_checkbox"]
+  #remove duplicates
+  pe_checkbox[,comb:=paste0(person_id,"_",event_date)]
+  pe_checkbox<-pe_checkbox[!duplicated(comb)]
+  pe_checkbox[,comb:=NULL]
+  
+  #Delete old files
+  #remove all pe files from tmp
+  for (i in 1:length(pe_checkbox_files)){
+    file.remove(paste0(projectFolder,"/g_intermediate/pe_algorithm/", pe_checkbox_files[[i]]))
+  }
+  
+  saveRDS(pe_checkbox,paste0(projectFolder,"/g_intermediate/pe_algorithm/PE_checkbox.rds"))
+  rm(pe_checkbox)
+}
 
 ####PE DIAGNOSES####
 print("Loading all PE diagnoses D3 and merge with the pregnancy D3.")
