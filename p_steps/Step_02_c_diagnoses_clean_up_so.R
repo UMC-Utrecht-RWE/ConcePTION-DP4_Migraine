@@ -5,10 +5,12 @@ if(sum(sum(so_gdm_diagnoses,so_pe_diagnoses,so_migraine_diagnoses),
        sum(so_gdm_diagnoses_cat,so_pe_diagnoses_cat,so_migraine_diagnoses_cat),
        sum(!is.null(diag_checkbox_gdm_so),!is.null(diag_checkbox_pe_so)))>0){
   
-  if(sum(codesheet_diagnoses_gdm[table=="SURVEY_OBSERVATIONS",.N],
-         codesheet_diagnoses_pe[table=="SURVEY_OBSERVATIONS",.N],
-         codesheet_diagnoses_migraine[table=="SURVEY_OBSERVATIONS",.N])>0){
-  if(codesheet_diagnoses_gdm[table=="SURVEY_OBSERVATIONS",.N]>0){
+  #set up needed variables for diagnoses check:code_var,voc_var,date_var
+  #default is set to: so_source_value, so_unit, so_date
+  if(sum(so_gdm_diagnoses,so_pe_diagnoses,so_migraine_diagnoses)>0){
+  #the values should be the same for so_gdm_diagnoses, so_pe_diagnoses, so_migraine_diagnoses
+    #Check all to amke sure that the variables are set depending on which one is available
+    if(so_gdm_diagnoses>0){
     if("code" %in% codesheet_diagnoses_gdm[table=="SURVEY_OBSERVATIONS",val_1]){
       code_var<-codesheet_diagnoses_gdm[table=="SURVEY_OBSERVATIONS",col_1]
       voc_var<-codesheet_diagnoses_gdm[table=="SURVEY_OBSERVATIONS",col_2]
@@ -18,8 +20,9 @@ if(sum(sum(so_gdm_diagnoses,so_pe_diagnoses,so_migraine_diagnoses),
       voc_var<-codesheet_diagnoses_gdm[table=="SURVEY_OBSERVATIONS",col_1]
       date_var<-codesheet_diagnoses_gdm[table=="SURVEY_OBSERVATIONS",date_column]
     }
-  }
-  if(codesheet_diagnoses_pe[table=="SURVEY_OBSERVATIONS",.N]>0){
+    }
+    
+  if(so_pe_diagnoses>0){
     if("code" %in% codesheet_diagnoses_pe[table=="SURVEY_OBSERVATIONS",val_1]){
       code_var<-codesheet_diagnoses_pe[table=="SURVEY_OBSERVATIONS",col_1]
       voc_var<-codesheet_diagnoses_pe[table=="SURVEY_OBSERVATIONS",col_2]
@@ -30,7 +33,8 @@ if(sum(sum(so_gdm_diagnoses,so_pe_diagnoses,so_migraine_diagnoses),
       date_var<-codesheet_diagnoses_pe[table=="SURVEY_OBSERVATIONS",date_column]
     }
   }
-  if(codesheet_diagnoses_migraine[table=="SURVEY_OBSERVATIONS",.N]>0){
+    
+  if(so_migraine_diagnoses>0){
     if("code" %in% codesheet_diagnoses_migraine[table=="SURVEY_OBSERVATIONS",val_1]){
       code_var<-codesheet_diagnoses_migraine[table=="SURVEY_OBSERVATIONS",col_1]
       voc_var<-codesheet_diagnoses_migraine[table=="SURVEY_OBSERVATIONS",col_2]
@@ -45,9 +49,12 @@ if(sum(sum(so_gdm_diagnoses,so_pe_diagnoses,so_migraine_diagnoses),
     voc_var<-"so_unit"
     date_var<-"so_date"
   }
-  
+
+  #set up needed variables for categorical diagnoses check:code_var,voc_var,date_var
+  #default is set to: code_var, voc_var, date_var
   if(sum(so_gdm_diagnoses_cat,so_pe_diagnoses_cat,so_migraine_diagnoses_cat)>0){
-    if(codesheet_diagnoses_migraine_cat[table=="SURVEY_OBSERVATIONS",.N]>0){
+    
+    if(so_migraine_diagnoses_cat>0){
       if("code" %in% codesheet_diagnoses_migraine_cat[table=="SURVEY_OBSERVATIONS",val_1]){
         code_var_2<-codesheet_diagnoses_migraine_cat[table=="SURVEY_OBSERVATIONS",col_1]
         voc_var_2<-codesheet_diagnoses_migraine_cat[table=="SURVEY_OBSERVATIONS",col_2]
@@ -59,7 +66,7 @@ if(sum(sum(so_gdm_diagnoses,so_pe_diagnoses,so_migraine_diagnoses),
       }
     }
     
-    if(codesheet_diagnoses_gdm_cat[table=="SURVEY_OBSERVATIONS",.N]>0){
+    if(so_gdm_diagnoses_cat>0){
       if("code" %in% codesheet_diagnoses_gdm_cat[table=="SURVEY_OBSERVATIONS",val_1]){
         code_var_2<-codesheet_diagnoses_gdm_cat[table=="SURVEY_OBSERVATIONS",col_1]
         voc_var_2<-codesheet_diagnoses_gdm_cat[table=="SURVEY_OBSERVATIONS",col_2]
@@ -71,7 +78,7 @@ if(sum(sum(so_gdm_diagnoses,so_pe_diagnoses,so_migraine_diagnoses),
       }
     }
     
-    if(codesheet_diagnoses_pe_cat[table=="SURVEY_OBSERVATIONS",.N]>0){
+    if(so_pe_diagnoses_cat>0){
       if("code" %in% codesheet_diagnoses_pe_cat[table=="SURVEY_OBSERVATIONS",val_1]){
         code_var_2<-codesheet_diagnoses_pe_cat[table=="SURVEY_OBSERVATIONS",col_1]
         voc_var_2<-codesheet_diagnoses_pe_cat[table=="SURVEY_OBSERVATIONS",col_2]
@@ -87,8 +94,9 @@ if(sum(sum(so_gdm_diagnoses,so_pe_diagnoses,so_migraine_diagnoses),
     voc_var_2<-voc_var
     date_var_2<-date_var
   }
-  cols_needed<-unique(c(code_var,code_var_2, voc_var, voc_var_2, date_var, date_var_2))
   
+  cols_needed<-unique(c(code_var,code_var_2, voc_var, voc_var_2, date_var, date_var_2))
+  cols_needed<-c(cols_needed, "so_source_column")
   if(length(actual_tables$SURVEY_OBSERVATIONS)>0){
     #Load the observation periods hint table(use to make smaller the table)
     hint_fl<-list.files(paste0(projectFolder, "/g_intermediate/pregnancy_d3/"), "obs_period_hint")
@@ -158,9 +166,7 @@ if(sum(sum(so_gdm_diagnoses,so_pe_diagnoses,so_migraine_diagnoses),
       df<-df[, lapply(.SD, FUN=function(x) gsub("^$|^ $", NA, x))] 
       df[,so_origin:=NULL][,survey_id:=NULL][,so_source_table:=NULL]
       #####Diagnoses####
-      if(sum(codesheet_diagnoses_gdm[table=="SURVEY_OBSERVATIONS",.N],
-             codesheet_diagnoses_pe[table=="SURVEY_OBSERVATIONS",.N],
-             codesheet_diagnoses_migraine[table=="SURVEY_OBSERVATIONS",.N],
+      if(sum(so_gdm_diagnoses,so_pe_diagnoses,so_migraine_diagnoses,
              !is.null(diag_checkbox_gdm_so),!is.null(diag_checkbox_pe_so),
              so_gdm_diagnoses_cat, so_pe_diagnoses_cat, so_migraine_diagnoses_cat)>0){
         #cols<-c("person_id", "so_meaning", code_var, voc_var, date_var)
@@ -169,6 +175,7 @@ if(sum(sum(so_gdm_diagnoses,so_pe_diagnoses,so_migraine_diagnoses),
         remove_cols<-setdiff(names(df),cols_needed)
         remove_cols<-remove_cols[!remove_cols %in% c("person_id","so_meaning")]
         if(!is.null(remove_cols)){df[,eval(remove_cols):=NULL]}
+#Add different filter if the code_var and code_var_2 are not the same:To be implemented if needed
         #make sure missing data is read appropriately
         setnames(df, date_var,"event_date")
         setnames(df, code_var,"event_code")
@@ -242,6 +249,8 @@ if(sum(sum(so_gdm_diagnoses,so_pe_diagnoses,so_migraine_diagnoses),
         # df[prior_mig==0 | prior_du==0 | prior_saf==0, comb_prior_mig:=0]
         # df[after_mig==0 | after_du==0 | after_saf==0, comb_after_mig:=0]
         
+        #perform analysis if diagnostic codes are there
+        if(sum(so_gdm_diagnoses, so_pe_diagnoses,so_migraine_diagnoses)>0){
         if(df[is.na(remove),.N]>0){
           if(df[prior_gdm_pe==0 & after_gdm_pe==0 & is.na(remove),.N]>0){
             #data filtering based on codelists
@@ -387,7 +396,7 @@ if(sum(sum(so_gdm_diagnoses,so_pe_diagnoses,so_migraine_diagnoses),
                 }
           }
         }
-      
+        }
       #Change name back
         if("event_date" %in% names(df)){setnames(df,"event_date",date_var)}
         if("event_code" %in% names(df)){setnames(df, "event_code",code_var)}
@@ -401,6 +410,7 @@ if(sum(sum(so_gdm_diagnoses,so_pe_diagnoses,so_migraine_diagnoses),
             if(voc_var_2 %in% names(df)){setnames(df, voc_var_2,"event_vocabulary")}
               if("so_meaning" %in% names(df)){setnames(df,"so_meaning","meaning")}
         
+        if(sum(so_gdm_diagnoses_cat, so_pe_diagnoses_cat,so_migraine_diagnoses_cat)>0){
         if(df[is.na(remove),.N]>0){
           if(df[prior_gdm_pe==0 & after_gdm_pe==0 & is.na(remove),.N]>0){
             #data filtering based on codelists
@@ -547,6 +557,20 @@ if(sum(sum(so_gdm_diagnoses,so_pe_diagnoses,so_migraine_diagnoses),
             }
           }
         }
+        }
+        
+        if("remove" %in% names(df)){df[,remove:=NULL]}
+        if("year" %in% names(df)){df[,year:=NULL]}
+        if("prior_gdm_pe" %in% names(df)){df[,prior_gdm_pe:=NULL]}
+        if("prior_mig" %in% names(df)){df[,prior_mig:=NULL]}
+        if("prior_du" %in% names(df)){df[,prior_du:=NULL]}
+        if("prior_saf" %in% names(df)){df[,prior_saf:=NULL]}
+        if("after_gdm_pe" %in% names(df)){df[,after_gdm_pe:=NULL]}
+        if("after_mig" %in% names(df)){df[,after_mig:=NULL]}
+        if("after_du" %in% names(df)){df[,after_du:=NULL]}
+        if("after_saf" %in% names(df)){df[,after_saf:=NULL]}
+        if("code_no_dot" %in% names(df)){df[,code_no_dot:=NULL]}
+        
       ####Diagnoses category####
       #Gather information about not fixed values/Not needed at the moment
       # if(sum(!is.null(diag_cat_gdm),!is.null(diag_cat_pe), !is.null(diag_cat_migraine))>0){
@@ -678,14 +702,8 @@ if(sum(sum(so_gdm_diagnoses,so_pe_diagnoses,so_migraine_diagnoses),
       # }
       
         
-        setnames(df,"event_date",date_var_2)
-        setnames(df, "event_code",code_var_2)
-        setnames(df, "event_vocabulary",voc_var_2)
-        setnames(df,"meaning", "so_meaning")
-        df[,remove:=NULL][,year:=NULL][,prior_gdm_pe:=NULL][,prior_mig:=NULL][,prior_du:=NULL][,prior_saf:=NULL][,after_gdm_pe:=NULL][,after_mig:=NULL][,after_du:=NULL][,after_saf:=NULL][,code_no_dot:=NULL]
-        
       ####Checkbox information####
-        
+
         #Change name back
         if("event_date" %in% names(df)){setnames(df,"event_date",date_var_2)}
         if("event_code" %in% names(df)){setnames(df, "event_code",code_var_2)}
@@ -704,7 +722,8 @@ if(sum(sum(so_gdm_diagnoses,so_pe_diagnoses,so_migraine_diagnoses),
             names_df<-names(df)
             same_names<-as.character(intersect(names_df,names(gdm_diag_checkbox_so)))
             df<-merge.data.table(df,gdm_diag_checkbox_so,by=same_names,all.x=T)
-            if(df[!is.na(event_abbreviation),.N]>0){
+            setnames(df, "event_abbreviation", "condition")
+            if(df[!is.na(condition),.N]>0){
               for(cat_ind in 1:gdm_diag_checkbox_so[!duplicated(index),.N]){
                 cols_to_keep<-c(unique(gdm_diag_checkbox_so[cat_ind==index,checkbox_date]),unique(gdm_diag_checkbox_so[cat_ind==index,keep]))
                 #recopy columns
@@ -712,7 +731,7 @@ if(sum(sum(so_gdm_diagnoses,so_pe_diagnoses,so_migraine_diagnoses),
                 df[,event_code:=get(unique(gdm_diag_checkbox_so[cat_ind==index,keep]))]
                 #setnames(df,unique(gdm_diag_checkbox_so[cat_ind==index,checkbox_date]), "event_date")
                 #setnames(df,unique(gdm_diag_checkbox_so[cat_ind==index,keep]), "event_code")
-                setnames(df, "event_abbreviation", "condition")
+                
                 
                 #date variable
                 df[,event_date:=as.IDate(event_date, "%Y%m%d")]
@@ -729,6 +748,7 @@ if(sum(sum(so_gdm_diagnoses,so_pe_diagnoses,so_migraine_diagnoses),
                   saveRDS(df[include==1 & !is.na(condition)][year==years_cat[year_ind] & index==cat_ind, cols_to_keep, with=F], paste0(projectFolder,"/g_intermediate/tmp/", years_cat[year_ind],"_", "GDM_diagnoses_checkbox_so",cat_ind,".rds"))
                 }# new 01.06.2022
                 }
+                if("include" %in% names(df)){df[,include:=NULL]}
                 if("years_cat" %in% ls()){rm(years_cat)}
                 if("year_ind" %in% ls()){rm(year_ind)}
                 
@@ -750,6 +770,11 @@ if(sum(sum(so_gdm_diagnoses,so_pe_diagnoses,so_migraine_diagnoses),
       if("checkbox_date" %in% names(df)){df[,checkbox_date:=NULL]}
       if("include" %in% names(df)){df[,include:=NULL]}
       if("year" %in% names(df)){df[,year:=NULL]}
+      if("table" %in% names(df)){df[,table:=NULL]}
+      if("event_abbreviation" %in% names(df)){df[,event_abbreviation:=NULL]}
+        if("condition" %in% names(df)){df[,condition:=NULL]}
+      if("keep" %in% names(df)){df[,keep:=NULL]}
+      if("index" %in% names(df)){df[,index:=NULL]}
       
       #PE
       if(!is.null(diag_checkbox_pe_so)){
@@ -760,7 +785,8 @@ if(sum(sum(so_gdm_diagnoses,so_pe_diagnoses,so_migraine_diagnoses),
             names_df<-names(df)
             same_names<-intersect(names_df,names(pe_diag_checkbox_so))
             df<-merge.data.table(df,pe_diag_checkbox_so,by=same_names,all.x=T)
-            if(df[!is.na(event_abbreviation),.N]>0){
+            setnames(df, "event_abbreviation", "condition")
+            if(df[!is.na(condition),.N]>0){
               for(cat_ind in 1:pe_diag_checkbox_so[!duplicated(index),.N]){
                 cols_to_keep<-c(unique(pe_diag_checkbox_so[cat_ind==index,checkbox_date]),unique(pe_diag_checkbox_so[cat_ind==index,keep]))
                 #rename columns
@@ -770,8 +796,7 @@ if(sum(sum(so_gdm_diagnoses,so_pe_diagnoses,so_migraine_diagnoses),
                 #setnames(df,unique(pe_diag_checkbox_so[cat_ind==index,checkbox_date]), "event_date")
                 #setnames(df,unique(pe_diag_checkbox_so[cat_ind==index,keep]), "event_code")
                 #setnames(df, "so_meaning", "meaning")
-                setnames(df, "event_abbreviation", "condition")
-                
+              
                 #date variable
                 df[,event_date:=as.IDate(event_date, "%Y%m%d")]
                 df[,prior_gdm_pe:=ifelse(gdm_pe_start_study_date>event_date,1,0)]
@@ -787,6 +812,7 @@ if(sum(sum(so_gdm_diagnoses,so_pe_diagnoses,so_migraine_diagnoses),
                   saveRDS(df[include==1 & !is.na(condition)][year==years_cat[year_ind] & index==cat_ind, cols_to_keep, with=F], paste0(projectFolder,"/g_intermediate/tmp/", years_cat[year_ind],"_", "PE_diagnoses_checkbox_so",cat_ind,".rds"))
                 }# new 01.06.2022
                 }
+                if("include" %in% names(df)){df[,include:=NULL]}
                 if("years_cat" %in% ls()){rm(years_cat)}
                 if("year_ind" %in% ls()){rm(year_ind)}
                 
