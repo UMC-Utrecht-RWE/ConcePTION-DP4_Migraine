@@ -50,7 +50,7 @@ rm(dates_flowchart)
 #codesheet_diagnoses_migraine
 events_gdm_diagnoses<-ifelse("EVENTS" %in% codesheet_diagnoses_gdm[,table],1,0)
 mo_gdm_diagnoses<-ifelse("MEDICAL_OBSERVATIONS" %in% codesheet_diagnoses_gdm[,table],1,0)
-so_gdm_diagnoses<-ifelse("SURVEY_OBSERVATIONS" %in% c(codesheet_diagnoses_gdm[,table],codesheet_diagnoses_gdm_cat[,table]),1,0)
+so_gdm_diagnoses<-ifelse("SURVEY_OBSERVATIONS" %in% codesheet_diagnoses_gdm[,table],1,0)
 
 events_pe_diagnoses<-ifelse("EVENTS" %in% codesheet_diagnoses_pe[,table],1,0)
 mo_pe_diagnoses<-ifelse("MEDICAL_OBSERVATIONS" %in% codesheet_diagnoses_pe[,table],1,0)
