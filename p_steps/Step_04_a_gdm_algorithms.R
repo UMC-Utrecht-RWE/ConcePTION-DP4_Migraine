@@ -7,7 +7,7 @@ if(length(gdm_checkbox_files)>0){
   gdm_checkbox<-lapply(paste0(projectFolder,"/g_intermediate/gdm_algorithm/", gdm_checkbox_files), readRDS)
   gdm_checkbox<-as.data.table(do.call(rbind,gdm_checkbox))
   #Change conditio to GDM for all
-  gdm_checkbox[,condition:="GDM"]
+  gdm_checkbox[,condition:="GDM_checkbox"]
   #remove duplicates
   gdm_checkbox[,comb:=paste0(person_id,"_",event_date)]
   gdm_checkbox<-gdm_checkbox[!duplicated(comb)]
@@ -19,31 +19,10 @@ if(length(gdm_checkbox_files)>0){
     file.remove(paste0(projectFolder,"/g_intermediate/gdm_algorithm/", gdm_checkbox_files[[i]]))
   }
   
-  saveRDS(gdm_checkbox,paste0(projectFolder,"/g_intermediate/gdm_algorithm/GDM_checkbox"))
+  saveRDS(gdm_checkbox,paste0(projectFolder,"/g_intermediate/gdm_algorithm/GDM_checkbox.rds"))
   rm(gdm_checkbox)
   }
 
-#### PE check box clean up: Combine data from PE_checkbox and PE_checkbox_cat ####
-pe_checkbox_files<-list.files(paste0(projectFolder,"/g_intermediate/pe_algorithm/"),"PE_checkbox")
-if(length(pe_checkbox_files)>0){
-  pe_checkbox<-lapply(paste0(projectFolder,"/g_intermediate/pe_algorithm/", pe_checkbox_files), readRDS)
-  pe_checkbox<-as.data.table(do.call(rbind,pe_checkbox))
-  #Change conditio to PE for all
-  pe_checkbox[,condition:="PE"]
-  #remove duplicates
-  pe_checkbox[,comb:=paste0(person_id,"_",event_date)]
-  pe_checkbox<-pe_checkbox[!duplicated(comb)]
-  pe_checkbox[,comb:=NULL]
-  
-  #Delete old files
-  #remove all pe files from tmp
-  for (i in 1:length(pe_checkbox_files)){
-    file.remove(paste0(projectFolder,"/g_intermediate/pe_algorithm/", pe_checkbox_files[[i]]))
-  }
-  
-  saveRDS(pe_checkbox,paste0(projectFolder,"/g_intermediate/pe_algorithm/PE_checkbox"))
-  rm(pe_checkbox)
-}
 
 ####GDM DIAGNOSES####
 print("Loading all GDM diagnoses D3 and merge with the pregnancy D3.")
@@ -470,7 +449,7 @@ if(algorithm_template[NEW_STUDY_VARIABLES=="GDM_3" & COMPLEXITY=="complex" & !is
 if(length(alt_col)>0){pregnancy_d3_gdm_pe[pregnancy_d3_gdm_pe[,Reduce("|" , lapply(.SD,rule, value)),.SDcols=alt_col],alternative:=1]}else{pregnancy_d3_gdm_pe[,alternative:=NA]}
 if(length(excl_col)>0){pregnancy_d3_gdm_pe[pregnancy_d3_gdm_pe[,Reduce("|" , lapply(.SD,`>=`, 1)),.SDcols=excl_col],exclude:=1]}else{pregnancy_d3_gdm_pe[,exclude:=NA]}
 
-saveRDS(pregnancy_d3_gdm_pe,paste0(projectFolder,"/g_intermediate/gdm_algorithm/final_d3/GDM_3_D3.csv"))
+saveRDS(pregnancy_d3_gdm_pe,paste0(projectFolder,"/g_intermediate/gdm_algorithm/final_d3/GDM_3_D3.rds"))
 
 #export GDM_3
 GDM_3_dt<-data.table(algorithm="GDM_3", no_diagnosed_pregnancies=pregnancy_d3_gdm_pe[alternative==1 & is.na(exclude) & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_gdm_pe[!duplicated(pregnancy_id),.N])
@@ -557,7 +536,7 @@ alt_col<-GDM_4[TYPE=="OR",STUDY_VARIABLES]
 if(length(alt_col)>0){pregnancy_d3_gdm_pe[pregnancy_d3_gdm_pe[,Reduce("|" , lapply(.SD,`>=`, 1)),.SDcols=alt_col],alternative:=1]}else{pregnancy_d3_gdm_pe[,alternative:=NA]}
 if(length(excl_col)>0){pregnancy_d3_gdm_pe[pregnancy_d3_gdm_pe[,Reduce("|" , lapply(.SD,`>=`, 1)),.SDcols=excl_col],exclude:=1]}else{pregnancy_d3_gdm_pe[,exclude:=NA]}
 
-fwrite(pregnancy_d3_gdm_pe,paste0(projectFolder,"/g_intermediate/gdm_algorithm/final_d3/GDM_4_D3.csv"),row.names = F)
+saveRDS(pregnancy_d3_gdm_pe,paste0(projectFolder,"/g_intermediate/gdm_algorithm/final_d3/GDM_4_D3.csv"))
 
 #export GDM_3
 GDM_4_dt<-data.table(algorithm="GDM_4", no_diagnosed_pregnancies=pregnancy_d3_gdm_pe[alternative==1 & is.na(exclude) & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_gdm_pe[!duplicated(pregnancy_id),.N])
