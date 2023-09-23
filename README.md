@@ -26,11 +26,11 @@ Demostrating solutions for studying intermittent medication exposures in disease
 | p_parameters                         | additional_concepts.xlsx |
 
 # How to run
-1. Download the repository in your local setting
-2. Copy the outputs from the Pregnancy algorithm in the p_steps folder
+1. Download the repository in your local setting.
+2. Copy the outputs from the Pregnancy algorithm in the p_steps/Pregnancy algorithm/g_output/ folder.
 3. Run the to_run script. 
-4. Please avoid running multiple scripts at the same time in your server. This can make this repository take 10x times longer to produce results.
-5. Once the script has ran, please cross-check the reports generated
+4. Avoid running multiple scripts at the same time in your server. This can make this script take 10x times longer to produce results.
+5. Once the script has ran, please cross-check the reports generated in the g_output folder.
 
 ## License 
 [![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://opensource.org/licenses/)
