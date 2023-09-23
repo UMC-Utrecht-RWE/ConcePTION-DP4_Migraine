@@ -14,21 +14,23 @@ Demonstrating solutions for studying intermittent medication exposures in diseas
 Demostrating solutions for studying intermittent medication exposures in diseases with episodic manifestations during pregnancy: application to medication for migraine in pregnancy.
 
 # Parameters
-| Folder           | Parameter                                                          |
-| ---------------- | ------------------------------------------------------------------ |
-| p_steps          | study_dates.xlsx |
-| p_steps/codelists | migraine_codelist.csv |
-|                   | migraine_medication_codelist.csv|
-|                   | gestational_diabetes_codelist.csv |
-|                   | antidiabetic_medications_codelist.csv | 
-|                   | pre_eclampsia_codelist.csv |
-| p_parameters     | additional_concepts.xlsx |
+| Folder                               | Parameter                                                          |
+| -------------------------------------| ------------------------------------------------------------------ |
+| p_steps                              | study_dates.xlsx |
+| p_steps/Pregnancy algorithm/g_output | D3.RData outputs from the Pregnancy algorithm | 
+| p_steps/codelists                    | migraine_codelist.csv |
+|                                      | migraine_medication_codelist.csv|
+|                                      | gestational_diabetes_codelist.csv |
+|                                      | antidiabetic_medications_codelist.csv | 
+|                                      | pre_eclampsia_codelist.csv |
+| p_parameters                         | additional_concepts.xlsx |
 
 # How to run
 1. Download the repository in your local setting
-2. Run the to_run script. 
-3. Please avoid running multiple scripts at the same time in your server. This can make this repository take 10x times longer to produce results.
-4. Once the script has ran, please cross-check the reports generated
+2. Copy the outputs from the Pregnancy algorithm in the p_steps folder
+3. Run the to_run script. 
+4. Please avoid running multiple scripts at the same time in your server. This can make this repository take 10x times longer to produce results.
+5. Once the script has ran, please cross-check the reports generated
 
 ## License 
 [![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://opensource.org/licenses/)
