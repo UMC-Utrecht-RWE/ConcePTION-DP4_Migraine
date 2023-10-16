@@ -30,7 +30,13 @@ Demostrating solutions for studying intermittent medication exposures in disease
 2. Copy the outputs from the Pregnancy algorithm in the p_steps/Pregnancy algorithm/g_output/ folder.
 3. Run the to_run script. 
 4. Avoid running multiple scripts at the same time in your server. This can make this script take 10x times longer to produce results.
-5. Once the script has ran, please cross-check the reports generated in the g_output folder.
+5. Once the script has ran, please cross-check the six reports generated in the g_output folder:
+   * YYYYMMDD_DAPNAME_Report_0
+   * YYYYMMDD_DAPNAME_Report_1
+   * YYYYMMDD_DAPNAME_Report_2
+   * YYYYMMDD_DAPNAME_Report_3
+   * YYYYMMDD_DAPNAME_Report_4
+   * YYYYMMDD_DAPNAME_Report_4
 
 ## License 
 [![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://opensource.org/licenses/)
