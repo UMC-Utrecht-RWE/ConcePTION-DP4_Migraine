@@ -64,6 +64,7 @@ MIG_Dx_third;MG_third;AND;simple;;;;365.25;1
 MIG_Rx_third;Migraine_medicines_third;AND;simple;;;;365.25;1
 MIG_DxRx_third; MG_third;OR;simple;;;;;
 MIG_DxRx_third; Migraine_medicines_third;OR;simple;;;;;
-
+MIG_checkbox_a;Migraine_checkbox_baseline;AND;simple;;;;;
+MIG_checkbox_during;Migraine_checkbox_during;AND;simple;;;;;
 
 
