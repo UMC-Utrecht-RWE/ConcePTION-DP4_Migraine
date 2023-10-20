@@ -277,7 +277,11 @@ if("Step_04_MIG_DxRx_b.csv" %in% list.files(paste0(projectFolder,"/g_output/Migr
 alg_6<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_DxRx_b.csv"))
 }else{alg_6<-NULL}
 
-alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6)
+if("Step_04_MIG_checkbox_baseline_a.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
+alg_7<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_checkbox_baseline_a.csv"))
+}else{alg_7<-NULL}
+
+alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6,alg_7)
 
 if(!is.null(alg)){
   datatable(alg, extensions = "Buttons", options = list(scrollX=T,
@@ -293,13 +297,13 @@ if(!is.null(alg)){
 ```{r, echo=F}
 if(!is.null(alg)){
   ggplotly(ggplot(alg) +
-  geom_col(aes(x = factor(algorithm,levels =c('MIG_Dx_a','MIG_Rx_a','MIG_DxRx_a','MIG_Dx_b','MIG_Rx_b', 'MIG_DxRx_b')),  
+  geom_col(aes(x = factor(algorithm,levels =c('MIG_Dx_a','MIG_Rx_a','MIG_DxRx_a','MIG_Dx_b','MIG_Rx_b', 'MIG_DxRx_b', 'MIG_checkbox_baseline_a')),  
                y = no_diagnosed_pregnancies), fill = "green", width = 0.3) +
   geom_col(aes(x = algorithm, y = no_pregnancies), alpha = 0.3, fill = "#76b82a", width = 0.6) +
       ggtitle("Migraine baseline prevalence rates")+
 xlab("Algorithm") +
   ylab("Counts")+
-  theme(axis.text.x = element_text(angle = 90, hjust = 1),
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
         axis.title.x = element_text(colour = "#76b82a"),
         axis.title.y = element_text(colour = "#76b82a"),
         plot.title = element_text(colour = "#76b82a"))+
@@ -315,6 +319,7 @@ if("alg_3" %in% ls()){rm(alg_3)}
 if("alg_4" %in% ls()){rm(alg_4)}
 if("alg_5" %in% ls()){rm(alg_5)}
 if("alg_6" %in% ls()){rm(alg_6)}
+if("alg_7" %in% ls()){rm(alg_7)}
 if("alg" %in% ls()){rm(alg)}
 ```
 
@@ -348,7 +353,11 @@ if("Step_04_MIG_DxRx_b_age.csv" %in% list.files(paste0(projectFolder,"/g_output/
 alg_6<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_DxRx_b_age.csv"))
 }else{alg_6<-NULL}
 
-alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6)
+if("Step_04_MIG_checkbox_baseline_a_age.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
+alg_7<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_checkbox_baseline_a_age.csv"))
+}else{alg_7<-NULL}
+
+alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6, alg_7)
 
 if(!is.null(alg)){
   datatable(alg, extensions = "Buttons", options = list(scrollX=T,
@@ -363,7 +372,7 @@ if(!is.null(alg)){
 
 ```{r,echo=F}
   alg[,prevalence_100_pregnancies:=as.numeric(prevalence_100_pregnancies)]
-  ggplotly(ggplot(alg, aes(x=maternal_age, y=prevalence_100_pregnancies, group=algorithm))+
+ggplotly(ggplot(alg, aes(x=maternal_age, y=prevalence_100_pregnancies, group=algorithm))+
     geom_line(aes(color=algorithm))+
     geom_point(aes(color=algorithm))+
 theme(axis.text.x = element_text(size = 8,angle = 45),
@@ -385,6 +394,7 @@ if("alg_3" %in% ls()){rm(alg_3)}
 if("alg_4" %in% ls()){rm(alg_4)}
 if("alg_5" %in% ls()){rm(alg_5)}
 if("alg_6" %in% ls()){rm(alg_6)}
+if("alg_7" %in% ls()){rm(alg_7)}
 if("alg" %in% ls()){rm(alg)}
 ```
 
@@ -420,7 +430,11 @@ if("Step_04_MIG_DxRx_b_year.csv" %in% list.files(paste0(projectFolder,"/g_output
 alg_6<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_DxRx_b_year.csv"))
 }else{alg_6<-NULL}
 
-alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6)
+if("Step_04_MIG_checkbox_baseline_a_year.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
+alg_7<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_checkbox_baseline_a_year.csv"))
+}else{alg_7<-NULL}
+
+alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6,alg_7)
 
 if(!is.null(alg)){
   datatable(alg, extensions = "Buttons", options = list(scrollX=T,
@@ -435,7 +449,8 @@ if(!is.null(alg)){
 
 ```{r,echo=F}
   alg[,prevalence_100_pregnancies:=as.numeric(prevalence_100_pregnancies)]
-  ggplotly(ggplot(alg, aes(x=year, y=prevalence_100_pregnancies, group=algorithm))+
+  alg[,year:=as.factor(year)]
+ggplotly(ggplot(alg, aes(x=year, y=prevalence_100_pregnancies, group=algorithm))+
     geom_line(aes(color=algorithm))+
     geom_point(aes(color=algorithm))+
 theme(axis.text.x = element_text(size = 8,angle = 45),
@@ -457,6 +472,7 @@ if("alg_3" %in% ls()){rm(alg_3)}
 if("alg_4" %in% ls()){rm(alg_4)}
 if("alg_5" %in% ls()){rm(alg_5)}
 if("alg_6" %in% ls()){rm(alg_6)}
+if("alg_7" %in% ls()){rm(alg_7)}
 if("alg" %in% ls()){rm(alg)}
 ```
 
@@ -492,7 +508,11 @@ if("Step_04_MIG_DxRx_b_year_age.csv" %in% list.files(paste0(projectFolder,"/g_ou
 alg_6<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_DxRx_b_year_age.csv"))
 }else{alg_6<-NULL}
 
-alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6)
+if("Step_04_MIG_checkbox_baseline_a_year_age.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
+alg_7<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_checkbox_baseline_a_year_age.csv"))
+}else{alg_7<-NULL}
+
+alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6,alg_7)
 
 if(!is.null(alg)){
   datatable(alg, extensions = "Buttons", options = list(scrollX=T,
@@ -536,6 +556,7 @@ if("alg_3" %in% ls()){rm(alg_3)}
 if("alg_4" %in% ls()){rm(alg_4)}
 if("alg_5" %in% ls()){rm(alg_5)}
 if("alg_6" %in% ls()){rm(alg_6)}
+if("alg_7" %in% ls()){rm(alg_7)}
 if("alg" %in% ls()){rm(alg)}
 if("fig.1" %in% ls()){rm(fig.1)}
 ```
@@ -567,8 +588,11 @@ if("Step_04_MIG_DxRx_during.csv" %in% list.files(paste0(projectFolder,"/g_output
 alg_3<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_DxRx_during.csv"))
 }else{alg_3<-NULL}
 
+if("Step_04_MIG_checkbox_during.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
+alg_4<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_checkbox_during.csv"))
+}else{alg_4<-NULL}
 
-alg<-rbind(alg_1,alg_2,alg_3)
+alg<-rbind(alg_1,alg_2,alg_3,alg_4)
 
 if(!is.null(alg)){
   datatable(alg, extensions = "Buttons", options = list(scrollX=T,
@@ -584,7 +608,7 @@ if(!is.null(alg)){
 ```{r, echo=F}
 if(!is.null(alg)){
   ggplotly(ggplot(alg) +
-  geom_col(aes(x = factor(algorithm,levels =c('MIG_Dx_during','MIG_Rx_during','MIG_DxRx_during')),  
+  geom_col(aes(x = factor(algorithm,levels =c('MIG_Dx_during','MIG_Rx_during','MIG_DxRx_during', 'MIG_checkbox_during')),  
                y = no_diagnosed_pregnancies), fill = "green", width = 0.3) +
   geom_col(aes(x = algorithm, y = no_pregnancies), alpha = 0.3, fill = "#76b82a", width = 0.6) +
       ggtitle("Migraine during pregnancy prevalence rates")+
@@ -603,6 +627,7 @@ xlab("Algorithm") +
 if("alg_1" %in% ls()){rm(alg_1)}
 if("alg_2" %in% ls()){rm(alg_2)}
 if("alg_3" %in% ls()){rm(alg_3)}
+if("alg_4" %in% ls()){rm(alg_4)}
 if("alg" %in% ls()){rm(alg)}
 ```
 
@@ -623,8 +648,10 @@ if("Step_04_MIG_DxRx_during_age.csv" %in% list.files(paste0(projectFolder,"/g_ou
 alg_3<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_DxRx_during_age.csv"))
 }else{alg_3<-NULL}
 
-
-alg<-rbind(alg_1,alg_2,alg_3)
+if("Step_04_MIG_checkbox_during_age.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
+alg_4<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_checkbox_during_age.csv"))
+}else{alg_4<-NULL}
+alg<-rbind(alg_1,alg_2,alg_3,alg_4)
 
 if(!is.null(alg)){
   datatable(alg, extensions = "Buttons", options = list(scrollX=T,
@@ -658,6 +685,7 @@ theme(axis.text.x = element_text(size = 8,angle = 45),
 if("alg_1" %in% ls()){rm(alg_1)}
 if("alg_2" %in% ls()){rm(alg_2)}
 if("alg_3" %in% ls()){rm(alg_3)}
+if("alg_4" %in% ls()){rm(alg_4)}
 if("alg" %in% ls()){rm(alg)}
 ```
 
@@ -678,8 +706,11 @@ if("Step_04_MIG_DxRx_during_year.csv" %in% list.files(paste0(projectFolder,"/g_o
 alg_3<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_DxRx_during_year.csv"))
 }else{alg_3<-NULL}
 
+if("Step_04_MIG_checkbox_during_year.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
+alg_4<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_checkbox_during_year.csv"))
+}else{alg_4<-NULL}
 
-alg<-rbind(alg_1,alg_2,alg_3)
+alg<-rbind(alg_1,alg_2,alg_3,alg_4)
 
 if(!is.null(alg)){
   datatable(alg, extensions = "Buttons", options = list(scrollX=T,
@@ -694,7 +725,8 @@ if(!is.null(alg)){
 
 ```{r,echo=F}
   alg[,prevalence_100_pregnancies:=as.numeric(prevalence_100_pregnancies)]
-  ggplotly(ggplot(alg, aes(x=year, y=prevalence_100_pregnancies, group=algorithm))+
+  alg[,year:=as.factor(year)]
+ggplotly(ggplot(alg, aes(x=year, y=prevalence_100_pregnancies, group=algorithm))+
     geom_line(aes(color=algorithm))+
     geom_point(aes(color=algorithm))+
 theme(axis.text.x = element_text(size = 8,angle = 45),
@@ -713,6 +745,7 @@ theme(axis.text.x = element_text(size = 8,angle = 45),
 if("alg_1" %in% ls()){rm(alg_1)}
 if("alg_2" %in% ls()){rm(alg_2)}
 if("alg_3" %in% ls()){rm(alg_3)}
+if("alg_4" %in% ls()){rm(alg_4)}
 if("alg" %in% ls()){rm(alg)}
 ```
 
@@ -733,7 +766,11 @@ if("Step_04_MIG_DxRx_during_year_age.csv" %in% list.files(paste0(projectFolder,"
 alg_3<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_DxRx_during_year_age.csv"))
 }else{alg_3<-NULL}
 
-alg<-rbind(alg_1,alg_2,alg_3)
+if("Step_04_MIG_checkbox_during_year_age.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
+alg_4<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_checkbox_during_year_age.csv"))
+}else{alg_4<-NULL}
+
+alg<-rbind(alg_1,alg_2,alg_3,alg_4)
 
 if(!is.null(alg)){
   datatable(alg, extensions = "Buttons", options = list(scrollX=T,
@@ -774,6 +811,7 @@ htmltools::tagList(list(fig.1))
 if("alg_1" %in% ls()){rm(alg_1)}
 if("alg_2" %in% ls()){rm(alg_2)}
 if("alg_3" %in% ls()){rm(alg_3)}
+if("alg_4" %in% ls()){rm(alg_4)}
 if("alg" %in% ls()){rm(alg)}
 if("fig.1" %in% ls()){rm(fig.1)}
 ```
@@ -1019,7 +1057,8 @@ if(!is.null(alg)){
 
 ```{r,echo=F}
   alg[,prevalence_100_pregnancies:=as.numeric(prevalence_100_pregnancies)]
-  ggplotly(ggplot(alg, aes(x=year, y=prevalence_100_pregnancies, group=algorithm))+
+  alg[,year:=as.factor(year)]
+ggplotly(ggplot(alg, aes(x=year, y=prevalence_100_pregnancies, group=algorithm))+
     geom_line(aes(color=algorithm))+
     geom_point(aes(color=algorithm))+
 theme(axis.text.x = element_text(size = 8,angle = 45),
@@ -1166,8 +1205,8 @@ if("fig.1" %in% ls()){rm(fig.1)}
 * MIG_Dx_third: **At least one** diagnoses of Migraine (MG) recorded between 196th day of pregnancy and the end of pregnancy date. The denominator contains only pregnancies where the duration of pregnancy is at least 280 days.\
 * MIG_Rx_third: **At least one** triptan prescription of Migraine (N02CC) recorded between 196th day of pregnancy and the the end of pregnancy date. The denominator contains only pregnancies where the duration of pregnancy is at least 280 days.\
 * MIG_DxRx_third: **At least one** diagnoses of Migraine (MG) or **at least one** triptan prescription of Migraine (N02CC) recorded between 196th day of pregnancy and the the end of pregnancy date. The denominator contains only pregnancies where the duration of pregnancy is at least 280 days.\
-
-
+* MIG_checkbox_baseline_a: **At least one** diagnoses of Migraine (MG) recorded between LMP and end of pregnancy date for diagnoses coming from birth registry using the SURVEY OBSERVATIONS table.\
+* MIG_checkbox_during: **At least one** diagnoses of Migraine (MG) recorded between LMP and end of pregnancy date for diagnoses coming from birth registry using the SURVEY OBSERVATIONS table.\
 
 
 </div>
