@@ -507,7 +507,7 @@ for(i in 1:length(years)){
     ggtitle(paste0("GDM prevalence rates: ", years[i]))+
     xlab("Maternal age") +
     ylab("Prevalence_per_100_pregnancies")+
-    theme(panel.background=element_rect(color="lightgreen", linewidth = 1)))
+    theme(panel.background=element_rect(color="lightgreen")))
 }
 ```
 
@@ -810,7 +810,7 @@ for(i in 1:length(years)){
            ggtitle(paste0("PE prevalence rates: ", years[i]))+
            xlab("Maternal age") +
            ylab("Prevalence_per_100_pregnancies")+
-           theme(panel.background=element_rect(color="lightgreen", linewidth = 1)))
+           theme(panel.background=element_rect(color="lightgreen")))
 }
 ```
 
