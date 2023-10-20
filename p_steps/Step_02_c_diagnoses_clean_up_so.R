@@ -248,7 +248,7 @@ if(sum(sum(so_gdm_diagnoses,so_pe_diagnoses,so_migraine_diagnoses),
         # 
         # df[prior_mig==0 | prior_du==0 | prior_saf==0, comb_prior_mig:=0]
         # df[after_mig==0 | after_du==0 | after_saf==0, comb_after_mig:=0]
-        
+  #### Start filtering the data ####
         #perform analysis if diagnostic codes are there
         if(sum(so_gdm_diagnoses, so_pe_diagnoses,so_migraine_diagnoses)>0){
         if(df[is.na(remove),.N]>0){
@@ -710,7 +710,7 @@ if(sum(sum(so_gdm_diagnoses,so_pe_diagnoses,so_migraine_diagnoses),
         if("event_vocabulary" %in% names(df)){setnames(df, "event_vocabulary",voc_var_2)}
         if("meaning" %in% names(df)){setnames(df,"meaning", "so_meaning")}
       
-        #rename colums
+        #rename columns
         setnames(df, "so_meaning", "meaning")
         
       #GDM
