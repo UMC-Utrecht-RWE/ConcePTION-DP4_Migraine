@@ -429,7 +429,7 @@ rm(sum_mig)
 names_migraine<-c(paste0(names(conditions_migraine),"_baseline"),paste0(names(conditions_migraine),"_baseline_2"),paste0(names(conditions_migraine),"_during"),paste0(names(conditions_migraine),"_first"),paste0(names(conditions_migraine),"_second"),paste0(names(conditions_migraine),"_third"))
 #identify events that are not present from conditions_migraine
 not_present<-setdiff(names_migraine, names_events_extend)
-pregnancy_d3_mig[,eval(not_present):=list(0)]
+if(length(not_present)>0){pregnancy_d3_mig[,eval(not_present):=list(0)]}
 ####Migraine MEDICINES####
 print("Loading all Migraine medicines D3 and merge with the pregnancy D3.")
 
@@ -585,9 +585,7 @@ rm(mig_med_fl)
 names_medicines<-c(paste0(obs_period_med[,StudyVar],"_baseline"),paste0(obs_period_med[med_fl,StudyVar],"_baseline_2"),paste0(obs_period_med[med_fl,StudyVar],"_during"),paste0(obs_period_med[med_fl,StudyVar],"_first"),paste0(obs_period_med[med_fl,StudyVar],"_second"),paste0(obs_period_med[med_fl,StudyVar],"_third"))
 #identify events that are not present from conditions_migraine
 not_present<-setdiff(names_medicines, names(pregnancy_d3_mig))
-if(length(not_present)>0){
-pregnancy_d3_mig[,eval(not_present):=list(0)]
-}
+if(length(not_present)>0){pregnancy_d3_mig[,eval(not_present):=list(0)]}
 #rm(obs_period_med)
 
 obs_period<-rbind(obs_period_diag,obs_period_med)
@@ -1381,6 +1379,7 @@ rm(MIG_DxRx_during_3)
 print("Create algorithm MIG_Dx_during")
 MIG_checkbox_during<-algorithm_template[NEW_STUDY_VARIABLES=="MIG_checkbox_during"]
 inc_col<-MIG_checkbox_during[TYPE=="AND",STUDY_VARIABLES]
+if(!"Migraine_checkbox_during" %in% names(pregnancy_d3_mig)){pregnancy_d3_mig[,Migraine_checkbox_during:=0]}
 
 if(length(inc_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("&" , lapply(.SD,`>=`, 1)),.SDcols=inc_col],include:=1]}else{pregnancy_d3_mig[,include:=NA]}
 
