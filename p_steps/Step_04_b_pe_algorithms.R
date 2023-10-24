@@ -137,7 +137,7 @@ rm(pe_files)
 
 #identify events that are not present from conditions_pe
 not_present<-setdiff(obs_period_diag[,StudyVar], names_events)
-pregnancy_d3_gdm_pe[,eval(not_present):=list(0)]
+if(length(not_present)>0){pregnancy_d3_gdm_pe[,eval(not_present):=list(0)]}
 rm(obs_period_diag)
 
 print("Export PE pregnancy D3")
