@@ -133,7 +133,7 @@ rm(gdm_files)
 
 #identify events that are not present from conditions_gdm
 not_present<-setdiff(obs_period_diag[,StudyVar], names_events)
-pregnancy_d3_gdm_pe[,eval(not_present):=list(0)]
+if(length(not_present)>0){pregnancy_d3_gdm_pe[,eval(not_present):=list(0)]}
 ####GDM MEDICINES####
 print("Loading all GDM medicines D3 and merge with the pregnancy D3.")
 
@@ -235,7 +235,7 @@ rm(gdm_med_fl)
 
 #identify events that are not present from conditions_gdm
 not_present<-setdiff(obs_period_med[,StudyVar], names(pregnancy_d3_gdm_pe))
-pregnancy_d3_gdm_pe[,eval(not_present):=list(0)]
+if(length(not_present)>0){pregnancy_d3_gdm_pe[,eval(not_present):=list(0)]}
 
 obs_period<-rbind(obs_period_diag,obs_period_med)
 fwrite(obs_period, paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_observation_periods_gdm.csv"),row.names = F)
