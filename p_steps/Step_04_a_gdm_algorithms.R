@@ -26,11 +26,19 @@ if(length(gdm_checkbox_files)>0){
 
 ####GDM DIAGNOSES####
 print("Loading all GDM diagnoses D3 and merge with the pregnancy D3.")
+if(DAP_name=="CHUT"){
+  obs_period_diag<-data.table(StudyVar=c("GD","UNK_GD","PRE_GD","DM","DM_PREG","GDM_checkbox"),
+                              lookback=c(0,0,0,2.5*30.25,0,0),
+                              start_date=c(98,98,0,0,0,98),
+                              end_date=c(7*40,7*40,97,97,7*40,7*40),
+                              after=c(0,0,0,0,0,0))
+}else{
 obs_period_diag<-data.table(StudyVar=c("GD","UNK_GD","PRE_GD","DM","DM_PREG","GDM_checkbox"),
                        lookback=c(0,0,0,6*30.25,0,0),
                        start_date=c(98,98,0,0,0,98),
                        end_date=c(7*40,7*40,97,97,7*40,7*40),
                        after=c(7,7,0,0,7,7))
+}
 #gdm files
 gdm_files<-list.files(paste0(projectFolder,"/g_intermediate/gdm_algorithm/"))
 gdm_files<-gdm_files[!gdm_files %in% "GDM_medicines.rds"]
@@ -137,11 +145,19 @@ if(length(not_present)>0){pregnancy_d3_gdm_pe[,eval(not_present):=list(0)]}
 ####GDM MEDICINES####
 print("Loading all GDM medicines D3 and merge with the pregnancy D3.")
 
+if(DAP_name=="CHUT"){
+  obs_period_med<-data.table(StudyVar=c("GD_med","PRE_GD_med"),
+                             lookback=c(0,2.5*30.25),
+                             start_date=c(98,0),
+                             end_date=c(7*40,97),
+                             after=c(0,0))
+}else{
 obs_period_med<-data.table(StudyVar=c("GD_med","PRE_GD_med"),
                        lookback=c(0,6*30.25),
                        start_date=c(98,0),
                        end_date=c(7*40,97),
                        after=c(7,0))
+}
 
 
 gdm_med_fl<-list.files(paste0(projectFolder,"/g_intermediate/gdm_algorithm/"),"GDM_medicines")
