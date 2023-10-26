@@ -27,9 +27,9 @@ if(length(migraine_checkbox_files)>0){
 
 ####Migraine DIAGNOSES FILES####
 print("Loading all Migraine diagnoses D3 and merge with the pregnancy D3.")
-if(DAP_name %in% c("CHUT")){
+if(DAP_name == "CHUT"){
   obs_period_diag<-data.table(StudyVar=c("MG","MG_NO_AURA","MG_AURA","MG_STACOMP","MG_OTHER","MG_UNSP","MG_UPC", "Migraine_checkbox"),
-                              lookback=c(3*30.25,3*30.25,3*30.25,3*30.25,3*30.25,3*30.25,3*30.25,3*30.25),
+                              lookback=c(2.5*30.25,2.5*30.25,2.5*30.25,2.5*30.25,2.5*30.25,2.5*30.25,2.5*30.25,2.5*30.25),
                               start_date=c(0,0,0,0,0,0,0,0),
                               end_date=c(7*40,7*40,7*40,7*40,7*40,7*40,7*40,7*40),
                               after=c(0,0,0,0,0,0,0,0))  
@@ -137,13 +137,20 @@ names_mg<-names_events[names_events %in% "MG"]
 ####Migraine MEDICINES files####
   print("Loading all Migraine medicines D3 and merge with the pregnancy D3.")
  
-    if (DAP_name %in% c("THL", "CHUT")){
+    if (DAP_name == "THL"){
       obs_period_med<-data.table(StudyVar=c("Migraine_medicines"),
                                  lookback=c(3*30.25),
                                  start_date=c(0),
                                  end_date=c(40*7),
-                                 after=c(0))
-    }else{
+                                 after=c(0))}
+    if (DAP_name == "CHUT"){
+      obs_period_med<-data.table(StudyVar=c("Migraine_medicines"),
+                                 lookback=c(2.5*30.25),
+                                 start_date=c(0),
+                                 end_date=c(40*7),
+                                 after=c(0))}
+    
+    if (!DAP_name %in% c("THL", "CHUT")){
   obs_period_med<-data.table(StudyVar=c("Migraine_medicines"),
                          lookback=c(365.25),
                          start_date=c(0),
