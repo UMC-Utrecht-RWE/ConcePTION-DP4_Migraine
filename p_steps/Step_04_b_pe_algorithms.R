@@ -25,11 +25,19 @@ if(length(pe_checkbox_files)>0){
 
 ####PE DIAGNOSES####
 print("Loading all PE diagnoses D3 and merge with the pregnancy D3.")
+if(DAP_name=="CHUT"){
 obs_period_diag<-data.table(StudyVar=c("PE","ECL","HELLP","PE_checkbox"),
                        lookback=c(0,0,0,0),
                        start_date=c(20*7,20*7,20*7,20*7),
                        end_date=c(7*40,7*40,7*40,7*40),
-                       after=c(7,7,7,7))
+                       after=c(0,0,0,0))
+}else{
+  obs_period_diag<-data.table(StudyVar=c("PE","ECL","HELLP","PE_checkbox"),
+                              lookback=c(0,0,0,0),
+                              start_date=c(20*7,20*7,20*7,20*7),
+                              end_date=c(7*40,7*40,7*40,7*40),
+                              after=c(7,7,7,7)) 
+}
 fwrite(obs_period_diag, paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_observation_periods_pe.csv"),row.names = F)
 
 #pe files
