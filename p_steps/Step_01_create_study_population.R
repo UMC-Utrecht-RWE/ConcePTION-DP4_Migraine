@@ -496,7 +496,11 @@ rm(flowchart_max_age)
 
 ####Apply specific criteria to each project####
 #Check if the records have at least 3 months of lookback
-lookback_3_months<-3*30.25
+if (DAP_name == "CHUT"){
+lookback_3_months<-2.5*30.25
+}else{
+  lookback_3_months<-3*30.25  
+}
 lookback_12_months<-365.25
 #GDM_and_PE
 pregnancy_D3[gdm_pe_filter==1,dif:=pregnancy_start_date-op_start_date_gdm_pe]
