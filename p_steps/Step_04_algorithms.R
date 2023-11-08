@@ -73,7 +73,10 @@ if("sex_at_instance_creation" %in% names(pregnancy_d3_mig)){pregnancy_d3_mig[,se
 if("final_d3" %in% list.files(paste0(projectFolder,"/g_intermediate/migraine_algorithm/"))){
  unlink(paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3"), recursive = T)
 }
-source(paste0(projectFolder,"/p_steps/Step_04_c_migraine_algorithms.R"))
+source(paste0(projectFolder,"/p_steps/Step_04_c_migraine_algorithms_prepare.R"))
+source(paste0(projectFolder,"/p_steps/Step_04_d_migraine_algorithms.R"))
+source(paste0(projectFolder,"/p_steps/Step_04_e_migraine_algorithms_type.R"))
+source(paste0(projectFolder,"/p_steps/Step_04_f_migraine_algorithms_severity.R"))
 
 date_running_end_04<-Sys.Date()
 end_time_04<-Sys.time()
