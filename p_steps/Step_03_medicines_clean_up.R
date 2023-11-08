@@ -158,9 +158,9 @@ if(sum(length(med_gdm_medicines),length(med_migraine_medicines))>0){
     print(paste0("Analyzing table ",actual_tables$MEDICINES[med_tab_ind], "."))
     df<-fread(paste(path_dir, actual_tables$MEDICINES[med_tab_ind], sep=""), stringsAsFactors = FALSE, colClasses = "character")
     if(date_var=="both"){
-    cols<-c("person_id", code_var,"date_prescription","date_dispensing", "meaning_of_drug_record")
+    cols<-c("person_id", code_var,"date_prescription","date_dispensing", "meaning_of_drug_record", "medicinal_product_id")
     }else{
-      cols<-c("person_id", code_var, date_var, "meaning_of_drug_record")  
+      cols<-c("person_id", code_var, date_var, "meaning_of_drug_record","medicinal_product_id")  
     }
     df<-df[,cols, with=F]
     df<-df[, lapply(.SD, FUN=function(x) gsub("^$|^ $", NA, x))] #make sure missing data is read appropriately
@@ -247,7 +247,7 @@ if(sum(length(med_gdm_medicines),length(med_migraine_medicines))>0){
     df[condition=="Migraine_medicines" & prior_mig==0 & after_mig==0,include_mig:=1]
     # setnames(df,"medicinal_product_group","medicinal_product_group_start")
     # setnames(df,"condition","condition_start")
-    cols_to_incl<-c("person_id","medicine_date","year","atc_code", "meaning", "condition","medicinal_product_group")
+    cols_to_incl<-c("person_id","medicine_date","year","atc_code", "meaning", "condition","medicinal_product_group","medicinal_product_id")
     
     if(df[include_gdm==1,.N]>0){
       saveRDS(df[condition=="GDM_medicines",cols_to_incl,with=F], paste0(tmp, "GDM_medicines_exact_", med_tab_ind,".rds"))
@@ -309,14 +309,14 @@ if(sum(length(med_gdm_medicines),length(med_migraine_medicines))>0){
       df[!is.na(include_gdm) & is.na(medicinal_product_group),condition:=medicinal_product_group_start]
       df[!is.na(include_mig) & is.na(medicinal_product_group),condition:=medicinal_product_group_start]
       #df[,condition_start:=NULL][,medicinal_product_group_start:=NULL][,group:=NULL][,mechanism:=NULL][,nchar:=NULL]
-      cols_to_incl<-c("person_id","medicine_date","year","atc_code", "meaning", "condition","medicinal_product_group")
+      cols_to_incl<-c("person_id","medicine_date","year","atc_code", "meaning", "condition","medicinal_product_group","medicinal_product_id")
       
       if(df[include_gdm==1,.N]>0){
-        saveRDS(df[condition=="GDM_medicines",cols_to_incl,with=F], paste0(tmp, "GDM_medicines_", med_tab_ind,".rds"))
+        saveRDS(df[condition=="GDM_medicines",cols_to_incl,with=F], paste0(tmp, "GDM_medicines_", med_tab_ind, start_med_group[group_ind], ".rds"))
          }
 
       if(df[include_mig==1,.N]>0){
-        saveRDS(df[condition=="Migraine_medicines",cols_to_incl,with=F], paste0(tmp, "Migraine_medicines_", med_tab_ind,".rds"))
+        saveRDS(df[condition=="Migraine_medicines",cols_to_incl,with=F], paste0(tmp, "Migraine_medicines_", med_tab_ind, start_med_group[group_ind],".rds"))
        }
       
       #print(paste0("Analyze: ", actual_tables$MEDICINES[med_tab_ind], " for Migraine group ", start_med_group[group_ind], " match filtering."))
