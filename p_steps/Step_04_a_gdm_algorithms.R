@@ -215,7 +215,7 @@ if(gdm_med[,.N]>0){
   
   if(gdm_med[,.N]>0){
     #create a summary of included records
-    sum[[w]]<-data.table(StudyVar=obs_period_med[med_fl,StudyVar], no_records=gdm_med[!is.na(medicine_date) & !duplicated(pregnancy_id),.N], no_pregnancies=gdm_med[!duplicated(pregnancy_id),.N])
+    sum[[w]]<-data.table(StudyVar=obs_period_med[med_fl,StudyVar], no_records=gdm_med[!is.na(medicine_date),.N], no_pregnancies=gdm_med[!duplicated(pregnancy_id),.N])
     saveRDS(gdm_med, paste0(projectFolder,"/g_intermediate/gdm_algorithm/final_d3/", obs_period_med[med_fl,StudyVar],"_pregnancy_D3.rds"))
     cols<-c("person_id","pregnancy_id","pregnancy_start_date","pregnancy_end_date")
     gdm_med<-gdm_med[,cols,with=F]
