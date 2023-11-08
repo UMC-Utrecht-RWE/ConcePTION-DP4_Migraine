@@ -11,7 +11,7 @@ gdm_med_files_fl<-list.files(tmp, "GDM_medicines")
 if(length(gdm_med_files_fl)>0){
   gdm_med<-lapply(paste0(tmp, gdm_med_files_fl), readRDS)
   gdm_med<-as.data.table(do.call(rbind,gdm_med))
-
+if("medicinal_product_id" %in% names(gdm_med)){gdm_med[,medicinal_product_id:=NULL]}
   #Summary of included records by medicinal group, meaning, condition, year
   sum_gdm<-gdm_med[,.N, by=c("condition", "medicinal_product_group", "meaning", "year")]
   sum_gdm<-merge.data.table(sum_gdm,complete_med,by="medicinal_product_group",all.x=T)
