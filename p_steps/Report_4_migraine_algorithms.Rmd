@@ -45,13 +45,16 @@ General information:
 ```{r time_log, echo=F}
 timelog<-fread(paste0(projectFolder,"/g_output/Time log/", "Step_04_time_log.csv" ))
 timelog_2<-fread(paste0(projectFolder,"/g_output/Time log/", "Step_04_c_time_log.csv" ))
+timelog_3<-fread(paste0(projectFolder,"/g_output/Time log/", "Step_04_d_time_log.csv" ))
 kable(timelog)
 kable(timelog_2)
+kable(timelog_3)
 ```
 
 ```{r, echo=F}
 if("timelog" %in% ls()){rm(timelog)}
 if("timelog_2" %in% ls()){rm(timelog_2)}
+if("timelog_3" %in% ls()){rm(timelog_3)}
 ```
 
 </div>
@@ -303,7 +306,7 @@ if(!is.null(alg)){
       ggtitle("Migraine baseline prevalence rates")+
 xlab("Algorithm") +
   ylab("Counts")+
-  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+  theme(axis.text.x = element_text(size = 8,angle = 45),
         axis.title.x = element_text(colour = "#76b82a"),
         axis.title.y = element_text(colour = "#76b82a"),
         plot.title = element_text(colour = "#76b82a"))+
