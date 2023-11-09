@@ -156,7 +156,7 @@ rm(mig_dt)
 ####Migraine MEDICINES files####
 print("Loading all Migraine medicines D3 and merge with the pregnancy D3.")
 
-if (DAP_name == "THL"){
+if (DAP_name == "NIHW"){
   obs_period_med<-data.table(StudyVar=c("Migraine_medicines"),
                              lookback=c(3*30.25),
                              start_date=c(0),
@@ -169,7 +169,7 @@ if (DAP_name == "CHUT"){
                              end_date=c(40*7),
                              after=c(0))}
 
-if (!DAP_name %in% c("THL", "CHUT")){
+if (!DAP_name %in% c("NIHW", "CHUT")){
   obs_period_med<-data.table(StudyVar=c("Migraine_medicines"),
                              lookback=c(365.25),
                              start_date=c(0),
@@ -569,7 +569,7 @@ for(med_fl in 1:length(obs_period_med[,.N])){
       pregnancy_d3_mig[is.na(Migraine_injections_baseline),Migraine_injections_baseline:=0]
       
       #depending on the DAP: Different lookback
-      if(!DAP_name %in% c("THL", "CHUT")){
+      if(!DAP_name %in% c("NIHW", "CHUT")){
         mig_med[,start:=pregnancy_start_date - 3*30.25] 
         mig_med[medicine_date>=start & medicine_date<pregnancy_start_date,paste0(obs_period_med[med_fl, StudyVar],"_baseline_2"):=1]
         mig_med[medicine_date>=start & medicine_date<pregnancy_start_date & injection==1, Migraine_injections_baseline_2:=1]
@@ -740,7 +740,7 @@ if(mig_med_other[,.N]>0){
   pregnancy_d3_mig[is.na(Migraine_med_profilactic_baseline),Migraine_med_profilactic_baseline:=0]
 
   #depending on the DAP: Different lookback
-  if(!DAP_name %in% c("THL", "CHUT")){
+  if(!DAP_name %in% c("NIHW", "CHUT")){
     mig_med_other[,start:=pregnancy_start_date - 3*30.25] 
     mig_med_other[medicine_date>=start & medicine_date<pregnancy_start_date,Migraine_med_profilactic_baseline_2:=1]
     mig_baseline_2<-mig_med_other[Migraine_med_profilactic_baseline_2==1,lapply(.SD, sum),.SDcols = "Migraine_med_profilactic_baseline_2", by=c("person_id","pregnancy_id","pregnancy_start_date","pregnancy_end_date")]
