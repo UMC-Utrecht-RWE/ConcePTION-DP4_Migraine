@@ -1,0 +1,14 @@
+medicinal_product_group,atc_code,mechanism,comment,event_abbreviation_baseline,event_abbreviation_pregnancy
+Calcitonin gene-related peptide (CGRP) antagonists,N02CD,start,,severe,very severe
+Other antimigraine preparations,N02CX,start,,severe,very severe
+Beta blocking agents,C07A,start,,severe,very severe
+ACE inhibitors,C09A,start,,severe,very severe
+ARBs,C09C,start,,severe,very severe
+Antiepileptics,N03A,start,,severe,very severe
+Non-selective monoamine reuptake inhibitors,N06AA,start,,severe,very severe
+Venlafaxine,N06AX16,exact,,severe,very severe
+Flunarizine,N07CA03,exact,,severe,very severe
+Corticosteroid derivatives,N02CB,start,,severe,very severe
+Phenylalkylamine derivatives,C08DA,start,,severe,very severe
+Botulinum toxin,M03AX01,exact,,severe,very severe
+Triptans,N02CC,start,,moderate,moderate
