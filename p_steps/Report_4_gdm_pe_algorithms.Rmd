@@ -265,6 +265,7 @@ alg_8<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_GDM_8.
 
 alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_8)
 
+alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 if(!is.null(alg)){
   datatable(alg, extensions = "Buttons", options = list(scrollX=T,
                                                                     dom = "Blfrtip",
@@ -335,6 +336,8 @@ alg_8<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_GDM_8_
 }else{alg_8<-NULL}
 
 alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_8)
+
+alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 
 if(!is.null(alg)){
   datatable(alg, extensions = "Buttons", options = list(scrollX=T,
@@ -407,6 +410,7 @@ alg_8<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_GDM_8_
 }else{alg_8<-NULL}
 
 alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_8)
+alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 
 if(!is.null(alg)){
   datatable(alg, extensions = "Buttons", options = list(scrollX=T,
@@ -479,6 +483,7 @@ alg_8<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_GDM_8_
 }else{alg_8<-NULL}
 
 alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_8)
+alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 
 if(!is.null(alg)){
   datatable(alg, extensions = "Buttons", options = list(scrollX=T,
