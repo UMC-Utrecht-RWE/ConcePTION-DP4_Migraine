@@ -35,6 +35,12 @@ MIG_S1_a_dt[lower_95_CI<0,lower_95_CI:=0]
 
 fwrite(MIG_S1_a_dt,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_S1_a.csv"),row.names = F)
 
+#number of pregnancies with baseline migraine
+pregnancy_d3_mig[MG_baseline>=1 | Migraine_medicines_baseline>=1,preg_baseline:=1]
+MIG_S1_a_coh<-data.table(algorithm="MIG_S1_a", no_diagnosed_pregnancies=pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_baseline==1,.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_baseline==1,.N])
+MIG_S1_a_coh[,percentage:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_S1_a_coh[,denominator:="Number of pregnancies with baseline migraine(MG diagnoses or Triptan prescription), lookback= 365 days(90 days/75 days)"]
+
 #by maternal age
 pregnancy_d3_mig[,maternal_age:=as.character(maternal_age)]
 records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id), .N, by=.(maternal_age)]
@@ -76,6 +82,17 @@ MIG_S1_a_2[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,preval
 MIG_S1_a_2[lower_95_CI<0,lower_95_CI:=0]
 fwrite(MIG_S1_a_2,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_S1_a_year.csv"),row.names = F)
 rm(MIG_S1_a_2)
+
+#number of pregnnacies with baseline migraine
+records_coh<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_baseline==1,by="year",.N]
+names(records_coh)<-c("year","no_diagnosed_pregnancies")
+total_coh<-pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_baseline==1,by="year",.N]
+names(total_coh)<-c("year","no_pregnancies")
+records_coh<-merge.data.table(records_coh,total_coh,by="year",all=T)
+MIG_S1_a_coh_2<-data.table(algorithm="MIG_S1_a", records_coh)
+MIG_S1_a_coh_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
+MIG_S1_a_coh_2[,percentage:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_S1_a_coh_2[,denominator:="Number of pregnancies with baseline migraine(MG diagnoses or Triptan prescription), lookback= 365 days(90 days/75 days) by year"]
 
 #by year group and maternal age
 records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by=c("year_group","maternal_age"), .N]
@@ -123,6 +140,12 @@ MIG_S1_b_dt[lower_95_CI<0,lower_95_CI:=0]
 
 fwrite(MIG_S1_b_dt,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_S1_b.csv"),row.names = F)
 
+#number of pregnancies with baseline migraine
+pregnancy_d3_mig[MG_baseline_2>=1 | Migraine_medicines_baseline_2>=1,preg_baseline_2:=1]
+MIG_S1_b_coh<-data.table(algorithm="MIG_S1_b", no_diagnosed_pregnancies=pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_baseline_2==1,.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_baseline_2==1,.N])
+MIG_S1_b_coh[,percentage:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_S1_b_coh[,denominator:="Number of pregnancies with baseline migraine(MG diagnoses or Triptan prescription), lookback= 90 days/75 days"]
+
 #by maternal age
 pregnancy_d3_mig[,maternal_age:=as.character(maternal_age)]
 records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id), .N, by=.(maternal_age)]
@@ -164,6 +187,17 @@ MIG_S1_b_2[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,preval
 MIG_S1_b_2[lower_95_CI<0,lower_95_CI:=0]
 fwrite(MIG_S1_b_2,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_S1_b_year.csv"),row.names = F)
 rm(MIG_S1_b_2)
+
+#number of pregnnacies with baseline migraine
+records_coh<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_baseline_2==1,by="year",.N]
+names(records_coh)<-c("year","no_diagnosed_pregnancies")
+total_coh<-pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_baseline_2==1,by="year",.N]
+names(total_coh)<-c("year","no_pregnancies")
+records_coh<-merge.data.table(records_coh,total_coh,by="year",all=T)
+MIG_S1_b_coh_2<-data.table(algorithm="MIG_S1_b", records_coh)
+MIG_S1_b_coh_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
+MIG_S1_b_coh_2[,percentage:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_S1_b_coh_2[,denominator:="Number of pregnancies with baseline migraine(MG diagnoses or Triptan prescription), lookback= 90 days/75 days by year"]
 
 
 #by year group and maternal age
@@ -211,6 +245,12 @@ MIG_S1_during_dt[lower_95_CI<0,lower_95_CI:=0]
 
 fwrite(MIG_S1_during_dt,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_S1_during.csv"),row.names = F)
 
+#number of pregnancies with baseline migraine
+pregnancy_d3_mig[MG_during>=1 | Migraine_medicines_during>=1,preg_during:=1]
+MIG_S1_during_coh<-data.table(algorithm="MIG_S1_during", no_diagnosed_pregnancies=pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_during==1,.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_during==1,.N])
+MIG_S1_during_coh[,percentage:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_S1_during_coh[,denominator:="Number of pregnancies with migraine(MG diagnoses or Triptan prescription) during pregnancy"]
+
 #by maternal age
 pregnancy_d3_mig[,maternal_age:=as.character(maternal_age)]
 records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id), .N, by=.(maternal_age)]
@@ -252,6 +292,17 @@ MIG_S1_during_2[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,p
 MIG_S1_during_2[lower_95_CI<0,lower_95_CI:=0]
 fwrite(MIG_S1_during_2,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_S1_during_year.csv"),row.names = F)
 rm(MIG_S1_during_2)
+
+#number of pregnnacies with migraine
+records_coh<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_during==1,by="year",.N]
+names(records_coh)<-c("year","no_diagnosed_pregnancies")
+total_coh<-pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_during==1,by="year",.N]
+names(total_coh)<-c("year","no_pregnancies")
+records_coh<-merge.data.table(records_coh,total_coh,by="year",all=T)
+MIG_S1_during_coh_2<-data.table(algorithm="MIG_S1_during", records_coh)
+MIG_S1_during_coh_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
+MIG_S1_during_coh_2[,percentage:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_S1_during_coh_2[,denominator:="Number of pregnancies with migraine(MG diagnoses or Triptan prescription) during pregnancy by year"]
 
 #by year group and maternal age
 records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by=c("year_group","maternal_age"), .N]
@@ -322,6 +373,12 @@ MIG_S2_a_dt[lower_95_CI<0,lower_95_CI:=0]
 
 fwrite(MIG_S2_a_dt,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_S2_a.csv"),row.names = F)
 
+#number of pregnancies with baseline migraine
+pregnancy_d3_mig[MG_baseline>=1 | Migraine_medicines_baseline>=1,preg_baseline:=1]
+MIG_S2_a_coh<-data.table(algorithm="MIG_S2_a", no_diagnosed_pregnancies=pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_baseline==1,.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_baseline==1,.N])
+MIG_S2_a_coh[,percentage:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_S2_a_coh[,denominator:="Number of pregnancies with baseline migraine(MG diagnoses or Triptan prescription), lookback= 365 days(90 days/75 days)"]
+
 #by maternal age
 pregnancy_d3_mig[,maternal_age:=as.character(maternal_age)]
 records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id), .N, by=.(maternal_age)]
@@ -363,6 +420,17 @@ MIG_S2_a_2[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,preval
 MIG_S2_a_2[lower_95_CI<0,lower_95_CI:=0]
 fwrite(MIG_S2_a_2,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_S2_a_year.csv"),row.names = F)
 rm(MIG_S2_a_2)
+
+#number of pregnnacies with baseline migraine
+records_coh<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_baseline==1,by="year",.N]
+names(records_coh)<-c("year","no_diagnosed_pregnancies")
+total_coh<-pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_baseline==1,by="year",.N]
+names(total_coh)<-c("year","no_pregnancies")
+records_coh<-merge.data.table(records_coh,total_coh,by="year",all=T)
+MIG_S2_a_coh_2<-data.table(algorithm="MIG_S2_a", records_coh)
+MIG_S2_a_coh_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
+MIG_S2_a_coh_2[,percentage:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_S2_a_coh_2[,denominator:="Number of pregnancies with baseline migraine(MG diagnoses or Triptan prescription), lookback= 365 days(90 days/75 days) by year"]
 
 #by year group and maternal age
 records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by=c("year_group","maternal_age"), .N]
@@ -411,6 +479,12 @@ MIG_S2_b_dt[lower_95_CI<0,lower_95_CI:=0]
 
 fwrite(MIG_S2_b_dt,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_S2_b.csv"),row.names = F)
 
+#number of pregnancies with baseline migraine
+pregnancy_d3_mig[MG_baseline_2>=1 | Migraine_medicines_baseline_2>=1,preg_baseline_2:=1]
+MIG_S2_b_coh<-data.table(algorithm="MIG_S2_b", no_diagnosed_pregnancies=pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_baseline_2==1,.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_baseline_2==1,.N])
+MIG_S2_b_coh[,percentage:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_S2_b_coh[,denominator:="Number of pregnancies with baseline migraine(MG diagnoses or Triptan prescription), lookback= 90 days/75 days"]
+
 #by maternal age
 pregnancy_d3_mig[,maternal_age:=as.character(maternal_age)]
 records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id), .N, by=.(maternal_age)]
@@ -453,6 +527,16 @@ MIG_S2_b_2[lower_95_CI<0,lower_95_CI:=0]
 fwrite(MIG_S2_b_2,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_S2_b_year.csv"),row.names = F)
 rm(MIG_S2_b_2)
 
+#number of pregnnacies with baseline migraine
+records_coh<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_baseline_2==1,by="year",.N]
+names(records_coh)<-c("year","no_diagnosed_pregnancies")
+total_coh<-pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_baseline_2==1,by="year",.N]
+names(total_coh)<-c("year","no_pregnancies")
+records_coh<-merge.data.table(records_coh,total_coh,by="year",all=T)
+MIG_S2_b_coh_2<-data.table(algorithm="MIG_S2_b", records_coh)
+MIG_S2_b_coh_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
+MIG_S2_b_coh_2[,percentage:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_S2_b_coh_2[,denominator:="Number of pregnancies with baseline migraine(MG diagnoses or Triptan prescription), lookback= 90 days/75 days by year"]
 
 #by year group and maternal age
 records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by=c("year_group","maternal_age"), .N]
@@ -499,6 +583,12 @@ MIG_S2_during_dt[lower_95_CI<0,lower_95_CI:=0]
 
 fwrite(MIG_S2_during_dt,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_S2_during.csv"),row.names = F)
 
+#number of pregnancies with baseline migraine
+pregnancy_d3_mig[MG_during>=1 | Migraine_medicines_during>=1,preg_during:=1]
+MIG_S2_during_coh<-data.table(algorithm="MIG_S2_during", no_diagnosed_pregnancies=pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_during==1,.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_during==1,.N])
+MIG_S2_during_coh[,percentage:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_S2_during_coh[,denominator:="Number of pregnancies with migraine(MG diagnoses or Triptan prescription) during pregnancy"]
+
 #by maternal age
 pregnancy_d3_mig[,maternal_age:=as.character(maternal_age)]
 records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id), .N, by=.(maternal_age)]
@@ -540,6 +630,17 @@ MIG_S2_during_2[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,p
 MIG_S2_during_2[lower_95_CI<0,lower_95_CI:=0]
 fwrite(MIG_S2_during_2,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_S2_during_year.csv"),row.names = F)
 rm(MIG_S2_during_2)
+
+#number of pregnnacies with migraine
+records_coh<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_during==1,by="year",.N]
+names(records_coh)<-c("year","no_diagnosed_pregnancies")
+total_coh<-pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_during==1,by="year",.N]
+names(total_coh)<-c("year","no_pregnancies")
+records_coh<-merge.data.table(records_coh,total_coh,by="year",all=T)
+MIG_S2_during_coh_2<-data.table(algorithm="MIG_S2_during", records_coh)
+MIG_S2_during_coh_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
+MIG_S2_during_coh_2[,percentage:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_S2_during_coh_2[,denominator:="Number of pregnancies with migraine(MG diagnoses or Triptan prescription) during pregnancy by year"]
 
 #by year group and maternal age
 records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by=c("year_group","maternal_age"), .N]
@@ -610,6 +711,12 @@ MIG_S3_a_dt[lower_95_CI<0,lower_95_CI:=0]
 
 fwrite(MIG_S3_a_dt,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_S3_a.csv"),row.names = F)
 
+#number of pregnancies with baseline migraine
+pregnancy_d3_mig[MG_baseline>=1 | Migraine_medicines_baseline>=1,preg_baseline:=1]
+MIG_S3_a_coh<-data.table(algorithm="MIG_S3_a", no_diagnosed_pregnancies=pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_baseline==1,.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_baseline==1,.N])
+MIG_S3_a_coh[,percentage:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_S3_a_coh[,denominator:="Number of pregnancies with baseline migraine(MG diagnoses or Triptan prescription), lookback= 365 days(90 days/75 days)"]
+
 #by maternal age
 pregnancy_d3_mig[,maternal_age:=as.character(maternal_age)]
 records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id), .N, by=.(maternal_age)]
@@ -651,6 +758,17 @@ MIG_S3_a_2[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,preval
 MIG_S3_a_2[lower_95_CI<0,lower_95_CI:=0]
 fwrite(MIG_S3_a_2,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_S3_a_year.csv"),row.names = F)
 rm(MIG_S3_a_2)
+
+#number of pregnnacies with baseline migraine
+records_coh<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_baseline==1,by="year",.N]
+names(records_coh)<-c("year","no_diagnosed_pregnancies")
+total_coh<-pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_baseline==1,by="year",.N]
+names(total_coh)<-c("year","no_pregnancies")
+records_coh<-merge.data.table(records_coh,total_coh,by="year",all=T)
+MIG_S3_a_coh_2<-data.table(algorithm="MIG_S3_a", records_coh)
+MIG_S3_a_coh_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
+MIG_S3_a_coh_2[,percentage:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_S3_a_coh_2[,denominator:="Number of pregnancies with baseline migraine(MG diagnoses or Triptan prescription), lookback= 365 days(90 days/75 days) by year"]
 
 #by year group and maternal age
 records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by=c("year_group","maternal_age"), .N]
@@ -698,6 +816,12 @@ MIG_S3_b_dt[lower_95_CI<0,lower_95_CI:=0]
 
 fwrite(MIG_S3_b_dt,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_S3_b.csv"),row.names = F)
 
+#number of pregnancies with baseline migraine
+pregnancy_d3_mig[MG_baseline_2>=1 | Migraine_medicines_baseline_2>=1,preg_baseline_2:=1]
+MIG_S3_b_coh<-data.table(algorithm="MIG_S3_b", no_diagnosed_pregnancies=pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_baseline_2==1,.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_baseline_2==1,.N])
+MIG_S3_b_coh[,percentage:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_S3_b_coh[,denominator:="Number of pregnancies with baseline migraine(MG diagnoses or Triptan prescription), lookback= 90 days/75 days"]
+
 #by maternal age
 pregnancy_d3_mig[,maternal_age:=as.character(maternal_age)]
 records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id), .N, by=.(maternal_age)]
@@ -740,6 +864,16 @@ MIG_S3_b_2[lower_95_CI<0,lower_95_CI:=0]
 fwrite(MIG_S3_b_2,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_S3_b_year.csv"),row.names = F)
 rm(MIG_S3_b_2)
 
+#number of pregnnacies with baseline migraine
+records_coh<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_baseline_2==1,by="year",.N]
+names(records_coh)<-c("year","no_diagnosed_pregnancies")
+total_coh<-pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_baseline_2==1,by="year",.N]
+names(total_coh)<-c("year","no_pregnancies")
+records_coh<-merge.data.table(records_coh,total_coh,by="year",all=T)
+MIG_S3_b_coh_2<-data.table(algorithm="MIG_S3_b", records_coh)
+MIG_S3_b_coh_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
+MIG_S3_b_coh_2[,percentage:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_S3_b_coh_2[,denominator:="Number of pregnancies with baseline migraine(MG diagnoses or Triptan prescription), lookback= 90 days/75 days by year"]
 
 #by year group and maternal age
 records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by=c("year_group","maternal_age"), .N]
@@ -786,6 +920,12 @@ MIG_S3_during_dt[lower_95_CI<0,lower_95_CI:=0]
 
 fwrite(MIG_S3_during_dt,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_S3_during.csv"),row.names = F)
 
+#number of pregnancies with baseline migraine
+pregnancy_d3_mig[MG_during>=1 | Migraine_medicines_during>=1,preg_during:=1]
+MIG_S3_during_coh<-data.table(algorithm="MIG_S3_during", no_diagnosed_pregnancies=pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_during==1,.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_during==1,.N])
+MIG_S3_during_coh[,percentage:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_S3_during_coh[,denominator:="Number of pregnancies with migraine(MG diagnoses or Triptan prescription) during pregnancy"]
+
 #by maternal age
 pregnancy_d3_mig[,maternal_age:=as.character(maternal_age)]
 records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id), .N, by=.(maternal_age)]
@@ -827,6 +967,17 @@ MIG_S3_during_2[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,p
 MIG_S3_during_2[lower_95_CI<0,lower_95_CI:=0]
 fwrite(MIG_S3_during_2,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_S3_during_year.csv"),row.names = F)
 rm(MIG_S3_during_2)
+
+#number of pregnnacies with migraine
+records_coh<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_during==1,by="year",.N]
+names(records_coh)<-c("year","no_diagnosed_pregnancies")
+total_coh<-pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_during==1,by="year",.N]
+names(total_coh)<-c("year","no_pregnancies")
+records_coh<-merge.data.table(records_coh,total_coh,by="year",all=T)
+MIG_S3_during_coh_2<-data.table(algorithm="MIG_S3_during", records_coh)
+MIG_S3_during_coh_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
+MIG_S3_during_coh_2[,percentage:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_S3_during_coh_2[,denominator:="Number of pregnancies with migraine(MG diagnoses or Triptan prescription) during pregnancy by year"]
 
 #by year group and maternal age
 records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by=c("year_group","maternal_age"), .N]
@@ -896,6 +1047,12 @@ MIG_S4_during_dt[lower_95_CI<0,lower_95_CI:=0]
 
 fwrite(MIG_S4_during_dt,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_S4_during.csv"),row.names = F)
 
+#number of pregnancies with baseline migraine
+pregnancy_d3_mig[MG_during>=1 | Migraine_medicines_during>=1,preg_during:=1]
+MIG_S4_during_coh<-data.table(algorithm="MIG_S4_during", no_diagnosed_pregnancies=pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_during==1,.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_during==1,.N])
+MIG_S4_during_coh[,percentage:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_S4_during_coh[,denominator:="Number of pregnancies with migraine(MG diagnoses or Triptan prescription) during pregnancy"]
+
 #by maternal age
 pregnancy_d3_mig[,maternal_age:=as.character(maternal_age)]
 records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id), .N, by=.(maternal_age)]
@@ -938,6 +1095,17 @@ MIG_S4_during_2[lower_95_CI<0,lower_95_CI:=0]
 fwrite(MIG_S4_during_2,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_S4_during_year.csv"),row.names = F)
 rm(MIG_S4_during_2)
 
+#number of pregnnacies with migraine
+records_coh<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_during==1,by="year",.N]
+names(records_coh)<-c("year","no_diagnosed_pregnancies")
+total_coh<-pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_during==1,by="year",.N]
+names(total_coh)<-c("year","no_pregnancies")
+records_coh<-merge.data.table(records_coh,total_coh,by="year",all=T)
+MIG_S4_during_coh_2<-data.table(algorithm="MIG_S4_during", records_coh)
+MIG_S4_during_coh_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
+MIG_S4_during_coh_2[,percentage:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_S4_during_coh_2[,denominator:="Number of pregnancies with migraine(MG diagnoses or Triptan prescription) during pregnancy by year"]
+
 #by year group and maternal age
 records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by=c("year_group","maternal_age"), .N]
 names(records)<-c("year_group","maternal_age", "no_diagnosed_pregnancies")
@@ -959,6 +1127,49 @@ pregnancy_d3_mig[,include:=NULL]
 rm(MIG_S4_during)
 fwrite(MIG_S4_during_3,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_S4_during_year_age.csv"),row.names = F)
 rm(MIG_S4_during_3)
+
+#### Migraine severity proportions ####
+#Type a baseline
+#MIG_S1_a_coh,MIG_S2_a_coh,MIG_S3_a_coh
+MIG_S_a_coh<-rbind(MIG_S1_a_coh,MIG_S2_a_coh,MIG_S3_a_coh)
+rm(MIG_S1_a_coh,MIG_S2_a_coh,MIG_S3_a_coh)
+
+fwrite(MIG_S_a_coh,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_S_a.csv"),row.names = F)
+rm(MIG_S_a_coh)
+#Type a baseline year
+#MIG_S1_a_coh_2,MIG_S2_a_coh_2,MIG_S3_a_coh_2
+MIG_S_a_coh_2<-rbind(MIG_S1_a_coh_2,MIG_S2_a_coh_2,MIG_S3_a_coh_2)
+rm(MIG_S1_a_coh_2,MIG_S2_a_coh_2,MIG_S3_a_coh_2)
+
+fwrite(MIG_S_a_coh_2,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_S_a_year.csv"),row.names = F)
+rm(MIG_S_a_coh_2)
+#Type b baseline
+#MIG_S1_b_coh,MIG_S2_b_coh,MIG_S3_b_coh
+MIG_S_b_coh<-rbind(MIG_S1_b_coh,MIG_S2_b_coh,MIG_S3_b_coh)
+rm(MIG_S1_b_coh,MIG_S2_b_coh,MIG_S3_b_coh)
+fwrite(MIG_S_b_coh,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_S_b.csv"),row.names = F)
+rm(MIG_S_b_coh)
+
+#Type b baseline year
+#MIG_S1_b_coh_2,MIG_S2_b_coh_2,MIG_S3_b_coh_2
+MIG_S_b_coh_2<-rbind(MIG_S1_b_coh_2,MIG_S2_b_coh_2,MIG_S3_b_coh_2)
+rm(MIG_S1_b_coh_2,MIG_S2_b_coh_2,MIG_S3_b_coh_2)
+fwrite(MIG_S_b_coh_2,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_S_b_year.csv"),row.names = F)
+rm(MIG_S_b_coh_2)
+
+#Type during
+#MIG_S1_during_coh,MIG_S2_during_coh,MIG_S3_during_coh,MIG_S4_during_coh
+MIG_S_during_coh<-rbind(MIG_S1_during_coh,MIG_S2_during_coh,MIG_S3_during_coh,MIG_S4_during_coh)
+rm(MIG_S1_during_coh,MIG_S2_during_coh,MIG_S3_during_coh,MIG_S4_during_coh)
+fwrite(MIG_S_during_coh,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_S_during.csv"),row.names = F)
+rm(MIG_S_during_coh)
+
+#Type during year
+#MIG_S1_during_coh_2,MIG_S2_during_coh,MIG_S3_during_coh,MIG_S4_during_coh
+MIG_S_during_coh_2<-rbind(MIG_S1_during_coh_2,MIG_S2_during_coh_2,MIG_S3_during_coh_2,MIG_S4_during_coh_2)
+rm(MIG_S1_during_coh_2,MIG_S2_during_coh_2,MIG_S3_during_coh_2,MIG_S4_during_coh_2)
+fwrite(MIG_S_during_coh_2,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_S_during_year.csv"),row.names = F)
+rm(MIG_S_during_coh_2)
 
 #### Save time info ####
 date_running_end_04_f<-Sys.Date()
