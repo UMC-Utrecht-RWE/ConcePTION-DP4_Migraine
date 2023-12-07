@@ -141,12 +141,12 @@ if("obs" %in% ls()){rm(obs)}
 
 <div class = 'box3'>
 
-## 2. Creation of the Migraine Severity Algorithms: Baseline
+## 1. Creation of the Migraine Severity Algorithms: Baseline
 
 If the prevalence is rounded to zero but the number of diagnosed pregnancies is higher than zero than the prevalence will be replaced with 0.0001.
 <br>
 
-### 2.1 Baseline Migraine Severity Algorithm Overall
+### 1.1 Baseline Migraine Severity Algorithm Overall
 
 
 ```{r , echo=F}
@@ -175,6 +175,7 @@ alg_6<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_S3_b
 }else{alg_6<-NULL}
 
 alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6)
+alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 
 if(!is.null(alg)){
   datatable(alg, extensions = "Buttons", options = list(scrollX=T,
@@ -217,7 +218,7 @@ if("alg" %in% ls()){rm(alg)}
 
 <br>
 
-### 2.2 Baseline Migraine Severity Algorithm by maternal age at start pregnancy
+### 1.2 Baseline Migraine Severity Algorithm by maternal age at start pregnancy
 
 ```{r , echo=F}
 if("Step_04_MIG_S1_a_age.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
@@ -246,6 +247,7 @@ alg_6<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_S3_b
 
 
 alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6)
+alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 
 if(!is.null(alg)){
   datatable(alg, extensions = "Buttons", options = list(scrollX=T,
@@ -289,7 +291,7 @@ if("alg" %in% ls()){rm(alg)}
 <br>
 
 
-### 2.3 Baseline Migraine Severity Algorithm by year of start pregnancy
+### 1.3 Baseline Migraine Severity Algorithm by year of start pregnancy
 
 ```{r , echo=F}
 if("Step_04_MIG_S1_a_year.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
@@ -318,6 +320,7 @@ alg_6<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_S3_b
 
 
 alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6)
+alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 
 if(!is.null(alg)){
   datatable(alg, extensions = "Buttons", options = list(scrollX=T,
@@ -362,7 +365,7 @@ if("alg" %in% ls()){rm(alg)}
 <br>
 
 
-### 2.4 Baseline Migraine Algorithm by maternal age and year of start pregnancy
+### 1.4 Baseline Migraine Algorithm by maternal age and year of start pregnancy
 
 ```{r , echo=F}
 if("Step_04_MIG_S1_a_year_age.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
@@ -392,6 +395,7 @@ alg_6<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_S3_b
 
 
 alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6)
+alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 
 if(!is.null(alg)){
   datatable(alg, extensions = "Buttons", options = list(scrollX=T,
@@ -445,12 +449,12 @@ if("fig.1" %in% ls()){rm(fig.1)}
 
 <div class = 'box3'>
 
-## 3. Creation of the Migraine Severity Algorithms: During pregnancy
+## 2. Creation of the Migraine Severity Algorithms: During pregnancy
 
 If the prevalence is rounded to zero but the number of diagnosed pregnancies is higher than zero than the prevalence will be replaced with 0.0001.
 <br>
 
-### 3.1 During pregnancy: Migraine Severity Algorithm Overall
+### 2.1 During pregnancy: Migraine Severity Algorithm Overall
 
 
 ```{r , echo=F}
@@ -471,6 +475,7 @@ alg_4<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_S4_d
 }else{alg_4<-NULL}
 
 alg<-rbind(alg_1,alg_2,alg_3,alg_4)
+alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 
 if(!is.null(alg)){
   datatable(alg, extensions = "Buttons", options = list(scrollX=T,
@@ -511,7 +516,7 @@ if("alg" %in% ls()){rm(alg)}
 
 <br>
 
-### 3.2 During pregnancy: Migraine Algorithm by maternal age at start pregnancy
+### 2.2 During pregnancy: Migraine Algorithm by maternal age at start pregnancy
 
 ```{r , echo=F}
 if("Step_04_MIG_S1_during_age.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
@@ -531,6 +536,7 @@ alg_4<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_S4_d
 }else{alg_4<-NULL}
 
 alg<-rbind(alg_1,alg_2,alg_3,alg_4)
+alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 
 if(!is.null(alg)){
   datatable(alg, extensions = "Buttons", options = list(scrollX=T,
@@ -570,7 +576,7 @@ if("alg" %in% ls()){rm(alg)}
 
 <br>
 
-### 3.3 During pregnancy: Migraine Algorithm by year of start pregnancy
+### 2.3 During pregnancy: Migraine Algorithm by year of start pregnancy
 
 ```{r , echo=F}
 if("Step_04_MIG_S1_during_year.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
@@ -590,6 +596,7 @@ alg_4<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_S4_d
 }else{alg_4<-NULL}
 
 alg<-rbind(alg_1,alg_2,alg_3,alg_4)
+alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 
 if(!is.null(alg)){
   datatable(alg, extensions = "Buttons", options = list(scrollX=T,
@@ -632,7 +639,7 @@ if("alg" %in% ls()){rm(alg)}
 
 <br>
 
-### 3.4 During pregnancy: Migraine Algorithm by maternal age and year of start pregnancy
+### 2.4 During pregnancy: Migraine Algorithm by maternal age and year of start pregnancy
 
 ```{r , echo=F}
 if("Step_04_MIG_S1_during_year_age.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
@@ -653,6 +660,7 @@ alg_4<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_S4_d
 
 
 alg<-rbind(alg_1,alg_2,alg_3,alg_4)
+alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 
 if(!is.null(alg)){
   datatable(alg, extensions = "Buttons", options = list(scrollX=T,
@@ -706,7 +714,7 @@ if("fig.1" %in% ls()){rm(fig.1)}
 
 <div class = 'box3'>
 
-## 4. Migraine Type Algorithms: Ocurrence prior to pregnancy and during pregnancy
+## 3. Migraine Type Algorithms: Ocurrence prior to pregnancy and during pregnancy
 
 If the prevalence is rounded to zero but the number of diagnosed pregnancies is higher than zero than the percentage will be replaced with 0.0001.
 <br>
@@ -727,6 +735,7 @@ alg_3<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_S3_b
 
 
 alg<-rbind(alg_1,alg_2,alg_3)
+alg[no_pregnancies_same_type>0 & percentage==0, percentage:=0.0001]
 
 if(!is.null(alg)){
   datatable(alg, extensions = "Buttons", options = list(scrollX=T,
@@ -772,11 +781,274 @@ if("alg" %in% ls()){rm(alg)}
 
 <br>
 
+## 4. Migraine Severity Algorithms: Ocurrence prior to pregnancy and during pregnancy within pregnancies diagnosed with migraine
+
+If the prevalence is rounded to zero but the number of diagnosed pregnancies is higher than zero than the percentage will be replaced with 0.0001.
+<br>
+
+
+```{r , echo=F}
+if("Step_04_MIG_S_a.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
+alg_1<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_S_a.csv"))
+}else{alg_1<-NULL}
+alg_1[no_diagnosed_pregnancies>0 & percentage==0, percentage:=0.0001]
+
+
+if("Step_04_MIG_S_b.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
+alg_2<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_S_b.csv"))
+}else{alg_2<-NULL}
+alg_2[no_diagnosed_pregnancies>0 & percentage==0, percentage:=0.0001]
+
+
+if("Step_04_MIG_S_during.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
+alg_3<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_S_during.csv"))
+}else{alg_3<-NULL}
+alg_3[no_diagnosed_pregnancies>0 & percentage==0, percentage:=0.0001]
+
+if("Step_04_MIG_S_a_year.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
+alg_4<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_S_a_year.csv"))
+}else{alg_4<-NULL}
+alg_4[no_diagnosed_pregnancies>0 & percentage==0, percentage:=0.0001]
+
+if("Step_04_MIG_S_b_year.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
+alg_5<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_S_b_year.csv"))
+}else{alg_5<-NULL}
+alg_5[no_diagnosed_pregnancies>0 & percentage==0, percentage:=0.0001]
+
+if("Step_04_MIG_S_during_year.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
+alg_6<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_S_during_year.csv"))
+}else{alg_6<-NULL}
+alg_6[no_diagnosed_pregnancies>0 & percentage==0, percentage:=0.0001]
+
+```
+
+### 4.1 Baseline a: Migraine Severity Algorithm in pregnancies diagnosed with migraine in baseline a
+```{r, echo=F}
+if(!is.null(alg_1)){
+  datatable(alg_1, extensions = "Buttons", options = list(scrollX=T,
+                                                                    dom = "Blfrtip",
+                                                                    buttons = c("copy", "csv","excel", "pdf", "print"),
+                                                                                lengthMenu = list(c(10,25,50,-1),
+                                                                                                  c(10,25,50,"All"))))
+}else{
+  print("This table is missing in the folder g_output/Migraine algorithm.")
+}
+```
+
+```{r, echo=F}
+if(!is.null(alg_1)){
+  ggplotly(ggplot(alg_1) +
+  geom_col(aes(x = factor(algorithm,levels =c('MIG_S1_a','MIG_S2_a','MIG_S3_a')),  
+               y = no_diagnosed_pregnancies), fill = "green", width = 0.3) +
+  geom_col(aes(x = algorithm, y = no_pregnancies), alpha = 0.3, fill = "#76b82a", width = 0.6) +
+      ggtitle("Migraine type occurrence")+
+xlab("Algorithm") +
+  ylab("Counts")+
+  theme_classic() +
+  theme(axis.title.x = element_text(colour = "#76b82a"),
+        axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+        axis.title.y = element_text(colour = "#76b82a"),
+        plot.title = element_text(colour = "#76b82a"))
+
+)
+}
+```
+
+<br>
+
+### 4.2 Baseline a: Migraine Severity Algorithm in pregnancies diagnosed with migraine in baseline a by year
+```{r, echo=F}
+if(!is.null(alg_4)){
+  datatable(alg_4, extensions = "Buttons", options = list(scrollX=T,
+                                                                    dom = "Blfrtip",
+                                                                    buttons = c("copy", "csv","excel", "pdf", "print"),
+                                                                                lengthMenu = list(c(10,25,50,-1),
+                                                                                                  c(10,25,50,"All"))))
+}else{
+  print("This table is missing in the folder g_output/Migraine algorithm.")
+}
+```
+
+```{r, echo=F}
+if(!is.null(alg_4)){
+  ggplotly(ggplot(alg_4) +
+  geom_col(aes(x = factor(algorithm,levels =c('MIG_S1_a','MIG_S2_a','MIG_S3_a')),  
+               y = no_diagnosed_pregnancies), fill = "green", width = 0.3) +
+  geom_col(aes(x = algorithm, y = no_pregnancies), alpha = 0.3, fill = "#76b82a", width = 0.6) +
+      ggtitle("Migraine type occurrence")+
+xlab("Algorithm") +
+  ylab("Counts")+
+  theme_classic() +
+  theme(axis.title.x = element_text(colour = "#76b82a"),
+        axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+        axis.title.y = element_text(colour = "#76b82a"),
+        plot.title = element_text(colour = "#76b82a"))
+
+)
+}
+```
+
+<br>
+
+### 4.3 Baseline b: Migraine Severity Algorithm in pregnancies diagnosed with migraine in baseline b
+```{r, echo=F}
+if(!is.null(alg_2)){
+  datatable(alg_2, extensions = "Buttons", options = list(scrollX=T,
+                                                                    dom = "Blfrtip",
+                                                                    buttons = c("copy", "csv","excel", "pdf", "print"),
+                                                                                lengthMenu = list(c(10,25,50,-1),
+                                                                                                  c(10,25,50,"All"))))
+}else{
+  print("This table is missing in the folder g_output/Migraine algorithm.")
+}
+```
+
+```{r, echo=F}
+if(!is.null(alg_2)){
+  ggplotly(ggplot(alg_2) +
+  geom_col(aes(x = factor(algorithm,levels =c('MIG_S1_b','MIG_S2_b','MIG_S3_b')),  
+               y = no_diagnosed_pregnancies), fill = "green", width = 0.3) +
+  geom_col(aes(x = algorithm, y = no_pregnancies), alpha = 0.3, fill = "#76b82a", width = 0.6) +
+      ggtitle("Migraine type occurrence")+
+xlab("Algorithm") +
+  ylab("Counts")+
+  theme_classic() +
+  theme(axis.title.x = element_text(colour = "#76b82a"),
+        axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+        axis.title.y = element_text(colour = "#76b82a"),
+        plot.title = element_text(colour = "#76b82a"))
+
+)
+}
+```
+
+<br>
+
+### 4.4 Baseline b: Migraine Severity Algorithm in pregnancies diagnosed with migraine in baseline b by year
+```{r, echo=F}
+if(!is.null(alg_5)){
+  datatable(alg_5, extensions = "Buttons", options = list(scrollX=T,
+                                                                    dom = "Blfrtip",
+                                                                    buttons = c("copy", "csv","excel", "pdf", "print"),
+                                                                                lengthMenu = list(c(10,25,50,-1),
+                                                                                                  c(10,25,50,"All"))))
+}else{
+  print("This table is missing in the folder g_output/Migraine algorithm.")
+}
+```
+
+```{r, echo=F}
+if(!is.null(alg_5)){
+  ggplotly(ggplot(alg_5) +
+  geom_col(aes(x = factor(algorithm,levels =c('MIG_S1_b','MIG_S2_b','MIG_S3_b')),  
+               y = no_diagnosed_pregnancies), fill = "green", width = 0.3) +
+  geom_col(aes(x = algorithm, y = no_pregnancies), alpha = 0.3, fill = "#76b82a", width = 0.6) +
+      ggtitle("Migraine type occurrence")+
+xlab("Algorithm") +
+  ylab("Counts")+
+  theme_classic() +
+  theme(axis.title.x = element_text(colour = "#76b82a"),
+        axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+        axis.title.y = element_text(colour = "#76b82a"),
+        plot.title = element_text(colour = "#76b82a"))
+
+)
+}
+```
+
+<br>
+
+### 4.5 During pregnancy: Migraine Severity Algorithm in pregnancies diagnosed with migraine during pregnancy
+```{r, echo=F}
+if(!is.null(alg_3)){
+  datatable(alg_3, extensions = "Buttons", options = list(scrollX=T,
+                                                                    dom = "Blfrtip",
+                                                                    buttons = c("copy", "csv","excel", "pdf", "print"),
+                                                                                lengthMenu = list(c(10,25,50,-1),
+                                                                                                  c(10,25,50,"All"))))
+}else{
+  print("This table is missing in the folder g_output/Migraine algorithm.")
+}
+```
+
+```{r, echo=F}
+if(!is.null(alg_3)){
+  ggplotly(ggplot(alg_3) +
+  geom_col(aes(x = factor(algorithm,levels =c('MIG_S1_during','MIG_S2_during','MIG_S3_during','MIG_S4_during')),  
+               y = no_diagnosed_pregnancies), fill = "green", width = 0.3) +
+  geom_col(aes(x = algorithm, y = no_pregnancies), alpha = 0.3, fill = "#76b82a", width = 0.6) +
+      ggtitle("Migraine type occurrence")+
+xlab("Algorithm") +
+  ylab("Counts")+
+  theme_classic() +
+  theme(axis.title.x = element_text(colour = "#76b82a"),
+        axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+        axis.title.y = element_text(colour = "#76b82a"),
+        plot.title = element_text(colour = "#76b82a"))
+
+)
+}
+```
+
+<br>
+
+### 4.6 During pregnancy: Migraine Severity Algorithm in pregnancies diagnosed with migraine during pregnancy by year
+```{r, echo=F}
+if(!is.null(alg_6)){
+  datatable(alg_6, extensions = "Buttons", options = list(scrollX=T,
+                                                                    dom = "Blfrtip",
+                                                                    buttons = c("copy", "csv","excel", "pdf", "print"),
+                                                                                lengthMenu = list(c(10,25,50,-1),
+                                                                                                  c(10,25,50,"All"))))
+}else{
+  print("This table is missing in the folder g_output/Migraine algorithm.")
+}
+```
+
+```{r, echo=F}
+if(!is.null(alg_6)){
+  ggplotly(ggplot(alg_6) +
+  geom_col(aes(x = factor(algorithm,levels =c('MIG_S1_during','MIG_S2_during','MIG_S3_during','MIG_S4_during')),  
+               y = no_diagnosed_pregnancies), fill = "green", width = 0.3) +
+  geom_col(aes(x = algorithm, y = no_pregnancies), alpha = 0.3, fill = "#76b82a", width = 0.6) +
+      ggtitle("Migraine type occurrence")+
+xlab("Algorithm") +
+  ylab("Counts")+
+  theme_classic() +
+  theme(axis.title.x = element_text(colour = "#76b82a"),
+        axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+        axis.title.y = element_text(colour = "#76b82a"),
+        plot.title = element_text(colour = "#76b82a"))
+
+)
+}
+```
+
+```{r, echo=F}
+if("alg_1" %in% ls()){rm(alg_1)}
+if("alg_2" %in% ls()){rm(alg_2)}
+if("alg_3" %in% ls()){rm(alg_3)}
+if("alg_4" %in% ls()){rm(alg_4)}
+if("alg_5" %in% ls()){rm(alg_5)}
+if("alg_6" %in% ls()){rm(alg_6)}
+if("alg_7" %in% ls()){rm(alg_7)}
+if("alg_8" %in% ls()){rm(alg_8)}
+if("alg" %in% ls()){rm(alg)}
+```
+
+<br>
+
 <div class = 'box3'>
 
 <br>
 
-**Migraine type algorithms**
+<div class = 'box3'>
+
+<br>
+
+## 5. Migraine Severity Algorithms
+
+**Migraine SEVERITY algorithms**
 
 * MIG_S1_a: **At least one** diagnoses of Migraine (MG) recorded up to 12 months prior to LMP and no prescription of triptans (N02CC) prior or during pregnancy or prescription of profilactic medicines prior or during pregnancy.\
 * MIG_S1_b: **At least one** diagnoses of Migraine (MG) recorded up to 3 months prior to LMP and no prescription of triptans (N02CC) prior or during pregnancy or prescription of profilactic medicines prior or during pregnancy.\
@@ -791,6 +1063,10 @@ if("alg" %in% ls()){rm(alg)}
 * MIG_S1_both: The same severity migraine (S1-Mild) recorded prior LMP and during pregnancy.\
 * MIG_S2_both: The same severity migraine (S2-Moderate) recorded prior LMP and during pregnancy.\
 * MIG_S3_both: The same severity migraine (S3-Severe) recorded prior LMP and during pregnancy.\
+* MIG_S_a: Proportion of migraine severity stratified over the algorithms S1-S3 in pregnancies diagnosed with baseline migraine (365 days/90 days/75 days/).\
+* MIG_S_b: Proportion of migraine severity stratified over the algorithms S1-S3 in pregnancies diagnosed with baseline migraine (90 days/75 days/).\
+* MIG_S_during: Proportion of migraine severity stratified over the algorithms S1-S4 in pregnancies diagnosed with migraine during pregnancy.\
+
 
 </div>
 
