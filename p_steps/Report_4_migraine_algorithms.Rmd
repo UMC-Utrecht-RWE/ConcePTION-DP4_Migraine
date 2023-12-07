@@ -285,6 +285,7 @@ alg_7<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_chec
 }else{alg_7<-NULL}
 
 alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6,alg_7)
+alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 
 if(!is.null(alg)){
   datatable(alg, extensions = "Buttons", options = list(scrollX=T,
@@ -361,6 +362,7 @@ alg_7<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_chec
 }else{alg_7<-NULL}
 
 alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6, alg_7)
+alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 
 if(!is.null(alg)){
   datatable(alg, extensions = "Buttons", options = list(scrollX=T,
@@ -438,6 +440,7 @@ alg_7<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_chec
 }else{alg_7<-NULL}
 
 alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6,alg_7)
+alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 
 if(!is.null(alg)){
   datatable(alg, extensions = "Buttons", options = list(scrollX=T,
@@ -516,6 +519,7 @@ alg_7<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_chec
 }else{alg_7<-NULL}
 
 alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6,alg_7)
+alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 
 if(!is.null(alg)){
   datatable(alg, extensions = "Buttons", options = list(scrollX=T,
@@ -596,6 +600,7 @@ alg_4<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_chec
 }else{alg_4<-NULL}
 
 alg<-rbind(alg_1,alg_2,alg_3,alg_4)
+alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 
 if(!is.null(alg)){
   datatable(alg, extensions = "Buttons", options = list(scrollX=T,
@@ -655,6 +660,7 @@ if("Step_04_MIG_checkbox_during_age.csv" %in% list.files(paste0(projectFolder,"/
 alg_4<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_checkbox_during_age.csv"))
 }else{alg_4<-NULL}
 alg<-rbind(alg_1,alg_2,alg_3,alg_4)
+alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 
 if(!is.null(alg)){
   datatable(alg, extensions = "Buttons", options = list(scrollX=T,
@@ -714,6 +720,7 @@ alg_4<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_chec
 }else{alg_4<-NULL}
 
 alg<-rbind(alg_1,alg_2,alg_3,alg_4)
+alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 
 if(!is.null(alg)){
   datatable(alg, extensions = "Buttons", options = list(scrollX=T,
@@ -774,6 +781,7 @@ alg_4<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_chec
 }else{alg_4<-NULL}
 
 alg<-rbind(alg_1,alg_2,alg_3,alg_4)
+alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 
 if(!is.null(alg)){
   datatable(alg, extensions = "Buttons", options = list(scrollX=T,
@@ -874,6 +882,7 @@ alg_8<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_DxRx
 
 
 alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6,alg_7,alg_8)
+alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 
 if(!is.null(alg)){
   datatable(alg, extensions = "Buttons", options = list(scrollX=T,
@@ -960,6 +969,7 @@ alg_9<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_DxRx
 }else{alg_9<-NULL}
 
 alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6,alg_7,alg_8,alg_9)
+alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 
 if(!is.null(alg)){
   datatable(alg, extensions = "Buttons", options = list(scrollX=T,
@@ -1046,6 +1056,7 @@ alg_9<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_DxRx
 }else{alg_9<-NULL}
 
 alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6,alg_7,alg_8,alg_9)
+alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 
 if(!is.null(alg)){
   datatable(alg, extensions = "Buttons", options = list(scrollX=T,
@@ -1130,6 +1141,7 @@ alg_9<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_DxRx
 }else{alg_9<-NULL}
 
 alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6,alg_7,alg_8,alg_9)
+alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 
 if(!is.null(alg)){
   datatable(alg, extensions = "Buttons", options = list(scrollX=T,
