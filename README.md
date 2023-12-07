@@ -1,3 +1,5 @@
+![Status](https://img.shields.io/badge/Study_status-ongoing-red) 
+
 ![Logo](https://www.imi-conception.eu/wp-content/uploads/2019/07/ConcePTION-logo-plain-new-e1564480200525.png)
 
 # :wave: Work Package 1 Demostration project 4 :pregnant_woman: :breast_feeding:
