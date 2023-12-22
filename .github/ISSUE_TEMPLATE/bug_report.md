@@ -7,8 +7,8 @@ assignees: ''
 
 ---
 
-**Study, DAP, release **
-Name of study, DAP, and release version to facilitate contact
+**Study, DAP, release**
+Name of study, DAP, and release version to facilitate contact.
 
 **Describe the bug**
 A clear and concise description of what the bug is.
