@@ -66,9 +66,12 @@ for (migraine_start_ind in 1:length(migraine_start)){
 }
 migraine_start[,remove:=NULL][,check:=NULL]
 
-
+gdm_start<-gdm_start[,c("medicinal_product_group","atc_code","mechanism","condition")]
+migraine_start<-migraine_start[,c("medicinal_product_group","atc_code","mechanism","condition")]
 start_med<-rbind(gdm_start,migraine_start)
 rm(gdm_start,migraine_start)
+gdm_exact<-gdm_exact[,c("medicinal_product_group","atc_code","mechanism","condition")]
+migraine_exact<-migraine_exact[,c("medicinal_product_group","atc_code","mechanism","condition")]
 exact_med<-rbind(gdm_exact,migraine_exact)
 rm(gdm_exact,migraine_exact)
 #group start_med into different number of characters
