@@ -68,16 +68,36 @@ Minimum and maximum dates of start date of pregnancy records for all projects by
 
 <br>
 
+Crosstabulation of present pregnancy records
+
+```{r preg_present_rec, echo=F}
+if("Step_00_crosstabulation_quality_outcome.csv" %in% list.files(paste0(projectFolder,"/g_output/Pregnancy algorithm/"))){
+present_rec<-fread(paste0(projectFolder,"/g_output/Pregnancy algorithm/Step_00_crosstabulation_quality_outcome.csv"))
+datatable(present_rec, extensions = "Buttons", options = list(scrollX=T,
+                                                                    dom = "Blfrtip",
+                                                                    buttons = c("copy", "csv","excel", "pdf", "print"),
+                                                                                lengthMenu = list(c(10,25,50,-1),
+                                                                                                  c(10,25,50,"All"))))
+}else{
+  print("This table is missing in the folder g_output/Pregnancy algorithm.")
+}
+```
+
+```{r,echo=F}
+rm(present_rec)
+```
+
 <div class = 'box3'>
 
 ## 1. Application of pregnancy algorithm and records quality
 
-Step 1: application of the Pregnancy algorithm(developed by ARS Toscana team).     
-Step 2: keep only pregnancy records with quality=="green".     
+Step 1: application of the Pregnancy algorithm(developed by ARS Toscana team).\     
+Step 2: keep only pregnancy records with quality color as specified in the additional concepts template.\     
+Step 3: keep only pregnancy records with type pregnancy outcome as specified in the additional concepts template.\ 
 
 <br>
 
-Removed records with quality other than green
+Removed records
 ```{r preg_excl_criteria_same, echo=F}
 if("Step_00_other_quality_records_removed.csv" %in% list.files(paste0(projectFolder,"/g_output/Pregnancy algorithm/"))){
 removed_rec<-fread(paste0(projectFolder,"/g_output/Pregnancy algorithm/Step_00_other_quality_records_removed.csv"))
