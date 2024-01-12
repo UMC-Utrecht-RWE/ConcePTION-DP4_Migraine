@@ -26,25 +26,69 @@ pregnancy_D3[,pregnancy_end_date:=as.IDate(pregnancy_end_date)]
 
 original_rows<-pregnancy_D3[,.N]
 
-####keep only green records####
-#count number of records that are removed
-yellow_rec<-pregnancy_D3[highest_quality=="2_yellow",.N]
-blue_rec<-pregnancy_D3[highest_quality=="3_blue",.N]
-red_rec<-pregnancy_D3[highest_quality=="4_red",.N]
-not_green_rec<-pregnancy_D3[highest_quality!="1_green",.N]
+###Get a cross tabulation between quality color, outcomes and type of data
+crosstab_rec<-pregnancy_D3[,.N, by=c("highest_quality","type_of_pregnancy_end")]
+setnames(crosstab_rec,"N","no_records")
+fwrite(crosstab_rec,paste0(output_dir, "Pregnancy algorithm/Step_00_crosstabulation_quality_outcome.csv"), row.names = F)
+rm(crosstab_rec)
+all_colors_present<-pregnancy_D3[!duplicated(highest_quality),highest_quality]
+all_color_present<-paste(all_colors_present,collapse=",")
+all_outcomes_present<-pregnancy_D3[!duplicated(type_of_pregnancy_end),type_of_pregnancy_end]
+all_outcome_present<-paste(all_outcomes_present,collapse=",")
+#####Load additional concepts template####
+additional_concepts_file<-list.files(paste0(projectFolder,"/p_parameters/"), "additional_concepts")
+additional_concepts<-read_excel(paste0(projectFolder,"/p_parameters/",additional_concepts_file),col_types = "text")
+additional_concepts<-as.data.table(additional_concepts)
+#Keep only needed information based on the DAP
+additional_concepts<-additional_concepts[DAP_NAME==data_access_provider_name]
+if(additional_concepts[,.N]==0){
+  stop("This is not a script issue. There is no data for your data source in additional_concepts. Fix the issue and then rerun the script.")
+}
+#quality color
+select_colors<-additional_concepts[table=="PREGNANCY" & StudyVar=="Quality_color",val_1]
+select_color<-unlist(strsplit(select_colors,","))
 
-removed_rec<-data.table(Indicator="Pregnancy records", 
-                        Quality=c("yellow","blue","red"), 
-                        removed_records=c(yellow_rec,blue_rec,red_rec), 
-                        percentage=c(round((yellow_rec/pregnancy_D3[,.N])*100,1),
-                                     round((blue_rec/pregnancy_D3[,.N])*100,1),
-                                     round((red_rec/pregnancy_D3[,.N])*100,1)))
-rm(yellow_rec,blue_rec,red_rec)
+
+####keep only needed records####
+#count number of records that are removed
+not_incl_rec<-pregnancy_D3[!highest_quality %in% select_color,.N]
+not_incl_rec_c<-not_incl_rec
+not_incl_color<-setdiff(all_colors_present,select_color)
+if(length(not_incl_color)==0){not_incl_color<-"None"}
+
+removed_rec<-data.table(Indicator=c("Present pregnancy records quality", "Included pregnancy records quality", "Removed records: quality"),  
+                        Quality_Outcome=c(all_color_present,select_colors,not_incl_color), 
+                        removed_records=c(NA,NA,not_incl_rec), 
+                        percentage=c(NA,NA,round((not_incl_rec/pregnancy_D3[,.N])*100,1)))
+rm(select_colors,not_incl_rec,not_incl_color)
+
+pregnancy_D3<-pregnancy_D3[highest_quality %in% select_color]
+rm(select_color)
+
+#type of outcome
+select_outcomes<-additional_concepts[table=="PREGNANCY" & StudyVar=="Pregnancy_outcome_include",val_1]
+select_outcome<-unlist(strsplit(select_outcomes,","))
+
+#count number of records that are removed
+not_incl_rec<-pregnancy_D3[!type_of_pregnancy_end %in% select_outcome,.N]
+not_incl_rec_o<-not_incl_rec
+not_incl_outcome<-setdiff(all_outcomes_present,select_outcome)
+if(length(not_incl_outcome)==0){not_incl_outcome<-"None"}
+
+removed_rec_o<-data.table(Indicator=c("Present pregnancy records outcomes", "Included pregnancy records outcomes", "Removed records: outcome"),  
+                        Quality_Outcome=c(all_outcome_present,select_outcomes,not_incl_outcome), 
+                        removed_records=c(NA,NA,not_incl_rec), 
+                        percentage=c(NA,NA,round((not_incl_rec/pregnancy_D3[,.N])*100,1)))
+rm(select_outcomes,not_incl_rec,not_incl_outcome)
+
+removed_rec<-rbind(removed_rec,removed_rec_o)
+
 fwrite(removed_rec,paste0(output_dir, "Pregnancy algorithm/Step_00_other_quality_records_removed.csv"), row.names = F)
 rm(removed_rec)
 
-pregnancy_D3<-pregnancy_D3[highest_quality=="1_green"]
-
+pregnancy_D3<-pregnancy_D3[type_of_pregnancy_end %in% select_outcome]
+rm(select_outcome)
+not_incl_rec<-not_incl_rec_c+not_incl_rec_o
 ####check for issues####
 issues_preg_alg_sex<-pregnancy_D3[sex_at_instance_creation!="F",.N]
 pregnancy_D3<-pregnancy_D3[sex_at_instance_creation=="F"]
@@ -78,7 +122,7 @@ if(issue_1>0){
 
 incl_rec<-pregnancy_D3[,.N]
 Indicator<-c("1.0. Number of original records from the pregnancy algorithm",
-             "1.1. Number of records with quality other than green",
+             "1.1. Number of records with quality other than needed",
              "1.2. Records with sex other than female", 
              "1.3. Records with missing start or end date of pregnancy or both",
              "1.4. Records with missing person id",
@@ -86,10 +130,10 @@ Indicator<-c("1.0. Number of original records from the pregnancy algorithm",
              "1.6. Records where gestational age is longer than 43 weeks(301 days)",
              "1.7. Records with the same person_id and start_date_pregnancy(keep the longest record, exclude others)",
              "1.8. Records left after exclusions")
-placeholder<-c(original_rows,not_green_rec,issues_preg_alg_sex,issues_preg_alg_date,issues_preg_alg_pid,issues_preg_alg_prid,issues_preg_alg_ga,issue_1, incl_rec)
+placeholder<-c(original_rows,not_incl_rec,issues_preg_alg_sex,issues_preg_alg_date,issues_preg_alg_pid,issues_preg_alg_prid,issues_preg_alg_ga,issue_1, incl_rec)
 issues<-data.table(Indicator=Indicator, Count=placeholder)
 rm(Indicator,placeholder)
-rm(issues_preg_alg_sex,not_green_rec,issues_preg_alg_date,issues_preg_alg_pid,issues_preg_alg_prid,issues_preg_alg_ga,incl_rec, issue_1)
+rm(issues_preg_alg_sex,not_incl_rec,issues_preg_alg_date,issues_preg_alg_pid,issues_preg_alg_prid,issues_preg_alg_ga,incl_rec, issue_1)
 
 fwrite(issues,paste0(output_dir, "Pregnancy algorithm/Step_00_issues_flowchart_pregnancy_D3.csv"), row.names = F)
 rm(issues)
