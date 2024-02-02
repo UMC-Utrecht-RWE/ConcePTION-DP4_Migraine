@@ -30,65 +30,29 @@ original_rows<-pregnancy_D3[,.N]
 crosstab_rec<-pregnancy_D3[,.N, by=c("highest_quality","type_of_pregnancy_end")]
 setnames(crosstab_rec,"N","no_records")
 fwrite(crosstab_rec,paste0(output_dir, "Pregnancy algorithm/Step_00_crosstabulation_quality_outcome.csv"), row.names = F)
-rm(crosstab_rec)
 all_colors_present<-pregnancy_D3[!duplicated(highest_quality),highest_quality]
 all_color_present<-paste(all_colors_present,collapse=",")
 all_outcomes_present<-pregnancy_D3[!duplicated(type_of_pregnancy_end),type_of_pregnancy_end]
 all_outcome_present<-paste(all_outcomes_present,collapse=",")
-#####Load additional concepts template####
-additional_concepts_file<-list.files(paste0(projectFolder,"/p_parameters/"), "additional_concepts")
-additional_concepts<-read_excel(paste0(projectFolder,"/p_parameters/",additional_concepts_file),col_types = "text")
-additional_concepts<-as.data.table(additional_concepts)
-#Keep only needed information based on the DAP
-additional_concepts<-additional_concepts[DAP_NAME==data_access_provider_name]
-if(additional_concepts[,.N]==0){
-  stop("This is not a script issue. There is no data for your data source in additional_concepts. Fix the issue and then rerun the script.")
-}
-#quality color
-select_colors<-additional_concepts[table=="PREGNANCY" & StudyVar=="Quality_color",val_1]
-select_color<-unlist(strsplit(select_colors,","))
 
+#####Apply selection script####
+source(paste0(projectFolder,"/p_steps/Step_00_a_D3_pregnancy_final_filter.R"))
 
-####keep only needed records####
+####cross tab of included records####
 #count number of records that are removed
-not_incl_rec<-pregnancy_D3[!highest_quality %in% select_color,.N]
-not_incl_rec_c<-not_incl_rec
-not_incl_color<-setdiff(all_colors_present,select_color)
-if(length(not_incl_color)==0){not_incl_color<-"None"}
+crosstab_rec_inc<-pregnancy_D3[,.N, by=c("highest_quality","type_of_pregnancy_end")]
+setnames(crosstab_rec_inc,"N","included_records")
+#combine
+crosstab<-merge.data.table(crosstab_rec,crosstab_rec_inc, by=c("highest_quality","type_of_pregnancy_end"), all=T)
+crosstab[is.na(included_records), included_records:=0]
+crosstab[,no_records:=as.numeric(no_records)][,included_records:=as.numeric(included_records)]
+crosstab[,removed_records:=no_records-included_records]
+crosstab[,removal_percentage:=round((removed_records/no_records)*100,1)]
+not_incl_rec<-crosstab[,sum(removed_records)]
 
-removed_rec<-data.table(Indicator=c("Present pregnancy records quality", "Included pregnancy records quality", "Removed records: quality"),  
-                        Quality_Outcome=c(all_color_present,select_colors,not_incl_color), 
-                        removed_records=c(NA,NA,not_incl_rec), 
-                        percentage=c(NA,NA,round((not_incl_rec/pregnancy_D3[,.N])*100,1)))
-rm(select_colors,not_incl_rec,not_incl_color)
+fwrite(crosstab,paste0(output_dir, "Pregnancy algorithm/Step_00_other_quality_records_removed.csv"), row.names = F)
+rm(crosstab)
 
-pregnancy_D3<-pregnancy_D3[highest_quality %in% select_color]
-rm(select_color)
-
-#type of outcome
-select_outcomes<-additional_concepts[table=="PREGNANCY" & StudyVar=="Pregnancy_outcome_include",val_1]
-select_outcome<-unlist(strsplit(select_outcomes,","))
-
-#count number of records that are removed
-not_incl_rec<-pregnancy_D3[!type_of_pregnancy_end %in% select_outcome,.N]
-not_incl_rec_o<-not_incl_rec
-not_incl_outcome<-setdiff(all_outcomes_present,select_outcome)
-if(length(not_incl_outcome)==0){not_incl_outcome<-"None"}
-
-removed_rec_o<-data.table(Indicator=c("Present pregnancy records outcomes", "Included pregnancy records outcomes", "Removed records: outcome"),  
-                        Quality_Outcome=c(all_outcome_present,select_outcomes,not_incl_outcome), 
-                        removed_records=c(NA,NA,not_incl_rec), 
-                        percentage=c(NA,NA,round((not_incl_rec/pregnancy_D3[,.N])*100,1)))
-rm(select_outcomes,not_incl_rec,not_incl_outcome)
-
-removed_rec<-rbind(removed_rec,removed_rec_o)
-
-fwrite(removed_rec,paste0(output_dir, "Pregnancy algorithm/Step_00_other_quality_records_removed.csv"), row.names = F)
-rm(removed_rec)
-
-pregnancy_D3<-pregnancy_D3[type_of_pregnancy_end %in% select_outcome]
-rm(select_outcome)
-not_incl_rec<-not_incl_rec_c+not_incl_rec_o
 ####check for issues####
 issues_preg_alg_sex<-pregnancy_D3[sex_at_instance_creation!="F",.N]
 pregnancy_D3<-pregnancy_D3[sex_at_instance_creation=="F"]
