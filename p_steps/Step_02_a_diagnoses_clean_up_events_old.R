@@ -142,225 +142,149 @@ if(sum(events_gdm_diagnoses,events_pe_diagnoses,events_migraine_diagnoses)>0){
           
           if(df[,.N]>0){
             
-            if(sum(events_gdm_diagnoses, events_pe_diagnoses,events_migraine_diagnoses)>0){
+            if(df[prior_gdm_pe==0 & after_gdm_pe==0,.N]>0){
+              if(events_gdm_diagnoses>0){
+                print(paste0("Filtering data for GDM diagnoses:", actual_tables$EVENTS[y]))
+                years_study_events<-sort(df[prior_gdm_pe==0 & after_gdm_pe==0][!duplicated(year), year])#years present in this table
                 
-                if(df[prior_gdm_pe==0 & after_gdm_pe==0,.N]>0){
+                if(sum(df[prior_gdm_pe==0 & after_gdm_pe==0][!duplicated(event_vocabulary), event_vocabulary] %in% vocabularies_list_gdm)>0){
+                  for (i in 1:length(conditions_gdm)){
+                    for(j in 1:length(conditions_gdm[[i]])){
+                      
+                      codes<-data.table(event_vocabulary=names(conditions_gdm[[i]])[j], truncated_code=conditions_gdm[[i]][[j]], filter=1)
+                      for(codes_ind in 1:codes[,.N]){
+                        length<-nchar(codes[codes_ind,truncated_code])
+                        #create truncated code
+                        df[prior_gdm_pe==0 & after_gdm_pe==0 & event_vocabulary==names(conditions_gdm[[i]])[j], truncated_code:=substr(code_no_dot,1,length)]
+                        
+                        df<-merge.data.table(df,codes[codes_ind,],by=c("event_vocabulary","truncated_code"),all.x = T,allow.cartesian = T)
+                        
+                        if(df[prior_gdm_pe==0 & after_gdm_pe==0 & filter==1,.N]>0){
+                          years_this_event<-sort(df[prior_gdm_pe==0 & after_gdm_pe==0 & filter==1][!duplicated(year),year])
+                          for(year_ind in 1:length(years_this_event)){
+                            saveRDS(data.table(df[prior_gdm_pe==0 & after_gdm_pe==0 & filter==1 & year==years_this_event[year_ind]], condition=names(conditions_gdm[i])), paste0(tmp,years_this_event[year_ind],"_","GDM_", names(conditions_gdm[i]), "_",actual_tables$EVENTS[y],"_", codes_ind, ".rds"))
+                          }
+                        } else {
+                          years_this_event<-NULL}# new 01.06.2022
+                        
+                        rm(years_this_event)
+                        rm(length)
+                        if("filter" %in% names(df)){df[,filter:=NULL]}
+                        if("truncated_code" %in% names(df)){df[,truncated_code:=NULL]}
+                      }
+                      rm(codes)
+                    }
+                  }
                   
-                  if(events_gdm_diagnoses>0){ 
-                    
-                    vocabularies_to_start_with<-c("ICD", "ICPC", "RCD")
-                    print(paste0("Filtering data for GDM diagnoses category:", actual_tables$EVENTS[y]))
-                    years_study_events<-sort(df[prior_gdm_pe==0 & after_gdm_pe==0][!duplicated(year), year])#years present in this table
-                    
-                    #startWith for the event GDM
-                    if(sum(sapply(vocabularies_to_start_with, function(start) any(startsWith(df[prior_gdm_pe==0 & after_gdm_pe==0][!duplicated(event_vocabulary), event_vocabulary], start))),na.rm=T)>=1){
-                      if(sum(df[prior_gdm_pe==0 & after_gdm_pe==0][!duplicated(event_vocabulary), event_vocabulary] %in% vocabularies_list_gdm)>0){
-                        for (i in 1:length(conditions_gdm)){
-                          for(j in 1:length(conditions_gdm[[i]])){
-                            
-                            codes<-data.table(event_vocabulary=names(conditions_gdm[[i]])[j], truncated_code=conditions_gdm[[i]][[j]], filter=1)
-                            for(codes_ind in 1:codes[,.N]){
-                              length<-nchar(codes[codes_ind,truncated_code])
-                              #create truncated code
-                              df[,truncated_code:=substr(code_no_dot,1,length)]
-                              
-                              df<-merge.data.table(df,codes[codes_ind,],by=c("event_vocabulary","truncated_code"),all.x = T,allow.cartesian = T)
-                              
-                              if(df[prior_gdm_pe==0 & after_gdm_pe==0][filter==1,.N]>0){
-                                years_this_event<-sort(df[prior_gdm_pe==0 & after_gdm_pe==0][filter==1][!duplicated(year),year])
-                                for(year_ind in 1:length(years_this_event)){
-                                  saveRDS(data.table(df[prior_gdm_pe==0 & after_gdm_pe==0][filter==1][year==years_this_event[year_ind]], condition=names(conditions_gdm[i])), paste0(tmp,years_this_event[year_ind],"_","GDM_", names(conditions_gdm[i]),"_",names(conditions_gdm[[i]])[j], "_",actual_tables$EVENTS[y],"_", codes_ind, ".rds"))
-                                }
-                              } else {
-                                years_this_event<-NULL}# new 01.06.2022
-                              
-                              rm(years_this_event)
-                              rm(length)
-                              if("filter" %in% names(df)){df[,filter:=NULL]}
-                              if("truncated_code" %in% names(df)){df[,truncated_code:=NULL]}
-                            }
-                            rm(codes)
-                          }
-                        }
-                        
-                      }
-                    }
-                    #exact match for the other events related to GDM
-                    if(sum(sapply(vocabularies_to_start_with, function(start) any(startsWith(df[prior_gdm_pe==0 & after_gdm_pe==0][!duplicated(event_vocabulary), event_vocabulary], start))),na.rm=T)==0){
-                      if(sum(df[prior_gdm_pe==0 & after_gdm_pe==0][!duplicated(event_vocabulary), event_vocabulary] %in% vocabularies_list_gdm)>0){
-                        for (i in 1:length(conditions_gdm)){
-                          for(j in 1:length(conditions_gdm[[i]])){
-                            
-                            codes<-data.table(event_vocabulary=names(conditions_gdm[[i]])[j], code_no_dot=conditions_gdm[[i]][[j]], filter=1)
-                            for(codes_ind in 1:codes[,.N]){
-                              #create truncated code
-                              df<-merge.data.table(df,codes[codes_ind,],by=c("event_vocabulary","code_no_dot"),all.x = T,allow.cartesian = T)
-                              
-                              if(df[prior_gdm_pe==0 & after_gdm_pe==0][filter==1,.N]>0){
-                                years_this_event<-sort(df[prior_gdm_pe==0 & after_gdm_pe==0][filter==1][!duplicated(year),year])
-                                for(year_ind in 1:length(years_this_event)){
-                                  saveRDS(data.table(df[prior_gdm_pe==0 & after_gdm_pe==0][filter==1][year==years_this_event[year_ind]], condition=names(conditions_gdm[i])), paste0(tmp,years_this_event[year_ind],"_","GDM_", names(conditions_gdm[i]),"_",names(conditions_gdm[[i]])[j], "_",actual_tables$EVENTS[y],"_", codes_ind, ".rds"))
-                                }
-                              } else {
-                                years_this_event<-NULL}# new 01.06.2022
-                              
-                              rm(years_this_event)
-                              if("filter" %in% names(df)){df[,filter:=NULL]}
-                            }
-                            rm(codes)
-                          }
-                        }
-                        
-                      }
-                    }
-                    rm(vocabularies_to_start_with,years_study_events)
-                  }
-                  if(events_pe_diagnoses>0){ 
-                    #Check if specific diagnoses needs to be analyzed
-                    vocabularies_to_start_with<-c("ICD", "ICPC", "RCD")
-                    print(paste0("Filtering data for PE diagnoses category:", actual_tables$EVENTS[y]))
-                    years_study_events<-sort(df[prior_gdm_pe==0 & after_gdm_pe==0][!duplicated(year), year])#years present in this table
-                    
-                    #startWith for the event PE
-                    if(sum(sapply(vocabularies_to_start_with, function(start) any(startsWith(df[prior_gdm_pe==0 & after_gdm_pe==0][!duplicated(event_vocabulary), event_vocabulary], start))),na.rm=T)>=1){
-                      if(sum(df[prior_gdm_pe==0 & after_gdm_pe==0][!duplicated(event_vocabulary), event_vocabulary] %in% vocabularies_list_pe)>0){
-                        for (i in 1:length(conditions_pe)){
-                          for(j in 1:length(conditions_pe[[i]])){
-                            
-                            codes<-data.table(event_vocabulary=names(conditions_pe[[i]])[j], truncated_code=conditions_pe[[i]][[j]], filter=1)
-                            for(codes_ind in 1:codes[,.N]){
-                              length<-nchar(codes[codes_ind,truncated_code])
-                              #create truncated code
-                              df[,truncated_code:=substr(code_no_dot,1,length)]
-                              
-                              df<-merge.data.table(df,codes[codes_ind,],by=c("event_vocabulary","truncated_code"),all.x = T,allow.cartesian = T)
-                              
-                              if(df[prior_gdm_pe==0 & after_gdm_pe==0][filter==1,.N]>0){
-                                years_this_event<-sort(df[prior_gdm_pe==0 & after_gdm_pe==0][filter==1][!duplicated(year),year])
-                                for(year_ind in 1:length(years_this_event)){
-                                  saveRDS(data.table(df[prior_gdm_pe==0 & after_gdm_pe==0][filter==1][year==years_this_event[year_ind]], condition=names(conditions_pe[i])), paste0(tmp,years_this_event[year_ind],"_","PE_", names(conditions_pe[i]),"_",names(conditions_pe[[i]])[j], "_",actual_tables$EVENTS[y],"_", codes_ind, ".rds"))
-                                }
-                              } else {
-                                years_this_event<-NULL}# new 01.06.2022
-                              
-                              rm(years_this_event)
-                              rm(length)
-                              if("filter" %in% names(df)){df[,filter:=NULL]}
-                              if("truncated_code" %in% names(df)){df[,truncated_code:=NULL]}
-                            }
-                            rm(codes)
-                          }
-                        }
-                        
-                      }
-                    }
-                    #exact match for the other events related to PE
-                    if(sum(sapply(vocabularies_to_start_with, function(start) any(startsWith(df[prior_gdm_pe==0 & after_gdm_pe==0][!duplicated(event_vocabulary), event_vocabulary], start))),na.rm=T)==0){
-                      if(sum(df[prior_gdm_pe==0 & after_gdm_pe==0][!duplicated(event_vocabulary), event_vocabulary] %in% vocabularies_list_pe)>0){
-                        for (i in 1:length(conditions_pe)){
-                          for(j in 1:length(conditions_pe[[i]])){
-                            
-                            codes<-data.table(event_vocabulary=names(conditions_pe[[i]])[j], code_no_dot=conditions_pe[[i]][[j]], filter=1)
-                            for(codes_ind in 1:codes[,.N]){
-                              #create truncated code
-                              df<-merge.data.table(df,codes[codes_ind,],by=c("event_vocabulary","code_no_dot"),all.x = T,allow.cartesian = T)
-                              
-                              if(df[prior_gdm_pe==0 & after_gdm_pe==0][filter==1,.N]>0){
-                                years_this_event<-sort(df[prior_gdm_pe==0 & after_gdm_pe==0][filter==1][!duplicated(year),year])
-                                for(year_ind in 1:length(years_this_event)){
-                                  saveRDS(data.table(df[prior_gdm_pe==0 & after_gdm_pe==0][filter==1][year==years_this_event[year_ind]], condition=names(conditions_pe[i])), paste0(tmp,years_this_event[year_ind],"_","PE_", names(conditions_pe[i]),"_",names(conditions_pe[[i]])[j], "_",actual_tables$EVENTS[y],"_", codes_ind, ".rds"))
-                                }
-                              } else {
-                                years_this_event<-NULL}# new 01.06.2022
-                              
-                              rm(years_this_event)
-                              if("filter" %in% names(df)){df[,filter:=NULL]}
-                            }
-                            rm(codes)
-                          }
-                        }
-                        
-                      }
-                    }
-                    rm(vocabularies_to_start_with,years_study_events)
-                    
-                  }
                 }
-                
-                
-                if(df[prior_mig==0 & after_mig==0,.N]>0){
-                  if(events_migraine_diagnoses>0){ 
-                    vocabularies_to_start_with<-c("ICD", "ICPC", "RCD")
-                    print(paste0("Filtering data for Migraine diagnoses category:", actual_tables$EVENTS[y]))
-                    years_study_events<-sort(df[prior_mig==0 & after_mig==0][!duplicated(year), year])#years present in this table
-                    
-                    #startWith for the event Migraine
-                    if(sum(sapply(vocabularies_to_start_with, function(start) any(startsWith(df[prior_mig==0 & after_mig==0][!duplicated(event_vocabulary), event_vocabulary], start))),na.rm=T)>=1){
-                      if(sum(df[prior_mig==0 & after_mig==0][!duplicated(event_vocabulary), event_vocabulary] %in% vocabularies_list_migraine)>0){
-                        for (i in 1:length(conditions_migraine)){
-                          for(j in 1:length(conditions_migraine[[i]])){
-                            
-                            codes<-data.table(event_vocabulary=names(conditions_migraine[[i]])[j], truncated_code=conditions_migraine[[i]][[j]], filter=1)
-                            for(codes_ind in 1:codes[,.N]){
-                              length<-nchar(codes[codes_ind,truncated_code])
-                              #create truncated code
-                              df[,truncated_code:=substr(code_no_dot,1,length)]
-                              
-                              df<-merge.data.table(df,codes[codes_ind,],by=c("event_vocabulary","truncated_code"),all.x = T,allow.cartesian = T)
-                              
-                              if(df[prior_mig==0 & after_mig==0][filter==1,.N]>0){
-                                years_this_event<-sort(df[prior_mig==0 & after_mig==0][filter==1][!duplicated(year),year])
-                                for(year_ind in 1:length(years_this_event)){
-                                  saveRDS(data.table(df[prior_mig==0 & after_mig==0][filter==1][year==years_this_event[year_ind]], condition=names(conditions_migraine[i])), paste0(tmp,years_this_event[year_ind],"_","Migraine_", names(conditions_migraine[i]),"_",names(conditions_migraine[[i]])[j], "_",actual_tables$EVENTS[y],"_", codes_ind, ".rds"))
-                                }
-                              } else {
-                                years_this_event<-NULL}# new 01.06.2022
-                              
-                              rm(years_this_event)
-                              rm(length)
-                              if("filter" %in% names(df)){df[,filter:=NULL]}
-                              if("truncated_code" %in% names(df)){df[,truncated_code:=NULL]}
-                            }
-                            rm(codes)
-                          }
-                        }
+              }
+              
+              if(events_pe_diagnoses>0){
+                print(paste0("Filtering data for PE diagnoses:", actual_tables$EVENTS[y]))
+                years_study_events<-sort(df[prior_gdm_pe==0 & after_gdm_pe==0][!duplicated(year), year])#years present in this table
+                if(sum(df[prior_gdm_pe==0 & after_gdm_pe==0][!duplicated(event_vocabulary), event_vocabulary] %in% vocabularies_list_pe)>0){
+                  for (i in 1:length(conditions_pe)){
+                    for(j in 1:length(conditions_pe[[i]])){
+                      
+                      codes<-data.table(event_vocabulary=names(conditions_pe[[i]])[j], truncated_code=conditions_pe[[i]][[j]], filter=1)
+                      for(codes_ind in 1:codes[,.N]){
+                        length<-nchar(codes[codes_ind,truncated_code])
+                        #create truncated code
+                        df[prior_gdm_pe==0 & after_gdm_pe==0 & event_vocabulary==names(conditions_pe[[i]])[j],truncated_code:=substr(code_no_dot,1,length)]
                         
-                      }
-                    }
-                    #exact match for the other events related to migraine
-                    if(sum(sapply(vocabularies_to_start_with, function(start) any(startsWith(df[prior_mig==0 & after_mig==0][!duplicated(event_vocabulary), event_vocabulary], start))),na.rm=T)==0){
-                      if(sum(df[prior_mig==0 & after_mig==0][!duplicated(event_vocabulary), event_vocabulary] %in% vocabularies_list_migraine)>0){
-                        for (i in 1:length(conditions_migraine)){
-                          for(j in 1:length(conditions_migraine[[i]])){
-                            
-                            codes<-data.table(event_vocabulary=names(conditions_migraine[[i]])[j], code_no_dot=conditions_migraine[[i]][[j]], filter=1)
-                            for(codes_ind in 1:codes[,.N]){
-                              #create truncated code
-                              df<-merge.data.table(df,codes[codes_ind,],by=c("event_vocabulary","code_no_dot"),all.x = T,allow.cartesian = T)
-                              
-                              if(df[prior_mig==0 & after_mig==0][filter==1,.N]>0){
-                                years_this_event<-sort(df[prior_mig==0 & after_mig==0][filter==1][!duplicated(year),year])
-                                for(year_ind in 1:length(years_this_event)){
-                                  saveRDS(data.table(df[prior_mig==0 & after_mig==0][filter==1][year==years_this_event[year_ind]], condition=names(conditions_migraine[i])), paste0(tmp,years_this_event[year_ind],"_","Migraine_", names(conditions_migraine[i]),"_",names(conditions_migraine[[i]])[j], "_",actual_tables$EVENTS[y],"_", codes_ind, ".rds"))
-                                }
-                              } else {
-                                years_this_event<-NULL}# new 01.06.2022
-                              
-                              rm(years_this_event)
-                              if("filter" %in% names(df)){df[,filter:=NULL]}
-                            }
-                            rm(codes)
-                          }
-                        }
+                        df<-merge.data.table(df,codes[codes_ind,],by=c("event_vocabulary","truncated_code"),all.x = T,allow.cartesian = T)
                         
+                        if(df[prior_gdm_pe==0 & after_gdm_pe==0 & filter==1,.N]>0){
+                          years_this_event<-sort(df[prior_gdm_pe==0 & after_gdm_pe==0 & filter==1][!duplicated(year),year])
+                          for(year_ind in 1:length(years_this_event)){
+                            saveRDS(data.table(df[prior_gdm_pe==0 & after_gdm_pe==0 & filter==1 & year==years_this_event[year_ind]], condition=names(conditions_pe[i])), paste0(tmp,years_this_event[year_ind],"_","PE_", names(conditions_pe[i]), "_",actual_tables$EVENTS[y],"_", codes_ind, ".rds"))
+                          }
+                        } else {
+                          years_this_event<-NULL}# new 01.06.2022
+                        
+                        rm(years_this_event)
+                        rm(length)
+                        if("filter" %in% names(df)){df[,filter:=NULL]}
+                        if("truncated_code" %in% names(df)){df[,truncated_code:=NULL]}
                       }
+                      rm(codes)
                     }
-                    rm(vocabularies_to_start_with,years_study_events)
-                    
                   }
+                  
                 }
+              }
             }
             
+            if(df[prior_mig==0 & after_mig==0,.N]>0){
+              if(events_migraine_diagnoses>0){
+                vocabularies_to_start_with<-c("ICD", "ICPC", "RCD")
+                print(paste0("Filtering data for Migraine diagnoses:", actual_tables$EVENTS[y]))
+                years_study_events<-sort(df[prior_mig==0 & after_mig==0][!duplicated(year), year])#years present in this table
+                
+                #startWith for the event Migraine
+                if(sum(sapply(vocabularies_to_start_with, function(start) any(startsWith(df[prior_mig==0 & after_mig==0][!duplicated(event_vocabulary), event_vocabulary], start))))>=1){
+                  if(sum(df[prior_mig==0 & after_mig==0][!duplicated(event_vocabulary), event_vocabulary] %in% vocabularies_list_migraine)>0){
+                    for (i in 1:length(conditions_migraine)){
+                      for(j in 1:length(conditions_migraine[[i]])){
+                        
+                        codes<-data.table(event_vocabulary=names(conditions_migraine[[i]])[j], truncated_code=conditions_migraine[[i]][[j]], filter=1)
+                        for(codes_ind in 1:codes[,.N]){
+                          length<-nchar(codes[codes_ind,truncated_code])
+                          #create truncated code
+                          df[prior_mig==0 & after_mig==0 & event_vocabulary==names(conditions_migraine[[i]])[j],truncated_code:=substr(code_no_dot,1,length)]
+                          
+                          df<-merge.data.table(df,codes[codes_ind,],by=c("event_vocabulary","truncated_code"),all.x = T,allow.cartesian = T)
+                          
+                          if(df[prior_mig==0 & after_mig==0 & filter==1,.N]>0){
+                            years_this_event<-sort(df[prior_mig==0 & after_mig==0 & filter==1][!duplicated(year),year])
+                            for(year_ind in 1:length(years_this_event)){
+                              saveRDS(data.table(df[prior_mig==0 & after_mig==0 & filter==1 & year==years_this_event[year_ind]], condition=names(conditions_migraine[i])), paste0(tmp,years_this_event[year_ind],"_","Migraine_", names(conditions_migraine[i]), "_",actual_tables$EVENTS[y],"_", codes_ind, ".rds"))
+                            }
+                          } else {
+                            years_this_event<-NULL}# new 01.06.2022
+                          
+                          rm(years_this_event)
+                          rm(length)
+                          if("filter" %in% names(df)){df[,filter:=NULL]}
+                          if("truncated_code" %in% names(df)){df[,truncated_code:=NULL]}
+                        }
+                        rm(codes)
+                      }
+                    }
+                    
+                  }
+                }
+                
+                if(sum(sapply(vocabularies_to_start_with, function(start) any(startsWith(df[prior_mig==0 & after_mig==0][!duplicated(event_vocabulary), event_vocabulary], start))))==0){
+                  #exact match for the other events related to migraine
+                  if(sum(df[prior_mig==0 & after_mig==0][!duplicated(event_vocabulary), event_vocabulary] %in% vocabularies_list_migraine)>0){
+                    for (i in 1:length(conditions_migraine)){
+                      for(j in 1:length(conditions_migraine[[i]])){
+                        
+                        codes<-data.table(event_vocabulary=names(conditions_migraine[[i]])[j], code_no_dot=conditions_migraine[[i]][[j]], filter=1)
+                        for(codes_ind in 1:codes[,.N]){
+                          #create truncated code
+                          df<-merge.data.table(df,codes[codes_ind,],by=c("event_vocabulary","code_no_dot"),all.x = T,allow.cartesian = T)
+                          
+                          if(df[prior_mig==0 & after_mig==0 & filter==1,.N]>0){
+                            years_this_event<-sort(df[prior_mig==0 & after_mig==0 & filter==1][!duplicated(year),year])
+                            for(year_ind in 1:length(years_this_event)){
+                              saveRDS(data.table(df[prior_mig==0 & after_mig==0 & filter==1 & year==years_this_event[year_ind]], condition=names(conditions_migraine[i])), paste0(tmp,years_this_event[year_ind],"_","Migraine_", names(conditions_migraine[i]), "_",actual_tables$EVENTS[y],"_", codes_ind, ".rds"))
+                            }
+                          } else {
+                            years_this_event<-NULL}# new 01.06.2022
+                          
+                          rm(years_this_event)
+                          if("filter" %in% names(df)){df[,filter:=NULL]}
+                        }
+                        rm(codes)
+                      }
+                    }
+                    
+                  }
+                }
+              }
+            }
           }
         }else{
           prior_diagnoses_rec_gdm_pe[[w]]<-0

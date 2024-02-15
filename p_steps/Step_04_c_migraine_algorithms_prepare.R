@@ -15,8 +15,8 @@ if(additional_concepts[,.N]==0){
 #Keep data only about sumatriptan injections
 additional_concepts<-additional_concepts[StudyVar=="Sumatriptan_inj"]
 #keep only value_2 as it contains data about the identification code
-additional_concepts<-additional_concepts[,.(val_2)]
-setnames(additional_concepts,"val_2","medicinal_product_id")
+additional_concepts<-additional_concepts[,.(val_1)]
+setnames(additional_concepts,"val_1","medicinal_product_id")
 additional_concepts[,injection:=1]
 additional_concepts[,atc_code:="N02CC01"]
 
@@ -26,7 +26,7 @@ if(length(migraine_checkbox_files)>0){
   migraine_checkbox<-lapply(paste0(projectFolder,"/g_intermediate/migraine_algorithm/", migraine_checkbox_files), readRDS)
   migraine_checkbox<-as.data.table(do.call(rbind,migraine_checkbox))
   #Change conditio to Migraine for all
-  migraine_checkbox[,condition:="GDM_checkbox"]
+  migraine_checkbox[,condition:="Migraine_checkbox"]
   #remove duplicates
   migraine_checkbox[,comb:=paste0(person_id,"_",event_date)]
   migraine_checkbox<-migraine_checkbox[!duplicated(comb)]
@@ -414,7 +414,7 @@ for(mig_fl in 1:length(mig_files)){
       pregnancy_d3_mig<-merge.data.table(pregnancy_d3_mig,mig_third,all.x=T, by=cols[!cols %in% "event_date"])
       rm(mig_third)
       pregnancy_d3_mig[is.na(get(paste0(names_events[mig_fl],"_third"))),eval(paste0(names_events[mig_fl],"_third")):=0]
-      
+
     }else{
       pregnancy_d3_mig[,eval(paste0(names_events[mig_fl],"_baseline")):=0]
       pregnancy_d3_mig[,eval(paste0(names_events[mig_fl],"_baseline_2")):=0]
@@ -476,12 +476,6 @@ mig_med[,truncated_atc:=substr(atc_code,1,5)]
 mig_med_other<-mig_med[truncated_atc != "N02CC"]
 mig_med<-mig_med[truncated_atc == "N02CC"]
 mig_med[,truncated_atc:=NULL]
-
-#Testing purposes
-mig_med[1:10,atc_code:="N02CC01"]
-mig_med[1:3,medicinal_product_id:=85466]
-mig_med[4,medicinal_product_id:=93252]
-mig_med[6:9,medicinal_product_id:=172675]
 
 #Add info about medicinal product id
 mig_med<-merge.data.table(mig_med, additional_concepts, by=c("atc_code", "medicinal_product_id"), all.x=T)

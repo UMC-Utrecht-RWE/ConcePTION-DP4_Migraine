@@ -18,13 +18,14 @@ source(paste0(pre_dir,"parameters/template_error_check.R"))
 #Split the information into medicines or diagnoses codesheet(where the codelists will be used) and not fixed
 
 ####GDM####
-codesheet_medicines_gdm<-additional_concepts[StudyVar=="GDM_medicines" & type=="codesheet"]
 codesheet_diagnoses_gdm<-additional_concepts[StudyVar=="GDM_diagnoses" & type=="codesheet"]
 codesheet_diagnoses_gdm_cat<-additional_concepts[StudyVar=="GDM_cat_diagnoses" & type=="codesheet"]
-codesheet_procedures_gdm<-additional_concepts[StudyVar=="GDM_procedures" & type=="codesheet"]
-not_fixed_gdm_ogtt_all<-additional_concepts[StudyVar=="GDM_OGTT_ALL" & type=="not_fixed"]
-not_fixed_gdm_ogtt_yes<-additional_concepts[StudyVar=="GDM_OGTT_YES" & type=="not_fixed"]
+codesheet_medicines_gdm<-additional_concepts[StudyVar=="GDM_medicines" & type=="codesheet"]
 not_fixed_gdm_checkbox<-additional_concepts[StudyVar=="GDM_checkbox" & type=="not_fixed"]
+
+#codesheet_procedures_gdm<-additional_concepts[StudyVar=="GDM_procedures" & type=="codesheet"]
+#not_fixed_gdm_ogtt_all<-additional_concepts[StudyVar=="GDM_OGTT_ALL" & type=="not_fixed"]
+#not_fixed_gdm_ogtt_yes<-additional_concepts[StudyVar=="GDM_OGTT_YES" & type=="not_fixed"]
 
 ####PE####
 codesheet_diagnoses_pe<-additional_concepts[StudyVar=="PE_diagnoses" & type=="codesheet"]
@@ -34,10 +35,10 @@ codesheet_diagnoses_pe_cat<-additional_concepts[StudyVar=="PE_cat_diagnoses" & t
 not_fixed_pe_checkbox<-additional_concepts[StudyVar=="PE_checkbox" & type=="not_fixed"]
 
 ####Migraine####
-codesheet_medicines_migraine<-additional_concepts[StudyVar=="Migraine_medicines" & type=="codesheet"]
-codesheet_diagnoses_migraine_cat<-additional_concepts[StudyVar=="Migraine_cat_diagnoses" & type=="codesheet"]
 codesheet_diagnoses_migraine<-additional_concepts[StudyVar=="Migraine_diagnoses" & type=="codesheet"]
-codesheet_procedures_migraine<-additional_concepts[StudyVar=="Migraine_procedures" & type=="codesheet"]
+codesheet_diagnoses_migraine_cat<-additional_concepts[StudyVar=="Migraine_cat_diagnoses" & type=="codesheet"]
+codesheet_medicines_migraine<-additional_concepts[StudyVar=="Migraine_medicines" & type=="codesheet"]
+#codesheet_procedures_migraine<-additional_concepts[StudyVar=="Migraine_procedures" & type=="codesheet"]
 
 ####Not needed: Diagnoses category####
 # gdm_diag_cat<-codesheet_diagnoses_gdm_cat[,c("table", "event_abbreviation","val_1","val_2","val_3","val_4","val_5","col_1","col_2","col_3","col_4","col_5","date_column","keep")]
@@ -161,7 +162,9 @@ if(not_fixed_gdm_checkbox[,.N]>0){
   }
   diag_checkbox_gdm<-rbindlist(diag_checkbox_gdm,fill=T)
   diag_checkbox_gdm_mo<-diag_checkbox_gdm[table=="MEDICAL_OBSERVATIONS"]
+  if(diag_checkbox_gdm_mo[,.N]==0){diag_checkbox_gdm_mo<-NULL}
   diag_checkbox_gdm_so<-diag_checkbox_gdm[table=="SURVEY_OBSERVATIONS"]
+  if(diag_checkbox_gdm_so[,.N]==0){diag_checkbox_gdm_so<-NULL}
   
 }else{
   diag_checkbox_gdm_mo<-NULL
@@ -196,7 +199,9 @@ if(not_fixed_pe_checkbox[,.N]>0){
   }
   diag_checkbox_pe<-rbindlist(diag_checkbox_pe,fill=T)
   diag_checkbox_pe_mo<-diag_checkbox_pe[table=="MEDICAL_OBSERVATIONS"]
+  if(diag_checkbox_pe_mo[,.N]==0){diag_checkbox_pe_mo<-NULL}
   diag_checkbox_pe_so<-diag_checkbox_pe[table=="SURVEY_OBSERVATIONS"]
+  if(diag_checkbox_pe_so[,.N]==0){diag_checkbox_pe_so<-NULL}
   
   
 }else{
