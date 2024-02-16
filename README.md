@@ -10,10 +10,6 @@ This demonstration project will show how we can include intensity and timing of 
 Algorithms for characterizing migraine in healthcare databases for use in perinatal studies: A Europen multi-database study
 ## :point_right: SAP Preeclampsia & Gestational Diabetes
 Algorithms to identify gestational diabetes & preeclampsia in ConcePTION population-based data sources
-## :point_right: SAP Safety 
-Demonstrating solutions for studying intermittent medication exposures in diseases with episodic manifestations during pregnancy: application to medication for migraine in pregnancy
-## :point_right: SAP Drug Utilization 
-Demostrating solutions for studying intermittent medication exposures in diseases with episodic manifestations during pregnancy: application to medication for migraine in pregnancy.
 
 # Parameters
 | Folder                               | Parameter                                                          |
