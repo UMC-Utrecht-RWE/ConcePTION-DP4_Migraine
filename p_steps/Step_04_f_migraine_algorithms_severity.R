@@ -20,10 +20,12 @@ excl_col<-MIG_S1_a[TYPE=="AND_NOT",STUDY_VARIABLES]
 if(length(inc_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("&" , lapply(.SD,`>=`, 1)),.SDcols=inc_col],include:=1]}else{pregnancy_d3_mig[,include:=NA]}
 if(length(excl_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("|" , lapply(.SD,`>=`, 1)),.SDcols=excl_col],exclude:=1]}else{pregnancy_d3_mig[,exclude:=NA]}
 
-saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/MIG_S1_a_D3.rds"))
-
 #Update include comun based on exclude
 pregnancy_d3_mig[exclude==1, include:=NA]
+pregnancy_d3_mig[,exclude:=NULL]
+
+saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/MIG_S1_a_D3.rds"))
+
 #export MIG_S1_a
 MIG_S1_a_dt<-data.table(algorithm="MIG_S1_a", no_diagnosed_pregnancies=pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id),.N])
 MIG_S1_a_dt[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
@@ -125,9 +127,11 @@ excl_col<-MIG_S1_b[TYPE=="AND_NOT",STUDY_VARIABLES]
 if(length(inc_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("&" , lapply(.SD,`>=`, 1)),.SDcols=inc_col],include:=1]}else{pregnancy_d3_mig[,include:=NA]}
 if(length(excl_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("|" , lapply(.SD,`>=`, 1)),.SDcols=excl_col],exclude:=1]}else{pregnancy_d3_mig[,exclude:=NA]}
 
-saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/MIG_S1_b_D3.rds"))
 #Update include comun based on exclude
 pregnancy_d3_mig[exclude==1, include:=NA]
+pregnancy_d3_mig[,exclude:=NULL]
+
+saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/MIG_S1_b_D3.rds"))
 
 #export MIG_S1_b
 MIG_S1_b_dt<-data.table(algorithm="MIG_S1_b", no_diagnosed_pregnancies=pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id),.N])
@@ -230,9 +234,11 @@ excl_col<-MIG_S1_during[TYPE=="AND_NOT",STUDY_VARIABLES]
 if(length(inc_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("&" , lapply(.SD,`>=`, 1)),.SDcols=inc_col],include:=1]}else{pregnancy_d3_mig[,include:=NA]}
 if(length(excl_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("|" , lapply(.SD,`>=`, 1)),.SDcols=excl_col],exclude:=1]}else{pregnancy_d3_mig[,exclude:=NA]}
 
-saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/MIG_S1_during_D3.rds"))
 #Update include comun based on exclude
 pregnancy_d3_mig[exclude==1, include:=NA]
+pregnancy_d3_mig[,exclude:=NULL]
+
+saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/MIG_S1_during_D3.rds"))
 
 #export MIG_S1_during
 MIG_S1_during_dt<-data.table(algorithm="MIG_S1_during", no_diagnosed_pregnancies=pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id),.N])
@@ -358,9 +364,11 @@ excl_col<-MIG_S2_a[TYPE=="AND_NOT",STUDY_VARIABLES]
 if(length(inc_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("&" , lapply(.SD,`>=`, 1)),.SDcols=inc_col],include:=1]}else{pregnancy_d3_mig[,include:=NA]}
 if(length(excl_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("|" , lapply(.SD,`>=`, 1)),.SDcols=excl_col],exclude:=1]}else{pregnancy_d3_mig[,exclude:=NA]}
 
-saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/MIG_S2_a_D3.rds"))
 #Update include comun based on exclude
 pregnancy_d3_mig[exclude==1, include:=NA]
+pregnancy_d3_mig[,exclude:=NULL]
+
+saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/MIG_S2_a_D3.rds"))
 
 #export MIG_S2_a
 MIG_S2_a_dt<-data.table(algorithm="MIG_S2_a", no_diagnosed_pregnancies=pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id),.N])
@@ -463,10 +471,11 @@ excl_col<-MIG_S2_b[TYPE=="AND_NOT",STUDY_VARIABLES]
 if(length(inc_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("&" , lapply(.SD,`>=`, 1)),.SDcols=inc_col],include:=1]}else{pregnancy_d3_mig[,include:=NA]}
 if(length(excl_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("|" , lapply(.SD,`>=`, 1)),.SDcols=excl_col],exclude:=1]}else{pregnancy_d3_mig[,exclude:=NA]}
 
-saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/MIG_S2_b_D3.rds"))
 #Update include comun based on exclude
 pregnancy_d3_mig[exclude==1, include:=NA]
+pregnancy_d3_mig[,exclude:=NULL]
 
+saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/MIG_S2_b_D3.rds"))
 
 #export MIG_S2_b
 MIG_S2_b_dt<-data.table(algorithm="MIG_S2_b", no_diagnosed_pregnancies=pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id),.N])
@@ -568,9 +577,11 @@ excl_col<-MIG_S2_during[TYPE=="AND_NOT",STUDY_VARIABLES]
 if(length(inc_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("&" , lapply(.SD,`>=`, 1)),.SDcols=inc_col],include:=1]}else{pregnancy_d3_mig[,include:=NA]}
 if(length(excl_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("|" , lapply(.SD,`>=`, 1)),.SDcols=excl_col],exclude:=1]}else{pregnancy_d3_mig[,exclude:=NA]}
 
-saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/MIG_S2_during_D3.rds"))
 #Update include comun based on exclude
 pregnancy_d3_mig[exclude==1, include:=NA]
+pregnancy_d3_mig[,exclude:=NULL]
+
+saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/MIG_S2_during_D3.rds"))
 
 #export MIG_S2_during
 MIG_S2_during_dt<-data.table(algorithm="MIG_S2_during", no_diagnosed_pregnancies=pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id),.N])
@@ -696,9 +707,11 @@ excl_col<-MIG_S3_a[TYPE=="AND_NOT",STUDY_VARIABLES]
 if(length(inc_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("&" , lapply(.SD,`>=`, 1)),.SDcols=inc_col],include:=1]}else{pregnancy_d3_mig[,include:=NA]}
 if(length(excl_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("|" , lapply(.SD,`>=`, 1)),.SDcols=excl_col],exclude:=1]}else{pregnancy_d3_mig[,exclude:=NA]}
 
-saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/MIG_S3_a_D3.rds"))
 #Update include comun based on exclude
 pregnancy_d3_mig[exclude==1, include:=NA]
+pregnancy_d3_mig[,exclude:=NULL]
+
+saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/MIG_S3_a_D3.rds"))
 
 #export MIG_S3_a
 MIG_S3_a_dt<-data.table(algorithm="MIG_S3_a", no_diagnosed_pregnancies=pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id),.N])
@@ -801,9 +814,11 @@ excl_col<-MIG_S3_b[TYPE=="AND_NOT",STUDY_VARIABLES]
 if(length(inc_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("&" , lapply(.SD,`>=`, 1)),.SDcols=inc_col],include:=1]}else{pregnancy_d3_mig[,include:=NA]}
 if(length(excl_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("|" , lapply(.SD,`>=`, 1)),.SDcols=excl_col],exclude:=1]}else{pregnancy_d3_mig[,exclude:=NA]}
 
-saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/MIG_S3_b_D3.rds"))
 #Update include comun based on exclude
 pregnancy_d3_mig[exclude==1, include:=NA]
+pregnancy_d3_mig[,exclude:=NULL]
+
+saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/MIG_S3_b_D3.rds"))
 
 #export MIG_S3_b
 MIG_S3_b_dt<-data.table(algorithm="MIG_S3_b", no_diagnosed_pregnancies=pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id),.N])
@@ -905,9 +920,11 @@ excl_col<-MIG_S3_during[TYPE=="AND_NOT",STUDY_VARIABLES]
 if(length(inc_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("&" , lapply(.SD,`>=`, 1)),.SDcols=inc_col],include:=1]}else{pregnancy_d3_mig[,include:=NA]}
 if(length(excl_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("|" , lapply(.SD,`>=`, 1)),.SDcols=excl_col],exclude:=1]}else{pregnancy_d3_mig[,exclude:=NA]}
 
-saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/MIG_S3_during_D3.rds"))
 #Update include comun based on exclude
 pregnancy_d3_mig[exclude==1, include:=NA]
+pregnancy_d3_mig[,exclude:=NULL]
+
+saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/MIG_S3_during_D3.rds"))
 
 #export MIG_S3_during
 MIG_S3_during_dt<-data.table(algorithm="MIG_S3_during", no_diagnosed_pregnancies=pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id),.N])
@@ -1032,9 +1049,11 @@ alt_col<-MIG_S4_during[TYPE=="OR",STUDY_VARIABLES]
 if(length(alt_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("|" , lapply(.SD,`>=`, 1)),.SDcols=alt_col],alternative:=1]}else{pregnancy_d3_mig[,alternative:=NA]}
 if(length(inc_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("&" , lapply(.SD,`>=`, 1)),.SDcols=inc_col],include:=1]}else{pregnancy_d3_mig[,include:=NA]}
 
-saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/MIG_S4_during_D3.rds"))
-#Update include comun based on alternative
+#Update include comun based on exclude
 pregnancy_d3_mig[is.na(alternative), include:=NA]
+pregnancy_d3_mig[,alternative:=NULL]
+
+saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/MIG_S4_during_D3.rds"))
 
 #export MIG_S4_during
 MIG_S4_during_dt<-data.table(algorithm="MIG_S4_during", no_diagnosed_pregnancies=pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id),.N])
