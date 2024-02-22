@@ -3,7 +3,7 @@ library(data.table)
 # UOSL: green and yellow from PROMPT and green yellow and blue from CONCEPTSET
 if(data_source_name=="UOSL"){
 D3_filtered <- rbind(pregnancy_D3[(meaning_of_principal_record == "birth_registry_mother" & imputed_end_of_pregnancy == 0)],
-                     pregnancy_D3[meaning_of_principal_record != "birth_registry_mother"][type_of_pregnancy_end == "SA" & type_of_pregnancy_end == "T"][imputed_start_of_pregnancy == 0 | imputed_end_of_pregnancy ==0])
+                     pregnancy_D3[!meaning_of_principal_record %in% c("birth_registry_mother", "PERSON_RELATIONSHIP")][highest_quality=="2_yellow"][type_of_pregnancy_end == "SA" | type_of_pregnancy_end == "T"])
 rm(pregnancy_D3)
 pregnancy_D3<-D3_filtered
 rm(D3_filtered)
