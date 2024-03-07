@@ -31,7 +31,7 @@ pregnancy_D3<-D3_filtered
 rm(D3_filtered)
 }
 
-# THL DP5: only pregnancies from registry 
+# THL: only pregnancies from registry 
 if(data_access_provider_name=="NIHW"){
 
 D3_filtered <- rbind(pregnancy_D3[meaning_of_principal_record %in% c("birth_registry","birth_registry_child") & imputed_end_of_pregnancy == 0][type_of_pregnancy_end == "LB" | type_of_pregnancy_end == "SB"],
@@ -43,7 +43,7 @@ rm(D3_filtered)
 }
 
 
-# FERRARA DP4: only pregnancies from registry
+# FERRARA: only pregnancies from registry
 #FIX THE MEANINGS FOR CONCEPTSETS
 if(data_access_provider_name=="FERR"){
   
@@ -57,7 +57,7 @@ if(data_access_provider_name=="FERR"){
   rm(D3_filtered)
 }
 
-# EFEMERIS DP4
+# EFEMERIS: 
 if(data_access_provider_name=="CHUT"){
   
   D3_filtered <- pregnancy_D3[imputed_start_of_pregnancy==0 & imputed_end_of_pregnancy == 0][type_of_pregnancy_end %in% c("LB", "SB", "SA", "T", "UNK")] #prompts
