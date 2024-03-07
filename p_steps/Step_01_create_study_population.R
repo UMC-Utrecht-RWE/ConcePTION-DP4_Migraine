@@ -548,40 +548,63 @@ pregnancy_D3[,dif:=NULL]
 
 #follow up 42 weeks
 #GDM and PE
+if (DAP_name != "CHUT"){
 pregnancy_D3[gdm_pe_filter==1,new_date:=pregnancy_start_date+42*7]
 no_fup_42_weeks<-pregnancy_D3[gdm_pe_filter==1 & new_date>op_end_date_gdm_pe,.N]
 pregnancy_D3[gdm_pe_filter==1 & new_date>op_end_date_gdm_pe, gdm_pe_filter:=NA]
 pregnancy_D3[,new_date:=NULL]
+}else{
+  no_fup_42_weeks<-0 
+}
 #7 days after delivery
 # no_7_days<-pregnancy_D3[gdm_pe_filter==1 & op_end_date_gdm_pe<pregnancy_end_date+7,.N]
 # pregnancy_D3[gdm_pe_filter==1 & op_end_date_gdm_pe<pregnancy_end_date+7,gdm_pe_filter:=NA]
 #Safety
+if (DAP_name != "CHUT"){
 pregnancy_D3[saf_filter==1,new_date:=pregnancy_start_date+42*7]
 no_fup_42_weeks_saf<-pregnancy_D3[saf_filter==1 & new_date>op_end_date_saf,.N]
 pregnancy_D3[saf_filter==1 & new_date>op_end_date_saf, saf_filter:=NA]
 pregnancy_D3[,new_date:=NULL]
-
+}else{
+  no_fup_42_weeks_saf<-0  
+}
 #record with necessary time after delivery
 #GDM and PE
+if (DAP_name != "CHUT"){
 pregnancy_D3[gdm_pe_filter==1,new_date:=pregnancy_end_date+after_delivery_gdm_pe]
 no_after_gdm_pe<-pregnancy_D3[gdm_pe_filter==1 & new_date>op_end_date_gdm_pe,.N]
 pregnancy_D3[gdm_pe_filter==1 & new_date>op_end_date_gdm_pe, gdm_pe_filter:=NA]
 pregnancy_D3[,new_date:=NULL]
+}else{
+  no_after_gdm_pe<-0  
+}
 #Migraine
+if (DAP_name != "CHUT"){
 pregnancy_D3[mig_filter==1,new_date:=pregnancy_end_date+after_delivery_migraine]
 no_after_mig<-pregnancy_D3[mig_filter==1 & new_date>op_end_date_mig,.N]
 pregnancy_D3[mig_filter==1 & new_date>op_end_date_mig, mig_filter:=NA]
 pregnancy_D3[,new_date:=NULL]
+}else{
+  no_after_mig<-0  
+}
 #DU
+if (DAP_name != "CHUT"){
 pregnancy_D3[du_filter==1,new_date:=pregnancy_end_date+after_delivery_du]
 no_after_du<-pregnancy_D3[du_filter==1 & new_date>op_end_date_du,.N]
 pregnancy_D3[du_filter==1 & new_date>op_end_date_du, du_filter:=NA]
 pregnancy_D3[,new_date:=NULL]
+}else{
+  no_after_du<-0 
+}
 #Saf
+if (DAP_name != "CHUT"){
 pregnancy_D3[saf_filter==1,new_date:=pregnancy_end_date+after_delivery_saf]
 no_after_saf<-pregnancy_D3[saf_filter==1 & new_date>op_end_date_saf,.N]
 pregnancy_D3[saf_filter==1 & new_date>op_end_date_saf, saf_filter:=NA]
 pregnancy_D3[,new_date:=NULL]
+}else{
+  no_after_saf<-0 
+}
 
 
 
