@@ -166,7 +166,11 @@ pregnancy_D3[filter_1==1 & filter_2==1,mig_filter:=1]
 pregnancy_D3[,filter_1:=NULL][,filter_2:=NULL]
 
 #Calculate number of pregnancy records with outcome LB/SB
+if(data_access_provider_name=="NIHW"){
+  pregnancy_D3[type_of_pregnancy_end  %in% c("LB", "SB"), keep_outcome:=1]  
+}else{
 pregnancy_D3[type_of_pregnancy_end %in% c("LB", "SB", "SA", "T"), keep_outcome:=1]
+}
 other_outcome_mig<-pregnancy_D3[is.na(keep_outcome) & mig_filter==1,.N]
 if(other_outcome_mig>0){
 type_other_outcome<-paste(unique(pregnancy_D3[is.na(keep_outcome) & mig_filter==1,type_of_pregnancy_end]), collapse = ",")
@@ -213,7 +217,11 @@ pregnancy_D3[filter_1==1 & filter_2==1,du_filter:=1]
 pregnancy_D3[,filter_1:=NULL][,filter_2:=NULL]
 
 #Calculate number of pregnancy records with outcome LB/SB
+if(data_access_provider_name=="NIHW"){
+  pregnancy_D3[type_of_pregnancy_end  %in% c("LB", "SB"), keep_outcome:=1]  
+}else{
 pregnancy_D3[type_of_pregnancy_end  %in% c("LB", "SB", "SA", "T"), keep_outcome:=1]
+}
 other_outcome_du<-pregnancy_D3[is.na(keep_outcome) & du_filter==1,.N]
 if(other_outcome_du>0){
   type_other_outcome<-paste(unique(pregnancy_D3[is.na(keep_outcome) & du_filter==1,type_of_pregnancy_end]), collapse = ",")
@@ -261,7 +269,11 @@ pregnancy_D3[filter_1==1 & filter_2==1,saf_filter:=1]
 pregnancy_D3[,filter_1:=NULL][,filter_2:=NULL]
 
 #Calculate number of pregnancy records with outcome LB/SB
+if(data_access_provider_name=="NIHW"){
+  pregnancy_D3[type_of_pregnancy_end  %in% c("LB", "SB", "T"), keep_outcome:=1]  
+}else{
 pregnancy_D3[type_of_pregnancy_end  %in% c("LB", "SB", "SA", "T"), keep_outcome:=1]
+}
 other_outcome_saf<-pregnancy_D3[is.na(keep_outcome) & saf_filter==1,.N]
 if(other_outcome_saf>0){
   type_other_outcome<-paste(unique(pregnancy_D3[is.na(keep_outcome) & saf_filter==1,type_of_pregnancy_end]), collapse = ",")
