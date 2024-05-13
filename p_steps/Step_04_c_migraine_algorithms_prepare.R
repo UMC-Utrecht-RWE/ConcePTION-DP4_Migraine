@@ -362,7 +362,7 @@ for(mig_fl in 1:length(mig_files)){
         rm(mig_baseline)
         pregnancy_d3_mig[is.na(get(paste0(names_events[mig_fl],"_baseline"))),eval(paste0(names_events[mig_fl],"_baseline")):=0]
       }else{
-        mig_dt[event_date>=pregnancy_start_date & event_date<pregnancy_end_date,"Migraine_checkbox_baseline":=1]
+        mig_dt[event_date>=pregnancy_start_date & event_date<=pregnancy_end_date,"Migraine_checkbox_baseline":=1]
         mig_baseline<-mig_dt[get("Migraine_checkbox_baseline")==1,lapply(.SD, sum),.SDcols = "Migraine_checkbox_baseline", by=c("person_id","pregnancy_id","pregnancy_start_date","pregnancy_end_date")]
         mig_dt[,eval(paste0(names_events[mig_fl],"_baseline")):=NULL]
         pregnancy_d3_mig<-merge.data.table(pregnancy_d3_mig,mig_baseline,all.x=T, by=cols[!cols %in% "event_date"])
@@ -384,7 +384,7 @@ for(mig_fl in 1:length(mig_files)){
         }
       }
       #during pregnancy
-      mig_dt[event_date>=pregnancy_start_date & event_date<pregnancy_end_date,paste0(names_events[mig_fl],"_during"):=1]
+      mig_dt[event_date>=pregnancy_start_date & event_date<=pregnancy_end_date,paste0(names_events[mig_fl],"_during"):=1]
       mig_during<-mig_dt[get(paste0(names_events[mig_fl],"_during"))==1,lapply(.SD, sum),.SDcols = paste0(names_events[mig_fl],"_during"), by=c("person_id","pregnancy_id","pregnancy_start_date","pregnancy_end_date")]
       mig_dt[,eval(paste0(names_events[mig_fl],"_during")):=NULL]
       pregnancy_d3_mig<-merge.data.table(pregnancy_d3_mig,mig_during,all.x=T, by=cols[!cols %in% "event_date"])
@@ -392,7 +392,7 @@ for(mig_fl in 1:length(mig_files)){
       pregnancy_d3_mig[is.na(get(paste0(names_events[mig_fl],"_during"))),eval(paste0(names_events[mig_fl],"_during")):=0]
       #first
       mig_dt[,start:=pregnancy_start_date + trimester_timepoint[Indicator=="first",as.numeric(start)]][,end:=pregnancy_start_date + trimester_timepoint[Indicator=="first",as.numeric(end)]]
-      mig_dt[event_date>=start & event_date<=end,paste0(names_events[mig_fl],"_first"):=1]
+      mig_dt[event_date>=start & event_date<end,paste0(names_events[mig_fl],"_first"):=1]
       mig_first<-mig_dt[get(paste0(names_events[mig_fl],"_first"))==1,lapply(.SD, sum),.SDcols = paste0(names_events[mig_fl],"_first"), by=c("person_id","pregnancy_id","pregnancy_start_date","pregnancy_end_date")]
       mig_dt[,eval(paste0(names_events[mig_fl],"_first")):=NULL]
       pregnancy_d3_mig<-merge.data.table(pregnancy_d3_mig,mig_first,all.x=T, by=cols[!cols %in% "event_date"])
@@ -400,7 +400,7 @@ for(mig_fl in 1:length(mig_files)){
       pregnancy_d3_mig[is.na(get(paste0(names_events[mig_fl],"_first"))),eval(paste0(names_events[mig_fl],"_first")):=0]
       #second
       mig_dt[,start:=pregnancy_start_date + trimester_timepoint[Indicator=="second",as.numeric(start)]][,end:=pregnancy_start_date + trimester_timepoint[Indicator=="second",as.numeric(end)]]
-      mig_dt[event_date>=start & event_date<=end,paste0(names_events[mig_fl],"_second"):=1]
+      mig_dt[event_date>=start & event_date<end,paste0(names_events[mig_fl],"_second"):=1]
       mig_second<-mig_dt[get(paste0(names_events[mig_fl],"_second"))==1,lapply(.SD, sum),.SDcols = paste0(names_events[mig_fl],"_second"), by=c("person_id","pregnancy_id","pregnancy_start_date","pregnancy_end_date")]
       mig_dt[,eval(paste0(names_events[mig_fl],"_second")):=NULL]
       pregnancy_d3_mig<-merge.data.table(pregnancy_d3_mig,mig_second,all.x=T, by=cols[!cols %in% "event_date"])
@@ -408,7 +408,7 @@ for(mig_fl in 1:length(mig_files)){
       pregnancy_d3_mig[is.na(get(paste0(names_events[mig_fl],"_second"))),eval(paste0(names_events[mig_fl],"_second")):=0]
       #third
       mig_dt[,start:=pregnancy_start_date + trimester_timepoint[Indicator=="third",as.numeric(start)]][,end:=pregnancy_start_date + trimester_timepoint[Indicator=="third",as.numeric(end)]]
-      mig_dt[event_date>=start & event_date<=end,paste0(names_events[mig_fl],"_third"):=1]
+      mig_dt[event_date>=start & event_date<end,paste0(names_events[mig_fl],"_third"):=1]
       mig_third<-mig_dt[get(paste0(names_events[mig_fl],"_third"))==1,lapply(.SD, sum),.SDcols = paste0(names_events[mig_fl],"_third"), by=c("person_id","pregnancy_id","pregnancy_start_date","pregnancy_end_date")]
       mig_dt[,eval(paste0(names_events[mig_fl],"_third")):=NULL]
       pregnancy_d3_mig<-merge.data.table(pregnancy_d3_mig,mig_third,all.x=T, by=cols[!cols %in% "event_date"])
@@ -583,8 +583,8 @@ for(med_fl in 1:length(obs_period_med[,.N])){
       }
       
       #during pregnancy
-      mig_med[medicine_date>=pregnancy_start_date & medicine_date<pregnancy_end_date,paste0(obs_period_med[med_fl, StudyVar],"_during"):=1]
-      mig_med[medicine_date>=pregnancy_start_date & medicine_date<pregnancy_end_date & injection==1,Migraine_injections_during:=1]
+      mig_med[medicine_date>=pregnancy_start_date & medicine_date<=pregnancy_end_date,paste0(obs_period_med[med_fl, StudyVar],"_during"):=1]
+      mig_med[medicine_date>=pregnancy_start_date & medicine_date<=pregnancy_end_date & injection==1,Migraine_injections_during:=1]
       mig_med_during<-mig_med[get(paste0(obs_period_med[med_fl, StudyVar],"_during"))==1,lapply(.SD, sum),.SDcols = paste0(obs_period_med[med_fl, StudyVar],"_during"), by=c("person_id","pregnancy_id","pregnancy_start_date","pregnancy_end_date")]
       mig_inj_during<-mig_med[Migraine_injections_during==1,lapply(.SD, sum),.SDcols = "Migraine_injections_during", by=c("person_id","pregnancy_id","pregnancy_start_date","pregnancy_end_date")]
       mig_med[,eval(paste0(obs_period_med[med_fl, StudyVar],"_during")):=NULL][,Migraine_injections_during:=NULL]
@@ -597,7 +597,7 @@ for(med_fl in 1:length(obs_period_med[,.N])){
       cols<-cols[!cols %in% c("medicinal_product_id","injection")]
       #first
       mig_med[,start:=pregnancy_start_date + trimester_timepoint[Indicator=="first",as.numeric(start)]][,end:=pregnancy_start_date + trimester_timepoint[Indicator=="first",as.numeric(end)]]
-      mig_med[medicine_date>=start & medicine_date<=end,paste0(obs_period_med[med_fl, StudyVar],"_first"):=1]
+      mig_med[medicine_date>=start & medicine_date<end,paste0(obs_period_med[med_fl, StudyVar],"_first"):=1]
       mig_med_first<-mig_med[get(paste0(obs_period_med[med_fl, StudyVar],"_first"))==1,lapply(.SD, sum),.SDcols = paste0(obs_period_med[med_fl, StudyVar],"_first"), by=c("person_id","pregnancy_id","pregnancy_start_date","pregnancy_end_date")]
       mig_med[,eval(paste0(obs_period_med[med_fl, StudyVar],"_first")):=NULL]
       pregnancy_d3_mig<-merge.data.table(pregnancy_d3_mig,mig_med_first,all.x=T, by=cols[!cols %in% "medicine_date"])
@@ -605,7 +605,7 @@ for(med_fl in 1:length(obs_period_med[,.N])){
       pregnancy_d3_mig[is.na(get(paste0(obs_period_med[med_fl, StudyVar],"_first"))),eval(paste0(obs_period_med[med_fl, StudyVar],"_first")):=0]
       #second
       mig_med[,start:=pregnancy_start_date + trimester_timepoint[Indicator=="second",as.numeric(start)]][,end:=pregnancy_start_date + trimester_timepoint[Indicator=="second",as.numeric(end)]]
-      mig_med[medicine_date>=start & medicine_date<=end,paste0(obs_period_med[med_fl, StudyVar],"_second"):=1]
+      mig_med[medicine_date>=start & medicine_date<end,paste0(obs_period_med[med_fl, StudyVar],"_second"):=1]
       mig_med_second<-mig_med[get(paste0(obs_period_med[med_fl, StudyVar],"_second"))==1,lapply(.SD, sum),.SDcols = paste0(obs_period_med[med_fl, StudyVar],"_second"), by=c("person_id","pregnancy_id","pregnancy_start_date","pregnancy_end_date")]
       mig_med[,eval(paste0(obs_period_med[med_fl, StudyVar],"_second")):=NULL]
       pregnancy_d3_mig<-merge.data.table(pregnancy_d3_mig,mig_med_second,all.x=T, by=cols[!cols %in% "medicine_date"])
@@ -613,7 +613,7 @@ for(med_fl in 1:length(obs_period_med[,.N])){
       pregnancy_d3_mig[is.na(get(paste0(obs_period_med[med_fl, StudyVar],"_second"))),eval(paste0(obs_period_med[med_fl, StudyVar],"_second")):=0]
       #third
       mig_med[,start:=pregnancy_start_date + trimester_timepoint[Indicator=="third",as.numeric(start)]][,end:=pregnancy_start_date + trimester_timepoint[Indicator=="third",as.numeric(end)]]
-      mig_med[medicine_date>=start & medicine_date<=end,paste0(obs_period_med[med_fl, StudyVar],"_third"):=1]
+      mig_med[medicine_date>=start & medicine_date<end,paste0(obs_period_med[med_fl, StudyVar],"_third"):=1]
       mig_med_third<-mig_med[get(paste0(obs_period_med[med_fl, StudyVar],"_third"))==1,lapply(.SD, sum),.SDcols = paste0(obs_period_med[med_fl, StudyVar],"_third"), by=c("person_id","pregnancy_id","pregnancy_start_date","pregnancy_end_date")]
       mig_med[,eval(paste0(obs_period_med[med_fl, StudyVar],"_third")):=NULL]
       pregnancy_d3_mig<-merge.data.table(pregnancy_d3_mig,mig_med_third,all.x=T, by=cols[!cols %in% "medicine_date"])
@@ -748,7 +748,7 @@ if(mig_med_other[,.N]>0){
   }
   
   #during pregnancy
-  mig_med_other[medicine_date>=pregnancy_start_date & medicine_date<pregnancy_end_date, Migraine_med_profilactic_during:=1]
+  mig_med_other[medicine_date>=pregnancy_start_date & medicine_date<=pregnancy_end_date, Migraine_med_profilactic_during:=1]
   mig_med_during<-mig_med_other[Migraine_med_profilactic_during==1,lapply(.SD, sum),.SDcols = "Migraine_med_profilactic_during", by=c("person_id","pregnancy_id","pregnancy_start_date","pregnancy_end_date")]
   mig_med_other[,Migraine_med_profilactic_during:=NULL]
   pregnancy_d3_mig<-merge.data.table(pregnancy_d3_mig,mig_med_during,all.x=T, by=cols[!cols %in% c("medicine_date")])
