@@ -542,7 +542,7 @@ for(mig_fl in 1:length(mig_files_checkbox)){
   rm(mig_dt) 
   w<-w+1
 }
-}
+}else{preg_d3_checkbox<-NULL}
 
 #Combine files
 original<-as.data.table(do.call(rbind,original))
