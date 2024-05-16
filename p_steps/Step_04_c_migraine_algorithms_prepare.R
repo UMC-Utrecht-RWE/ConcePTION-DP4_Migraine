@@ -32,9 +32,14 @@ if(length(migraine_checkbox_files)>0){
   migraine_checkbox<-migraine_checkbox[!duplicated(comb)]
   migraine_checkbox[,comb:=NULL]
   
-  #Delete old files
+  #Save old files inside a new folder
+  if("raw_data" %in% list.files(paste0(projectFolder,"/g_intermediate/migraine_algorithm/"))){
+    unlink(paste0(projectFolder,"/g_intermediate/migraine_algorithm/raw_data"), recursive = T)
+  }
+  dir.create(paste0(projectFolder, "/g_intermediate/migraine_algorithm/raw_data"))
   #remove all pe files from tmp
   for (i in 1:length(migraine_checkbox_files)){
+    file.copy(paste0(projectFolder,"/g_intermediate/migraine_algorithm/", migraine_checkbox_files[[i]]),paste0(projectFolder,"/g_intermediate/migraine_algorithm/raw_data/", migraine_checkbox_files[[i]]),overwrite = T)
     file.remove(paste0(projectFolder,"/g_intermediate/migraine_algorithm/", migraine_checkbox_files[[i]]))
   }
   
@@ -52,7 +57,7 @@ if(DAP_name == "CHUT"){
                               after=c(0,0,0,0,0,0,0,0))  
 }else{
   obs_period_diag<-data.table(StudyVar=c("MG","MG_NO_AURA","MG_AURA","MG_OTHER","MG_UNSP","MG_STACOMP","MG_UPC","Migraine_checkbox"),
-                              lookback=c(365.25,365.25,365.25,365.25,365.25,365.25,365.25,365.25),
+                              lookback=c(365.25,365.25,365.25,365.25,365.25,365.25,365.25,5),
                               start_date=c(0,0,0,0,0,0,0,0),
                               end_date=c(7*40,7*40,7*40,7*40,7*40,7*40,7*40,7*40),
                               after=c(0,0,0,0,0,0,0,0))
@@ -72,6 +77,7 @@ for(i in 1:length(mig_files)){
   names_events[[i]]<-unlist(str_split(mig_files[i],"[.]"))[1] 
 }
 names_events<-as.vector(do.call(rbind,names_events))
+names_events<-names_events[!names_events %in% "raw_data"]
 names_events_extend<-c(paste0(names_events,"_baseline"),paste0(names_events,"_baseline_2"),paste0(names_events,"_during"),paste0(names_events,"_first"),paste0(names_events,"_second"),paste0(names_events,"_third"))
 #Add onset diagnoses and mendication variable to the pregnancy d3
 pregnancy_d3_mig[,onset_diag:=0][,onset_med:=0]
@@ -267,6 +273,7 @@ onset_both<-pregnancy_d3_mig[onset_diag==1 & onset_med==1,.N]
 #excluded preg
 excluded_preg<-pregnancy_d3_mig[onset_diag==1 | onset_med==1,.N]
 
+
 pregnancy_d3_mig<-pregnancy_d3_mig[onset_diag==0 & onset_med==0]
 included_preg<-pregnancy_d3_mig[,.N]
 pregnancy_d3_mig[,onset_diag:=NULL][,onset_med:=NULL]
@@ -287,6 +294,8 @@ rm(orig_mig,onset_diag,onset_med,onset_both,excluded_preg,included_preg)
 fwrite(excluded_preg_flowchart, paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_excluded_pregnancies_onset_diag_med.csv"), row.names = F)
 rm(excluded_preg_flowchart)
 #delete the first version of the pregnancy D3 and save this one
+#Create another copy of the pregnancy D3 that will be used for Migraine_checkbox
+file.copy(paste0(projectFolder,"/g_intermediate/pregnancy_d3/MIG_Pregnancy_D3.rds"),paste0(projectFolder,"/g_intermediate/pregnancy_d3/MIGcheckbox_Pregnancy_D3.rds"))
 file.remove(paste0(projectFolder,"/g_intermediate/pregnancy_d3/MIG_Pregnancy_D3.rds"))
 saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/pregnancy_d3/MIG_Pregnancy_D3.rds"))
 ####Migraine DIAGNOSES####
@@ -297,6 +306,12 @@ sum<-list()
 
 dir.create(paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3"))
 
+mig_files_checkbox<-mig_files[grepl("Migraine_checkbox", mig_files)]
+if(length(mig_files_checkbox)>0){mig_files<-mig_files[!mig_files %in% mig_files_checkbox]}
+mig_files<-mig_files[!mig_files %in% "raw_data"]
+
+names_events<-names_events[!names_events %in% "Migraine_checkbox"]
+names_events<-names_events[!names_events %in% "raw_data"]
 w<-1
 for(mig_fl in 1:length(mig_files)){
   mig_dt<-readRDS(paste0(projectFolder,"/g_intermediate/migraine_algorithm/", mig_files[mig_fl]))
@@ -352,7 +367,7 @@ for(mig_fl in 1:length(mig_files)){
       saveRDS(mig_dt, paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/", names_events[mig_fl],"_pregnancy_D3.rds"))
       cols<-c("person_id","pregnancy_id","pregnancy_start_date","pregnancy_end_date","event_date")
       mig_dt<-mig_dt[,cols,with=F]
-      if(names_events[mig_fl] != "Migraine_checkbox"){
+
         #Identify all baseline events except for Migraine checkbox as the during calculation will be used
         mig_dt[,dif:=event_date-pregnancy_start_date]
         mig_dt[dif<0,paste0(names_events[mig_fl],"_baseline"):=1]
@@ -361,14 +376,7 @@ for(mig_fl in 1:length(mig_files)){
         pregnancy_d3_mig<-merge.data.table(pregnancy_d3_mig,mig_baseline,all.x=T, by=cols[!cols %in% "event_date"])
         rm(mig_baseline)
         pregnancy_d3_mig[is.na(get(paste0(names_events[mig_fl],"_baseline"))),eval(paste0(names_events[mig_fl],"_baseline")):=0]
-      }else{
-        mig_dt[event_date>=pregnancy_start_date & event_date<=pregnancy_end_date,"Migraine_checkbox_baseline":=1]
-        mig_baseline<-mig_dt[get("Migraine_checkbox_baseline")==1,lapply(.SD, sum),.SDcols = "Migraine_checkbox_baseline", by=c("person_id","pregnancy_id","pregnancy_start_date","pregnancy_end_date")]
-        mig_dt[,eval(paste0(names_events[mig_fl],"_baseline")):=NULL]
-        pregnancy_d3_mig<-merge.data.table(pregnancy_d3_mig,mig_baseline,all.x=T, by=cols[!cols %in% "event_date"])
-        rm(mig_baseline)
-        pregnancy_d3_mig[is.na(get(paste0(names_events[mig_fl],"_baseline"))),eval(paste0(names_events[mig_fl],"_baseline")):=0]
-      }
+
       if(names_events[mig_fl] != "Migraine_checkbox"){ 
         #depending on the DAP
         if(!DAP_name %in% c("CHUT")){
@@ -434,6 +442,106 @@ for(mig_fl in 1:length(mig_files)){
   
   rm(mig_dt) 
   w<-w+1
+}
+
+
+if(length(mig_files_checkbox)>0){
+w<-w+1
+#load the pregnancy d3 for migraine checkbox
+preg_d3_checkbox<-as.data.table(readRDS(paste0(projectFolder,"/g_intermediate/pregnancy_d3/MIGcheckbox_Pregnancy_D3.rds")))
+#remove uneccesary variables
+if("gdm_pe_filter" %in% names(preg_d3_checkbox)){preg_d3_checkbox[,gdm_pe_filter:=NULL]}
+if("du_filter" %in% names(preg_d3_checkbox)){preg_d3_checkbox[,du_filter:=NULL]}
+if("saf_filter" %in% names(preg_d3_checkbox)){preg_d3_checkbox[,saf_filter:=NULL]}
+if("mig_filter" %in% names(preg_d3_checkbox)){preg_d3_checkbox[,mig_filter:=NULL]}
+if("op_end_date_gdm_pe" %in% names(preg_d3_checkbox)){preg_d3_checkbox[,op_end_date_gdm_pe:=NULL]}
+if("op_end_date_du" %in% names(preg_d3_checkbox)){preg_d3_checkbox[,op_end_date_du:=NULL]}
+if("op_end_date_saf" %in% names(preg_d3_checkbox)){preg_d3_checkbox[,op_end_date_saf:=NULL]}
+if("op_start_date_gdm_pe" %in% names(preg_d3_checkbox)){preg_d3_checkbox[,op_start_date_gdm_pe:=NULL]}
+if("op_start_date_du" %in% names(preg_d3_checkbox)){preg_d3_checkbox[,op_start_date_du:=NULL]}
+if("op_start_date_saf" %in% names(preg_d3_checkbox)){preg_d3_checkbox[,op_start_date_saf:=NULL]}
+if("sex_at_instance_creation" %in% names(preg_d3_checkbox)){preg_d3_checkbox[,sex_at_instance_creation:=NULL]}
+preg_d3_checkbox[,age:=floor((pregnancy_start_date-birth_date)/365.25)]
+preg_d3_checkbox[,maternal_age:=as.character(lapply(age, age_band_creation))]
+preg_d3_checkbox[,year:=year(pregnancy_start_date)]
+preg_d3_checkbox[,year_group:=as.character(lapply(year, year_group_creation))]
+
+for(mig_fl in 1:length(mig_files_checkbox)){
+  mig_dt<-readRDS(paste0(projectFolder,"/g_intermediate/migraine_algorithm/", mig_files_checkbox[mig_fl]))
+  #merge with the pregnancy d3
+  mig_dt<-merge.data.table(preg_d3_checkbox, mig_dt, by="person_id", all.x=T, allow.cartesian = T)
+  mig_dt<-mig_dt[!is.na(event_date)]
+  if(mig_dt[,.N]>0){
+    original[[w]]<-data.table(StudyVar="Migraine_checkbox", event_records=mig_dt[,.N])
+    mig_dt[,event_date:=as.IDate(event_date)]
+    
+    if(obs_period_diag[StudyVar=="Migraine_checkbox",lookback]>0){
+      mig_dt[,lookback:=obs_period_diag[StudyVar=="Migraine_checkbox",lookback]]
+      mig_dt[,start_preg:=as.IDate(pregnancy_start_date-lookback)]
+      #exclude all events that are outside observation period of interest
+      mig_dt[,diff:=event_date-start_preg]
+      #remove all records with date before start date pregnancy+lookback
+      before[[w]]<-data.table(StudyVar="Migraine_checkbox", before_start=mig_dt[diff<0,.N])
+      mig_dt<-mig_dt[diff>=0]
+      mig_dt[,diff:=NULL][,lookback:=NULL][,start_preg:=NULL]
+    }else{
+      #remove all records before start obs
+      mig_dt[,start:=obs_period_diag[StudyVar=="Migraine_checkbox",start_date]]
+      mig_dt[,start_preg:=as.IDate(pregnancy_start_date+start)]
+      mig_dt[,diff:=event_date-start_preg]
+      before[[w]]<-data.table(StudyVar="Migraine_checkbox", before_start=mig_dt[diff<0,.N])
+      mig_dt<-mig_dt[diff>=0]
+      mig_dt[,diff:=NULL][,start:=NULL][,start_preg:=NULL]
+    }
+    
+    if(mig_dt[,.N]>0){
+      if(obs_period_diag[StudyVar=="Migraine_checkbox",after]>0){
+        mig_dt[,after:=obs_period_diag[StudyVar=="Migraine_checkbox",after] + 5 ]
+        mig_dt[,end_preg:=as.IDate(pregnancy_end_date+after)]
+        mig_dt[,diff:=event_date-end_preg]
+        after[[w]]<-data.table(StudyVar="Migraine_checkbox", after_end=mig_dt[diff>0,.N])
+        mig_dt<-mig_dt[diff<=0]
+        mig_dt[,diff:=NULL][,after:=NULL][,end_preg:=NULL]
+      }else{
+        #mig_dt[,end:=obs_period_diag[StudyVar==names_events[mig_fl],end_date]]
+        mig_dt[,end_preg:=as.IDate(pregnancy_end_date) + 5]
+        mig_dt[,diff:=event_date-end_preg]
+        after[[w]]<-data.table(StudyVar="Migraine_checkbox", after_end=mig_dt[diff>0,.N])
+        mig_dt<-mig_dt[diff<=0]
+        mig_dt[,diff:=NULL][,end_preg:=NULL]
+      }
+    }else{
+      after[[w]]<-data.table(StudyVar="Migraine_checkbox", after_end=0)
+    }
+    
+    if(mig_dt[,.N]>0){
+      #create a summary of included records
+      sum[[w]]<-data.table(StudyVar="Migraine_checkbox", no_records=mig_dt[!is.na(event_date),.N], no_pregnancies=mig_dt[!duplicated(pregnancy_id),.N])
+      saveRDS(mig_dt, paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/", "Migraine_checkbox_pregnancy_D3.rds"))
+      cols<-c("person_id","pregnancy_id","pregnancy_start_date","pregnancy_end_date","event_date")
+      mig_dt<-mig_dt[,cols,with=F]
+
+        mig_dt[event_date>=pregnancy_start_date + 5 & event_date<=pregnancy_end_date+5,"Migraine_checkbox_baseline":=1]
+        mig_baseline<-mig_dt[get("Migraine_checkbox_baseline")==1,lapply(.SD, sum),.SDcols = "Migraine_checkbox_baseline", by=c("person_id","pregnancy_id","pregnancy_start_date","pregnancy_end_date")]
+        mig_dt[,Migraine_checkbox_baseline:=NULL]
+        preg_d3_checkbox<-merge.data.table(preg_d3_checkbox,mig_baseline,all.x=T, by=cols[!cols %in% "event_date"])
+        rm(mig_baseline)
+        preg_d3_checkbox[is.na(Migraine_checkbox_baseline),Migraine_checkbox_baseline:=0]
+      
+        preg_d3_checkbox[,Migraine_checkbox_during:=Migraine_checkbox_baseline]
+      
+    }else{
+      preg_d3_checkbox[,Migraine_checkbox_baseline:=0]
+      preg_d3_checkbox[,Migraine_checkbox_during:=0]
+    }
+  }else{
+    preg_d3_checkbox[,Migraine_checkbox_baseline:=0]
+    preg_d3_checkbox[,Migraine_checkbox_during:=0]
+  }
+  
+  rm(mig_dt) 
+  w<-w+1
+}
 }
 
 #Combine files
