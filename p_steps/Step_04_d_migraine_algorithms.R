@@ -14,7 +14,7 @@ saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorith
 
 #export MIG_Dx_a
 MIG_Dx_a_dt<-data.table(algorithm="MIG_Dx_a", no_diagnosed_pregnancies=pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id),.N])
-MIG_Dx_a_dt[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Dx_a_dt[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_Dx_a_dt[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 #lower CI
 MIG_Dx_a_dt[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
@@ -34,7 +34,7 @@ MIG_Dx_a_1<-data.table(algorithm="MIG_Dx_a", records)
 MIG_Dx_a_1[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_Dx_a_1<-MIG_Dx_a_1[order(maternal_age)]
 rm(records,total)
-MIG_Dx_a_1[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Dx_a_1[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_Dx_a_1[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_Dx_a_1[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -55,7 +55,7 @@ MIG_Dx_a_2<-data.table(algorithm="MIG_Dx_a", records)
 MIG_Dx_a_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_Dx_a_2<-MIG_Dx_a_2[order(year)]
 rm(records,total)
-MIG_Dx_a_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Dx_a_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_Dx_a_2[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_Dx_a_2[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -75,7 +75,7 @@ MIG_Dx_a_3<-data.table(algorithm="MIG_Dx_a", records)
 MIG_Dx_a_3[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_Dx_a_3<-MIG_Dx_a_3[order(year_group,maternal_age)]
 rm(records,total)
-MIG_Dx_a_3[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Dx_a_3[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_Dx_a_3[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_Dx_a_3[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -99,7 +99,7 @@ saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorith
 
 #export MIG_Dx_b
 MIG_Dx_b_dt<-data.table(algorithm="MIG_Dx_b", no_diagnosed_pregnancies=pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id),.N])
-MIG_Dx_b_dt[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Dx_b_dt[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_Dx_b_dt[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 #lower CI
 MIG_Dx_b_dt[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
@@ -119,7 +119,7 @@ MIG_Dx_b_1<-data.table(algorithm="MIG_Dx_b", records)
 MIG_Dx_b_1[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_Dx_b_1<-MIG_Dx_b_1[order(maternal_age)]
 rm(records,total)
-MIG_Dx_b_1[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Dx_b_1[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_Dx_b_1[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_Dx_b_1[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -140,7 +140,7 @@ MIG_Dx_b_2<-data.table(algorithm="MIG_Dx_b", records)
 MIG_Dx_b_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_Dx_b_2<-MIG_Dx_b_2[order(year)]
 rm(records,total)
-MIG_Dx_b_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Dx_b_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_Dx_b_2[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_Dx_b_2[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -161,7 +161,7 @@ MIG_Dx_b_3<-data.table(algorithm="MIG_Dx_b", records)
 MIG_Dx_b_3[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_Dx_b_3<-MIG_Dx_b_3[order(year_group,maternal_age)]
 rm(records,total)
-MIG_Dx_b_3[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Dx_b_3[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_Dx_b_3[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_Dx_b_3[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -184,7 +184,7 @@ saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorith
 
 #export MIG_Rx_a
 MIG_Rx_a_dt<-data.table(algorithm="MIG_Rx_a", no_diagnosed_pregnancies=pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id),.N])
-MIG_Rx_a_dt[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Rx_a_dt[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_Rx_a_dt[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 #lower CI
 MIG_Rx_a_dt[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
@@ -204,7 +204,7 @@ MIG_Rx_a_1<-data.table(algorithm="MIG_Rx_a", records)
 MIG_Rx_a_1[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_Rx_a_1<-MIG_Rx_a_1[order(maternal_age)]
 rm(records,total)
-MIG_Rx_a_1[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Rx_a_1[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_Rx_a_1[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_Rx_a_1[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -226,7 +226,7 @@ MIG_Rx_a_2<-data.table(algorithm="MIG_Rx_a", records)
 MIG_Rx_a_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_Rx_a_2<-MIG_Rx_a_2[order(year)]
 rm(records,total)
-MIG_Rx_a_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Rx_a_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_Rx_a_2[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_Rx_a_2[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -247,7 +247,7 @@ MIG_Rx_a_3<-data.table(algorithm="MIG_Rx_a", records)
 MIG_Rx_a_3[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_Rx_a_3<-MIG_Rx_a_3[order(year_group,maternal_age)]
 rm(records,total)
-MIG_Rx_a_3[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Rx_a_3[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_Rx_a_3[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_Rx_a_3[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -270,7 +270,7 @@ saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorith
 
 #export MIG_Dx_a
 MIG_Rx_b_dt<-data.table(algorithm="MIG_Rx_b", no_diagnosed_pregnancies=pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id),.N])
-MIG_Rx_b_dt[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Rx_b_dt[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_Rx_b_dt[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 #lower CI
 MIG_Rx_b_dt[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
@@ -290,7 +290,7 @@ MIG_Rx_b_1<-data.table(algorithm="MIG_Rx_b", records)
 MIG_Rx_b_1[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_Rx_b_1<-MIG_Rx_b_1[order(maternal_age)]
 rm(records,total)
-MIG_Rx_b_1[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Rx_b_1[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_Rx_b_1[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_Rx_b_1[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -312,7 +312,7 @@ MIG_Rx_b_2<-data.table(algorithm="MIG_Rx_b", records)
 MIG_Rx_b_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_Rx_b_2<-MIG_Rx_b_2[order(year)]
 rm(records,total)
-MIG_Rx_b_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Rx_b_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_Rx_b_2[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_Rx_b_2[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -334,7 +334,7 @@ MIG_Rx_b_3<-data.table(algorithm="MIG_Rx_b", records)
 MIG_Rx_b_3[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_Rx_b_3<-MIG_Rx_b_3[order(year_group,maternal_age)]
 rm(records,total)
-MIG_Rx_b_3[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Rx_b_3[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_Rx_b_3[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_Rx_b_3[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -358,7 +358,7 @@ saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorith
 
 #export MIG_Dx_a
 MIG_DxRx_a_dt<-data.table(algorithm="MIG_DxRx_a", no_diagnosed_pregnancies=pregnancy_d3_mig[alternative==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id),.N])
-MIG_DxRx_a_dt[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_DxRx_a_dt[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_DxRx_a_dt[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 #lower CI
 MIG_DxRx_a_dt[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
@@ -378,7 +378,7 @@ MIG_DxRx_a_1<-data.table(algorithm="MIG_DxRx_a", records)
 MIG_DxRx_a_1[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_DxRx_a_1<-MIG_DxRx_a_1[order(maternal_age)]
 rm(records,total)
-MIG_DxRx_a_1[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_DxRx_a_1[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_DxRx_a_1[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_DxRx_a_1[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -399,7 +399,7 @@ MIG_DxRx_a_2<-data.table(algorithm="MIG_DxRx_a", records)
 MIG_DxRx_a_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_DxRx_a_2<-MIG_DxRx_a_2[order(year)]
 rm(records,total)
-MIG_DxRx_a_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_DxRx_a_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_DxRx_a_2[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_DxRx_a_2[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -421,7 +421,7 @@ MIG_DxRx_a_3<-data.table(algorithm="MIG_DxRx_a", records)
 MIG_DxRx_a_3[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_DxRx_a_3<-MIG_DxRx_a_3[order(year_group,maternal_age)]
 rm(records,total)
-MIG_DxRx_a_3[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_DxRx_a_3[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_DxRx_a_3[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_DxRx_a_3[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -445,7 +445,7 @@ saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorith
 
 #export MIG_Dx_a
 MIG_DxRx_b_dt<-data.table(algorithm="MIG_DxRx_b", no_diagnosed_pregnancies=pregnancy_d3_mig[alternative==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id),.N])
-MIG_DxRx_b_dt[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_DxRx_b_dt[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_DxRx_b_dt[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 #lower CI
 MIG_DxRx_b_dt[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
@@ -465,7 +465,7 @@ MIG_DxRx_b_1<-data.table(algorithm="MIG_DxRx_b", records)
 MIG_DxRx_b_1[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_DxRx_b_1<-MIG_DxRx_b_1[order(maternal_age)]
 rm(records,total)
-MIG_DxRx_b_1[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_DxRx_b_1[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_DxRx_b_1[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_DxRx_b_1[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -486,7 +486,7 @@ MIG_DxRx_b_2<-data.table(algorithm="MIG_DxRx_b", records)
 MIG_DxRx_b_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_DxRx_b_2<-MIG_DxRx_b_2[order(year)]
 rm(records,total)
-MIG_DxRx_b_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_DxRx_b_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_DxRx_b_2[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_DxRx_b_2[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -508,7 +508,7 @@ MIG_DxRx_b_3<-data.table(algorithm="MIG_DxRx_b", records)
 MIG_DxRx_b_3[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_DxRx_b_3<-MIG_DxRx_b_3[order(year_group,maternal_age)]
 rm(records,total)
-MIG_DxRx_b_3[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_DxRx_b_3[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_DxRx_b_3[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_DxRx_b_3[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -531,7 +531,7 @@ saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorith
 
 #export MIG_Dx_during
 MIG_Dx_during_dt<-data.table(algorithm="MIG_Dx_during", no_diagnosed_pregnancies=pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id),.N])
-MIG_Dx_during_dt[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Dx_during_dt[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_Dx_during_dt[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 #lower CI
 MIG_Dx_during_dt[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
@@ -551,7 +551,7 @@ MIG_Dx_during_1<-data.table(algorithm="MIG_Dx_during", records)
 MIG_Dx_during_1[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_Dx_during_1<-MIG_Dx_during_1[order(maternal_age)]
 rm(records,total)
-MIG_Dx_during_1[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Dx_during_1[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_Dx_during_1[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_Dx_during_1[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -572,7 +572,7 @@ MIG_Dx_during_2<-data.table(algorithm="MIG_Dx_during", records)
 MIG_Dx_during_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_Dx_during_2<-MIG_Dx_during_2[order(year)]
 rm(records,total)
-MIG_Dx_during_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Dx_during_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_Dx_during_2[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_Dx_during_2[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -592,7 +592,7 @@ MIG_Dx_during_3<-data.table(algorithm="MIG_Dx_during", records)
 MIG_Dx_during_3[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_Dx_during_3<-MIG_Dx_during_3[order(year_group,maternal_age)]
 rm(records,total)
-MIG_Dx_during_3[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Dx_during_3[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_Dx_during_3[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_Dx_during_3[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -615,7 +615,7 @@ saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorith
 
 #export MIG_Rx_during
 MIG_Rx_during_dt<-data.table(algorithm="MIG_Rx_during", no_diagnosed_pregnancies=pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id),.N])
-MIG_Rx_during_dt[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Rx_during_dt[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_Rx_during_dt[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 #lower CI
 MIG_Rx_during_dt[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
@@ -635,7 +635,7 @@ MIG_Rx_during_1<-data.table(algorithm="MIG_Rx_during", records)
 MIG_Rx_during_1[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_Rx_during_1<-MIG_Rx_during_1[order(maternal_age)]
 rm(records,total)
-MIG_Rx_during_1[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Rx_during_1[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_Rx_during_1[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_Rx_during_1[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -657,7 +657,7 @@ MIG_Rx_during_2<-data.table(algorithm="MIG_Rx_during", records)
 MIG_Rx_during_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_Rx_during_2<-MIG_Rx_during_2[order(year)]
 rm(records,total)
-MIG_Rx_during_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Rx_during_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_Rx_during_2[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_Rx_during_2[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -678,7 +678,7 @@ MIG_Rx_during_3<-data.table(algorithm="MIG_Rx_during", records)
 MIG_Rx_during_3[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_Rx_during_3<-MIG_Rx_during_3[order(year_group,maternal_age)]
 rm(records,total)
-MIG_Rx_during_3[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Rx_during_3[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_Rx_during_3[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_Rx_during_3[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -701,7 +701,7 @@ saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorith
 
 #export MIG_Dx_a
 MIG_DxRx_during_dt<-data.table(algorithm="MIG_DxRx_during", no_diagnosed_pregnancies=pregnancy_d3_mig[alternative==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id),.N])
-MIG_DxRx_during_dt[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_DxRx_during_dt[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_DxRx_during_dt[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 #lower CI
 MIG_DxRx_during_dt[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
@@ -721,7 +721,7 @@ MIG_DxRx_during_1<-data.table(algorithm="MIG_DxRx_during", records)
 MIG_DxRx_during_1[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_DxRx_during_1<-MIG_DxRx_during_1[order(maternal_age)]
 rm(records,total)
-MIG_DxRx_during_1[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_DxRx_during_1[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_DxRx_during_1[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_DxRx_during_1[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -742,7 +742,7 @@ MIG_DxRx_during_2<-data.table(algorithm="MIG_DxRx_during", records)
 MIG_DxRx_during_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_DxRx_during_2<-MIG_DxRx_during_2[order(year)]
 rm(records,total)
-MIG_DxRx_during_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_DxRx_during_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_DxRx_during_2[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_DxRx_during_2[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -764,7 +764,7 @@ MIG_DxRx_during_3<-data.table(algorithm="MIG_DxRx_during", records)
 MIG_DxRx_during_3[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_DxRx_during_3<-MIG_DxRx_during_3[order(year_group,maternal_age)]
 rm(records,total)
-MIG_DxRx_during_3[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_DxRx_during_3[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_DxRx_during_3[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_DxRx_during_3[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -778,18 +778,18 @@ rm(MIG_DxRx_during_3)
 
 
 #### MIG_checkbox_during:Prevalence of migraine during pregnancy when lookback==12 months(3 months) ####
-print("Create algorithm MIG_Dx_during")
+print("Create algorithm MIG_checkbox_during")
 MIG_checkbox_during<-algorithm_template[NEW_STUDY_VARIABLES=="MIG_checkbox_during"]
 inc_col<-MIG_checkbox_during[TYPE=="AND",STUDY_VARIABLES]
-if(!"Migraine_checkbox_during" %in% names(pregnancy_d3_mig)){pregnancy_d3_mig[,Migraine_checkbox_during:=0]}
+if(!"Migraine_checkbox_during" %in% names(preg_d3_checkbox)){preg_d3_checkbox[,Migraine_checkbox_during:=0]}
 
-if(length(inc_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("&" , lapply(.SD,`>=`, 1)),.SDcols=inc_col],include:=1]}else{pregnancy_d3_mig[,include:=NA]}
+if(length(inc_col)>0){preg_d3_checkbox[preg_d3_checkbox[,Reduce("&" , lapply(.SD,`>=`, 1)),.SDcols=inc_col],include:=1]}else{preg_d3_checkbox[,include:=NA]}
 
-saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/MIG_checkbox_during_D3.rds"))
+saveRDS(preg_d3_checkbox,paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/MIG_checkbox_during_D3.rds"))
 
 #export MIG_checkbox_during
-MIG_checkbox_during_dt<-data.table(algorithm="MIG_checkbox_during", no_diagnosed_pregnancies=pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id),.N])
-MIG_checkbox_during_dt[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_checkbox_during_dt<-data.table(algorithm="MIG_checkbox_during", no_diagnosed_pregnancies=preg_d3_checkbox[include==1 & !duplicated(pregnancy_id),.N], no_pregnancies=preg_d3_checkbox[!duplicated(pregnancy_id),.N])
+MIG_checkbox_during_dt[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_checkbox_during_dt[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 #lower CI
 MIG_checkbox_during_dt[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
@@ -805,17 +805,17 @@ fwrite(MIG_checkbox_baseline_dt,paste0(projectFolder,"/g_output/Migraine algorit
 rm(MIG_checkbox_baseline_dt)
 
 #by maternal age
-pregnancy_d3_mig[,maternal_age:=as.character(maternal_age)]
-records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id), .N, by=.(maternal_age)]
+preg_d3_checkbox[,maternal_age:=as.character(maternal_age)]
+records<-preg_d3_checkbox[include==1 & !duplicated(pregnancy_id), .N, by=.(maternal_age)]
 names(records)<-c("maternal_age","no_diagnosed_pregnancies")
-total<-pregnancy_d3_mig[!duplicated(pregnancy_id), by="maternal_age",.N]
+total<-preg_d3_checkbox[!duplicated(pregnancy_id), by="maternal_age",.N]
 names(total)<-c("maternal_age","no_pregnancies")
 records<-merge.data.table(records,total,by="maternal_age",all=T)
 MIG_Dx_during_1<-data.table(algorithm="MIG_checkbox_during", records)
 MIG_Dx_during_1[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_Dx_during_1<-MIG_Dx_during_1[order(maternal_age)]
 rm(records,total)
-MIG_Dx_during_1[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Dx_during_1[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_Dx_during_1[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_Dx_during_1[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -831,16 +831,16 @@ fwrite(MIG_Dx_baseline_1,paste0(projectFolder,"/g_output/Migraine algorithm/Step
 rm(MIG_Dx_during_1,MIG_Dx_baseline_1)
 
 #by year
-records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by="year", .N]
+records<-preg_d3_checkbox[include==1 & !duplicated(pregnancy_id),by="year", .N]
 names(records)<-c("year","no_diagnosed_pregnancies")
-total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by="year",.N]
+total<-preg_d3_checkbox[!duplicated(pregnancy_id),by="year",.N]
 names(total)<-c("year","no_pregnancies")
 records<-merge.data.table(records,total,by="year",all=T)
 MIG_Dx_during_2<-data.table(algorithm="MIG_checkbox_during", records)
 MIG_Dx_during_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_Dx_during_2<-MIG_Dx_during_2[order(year)]
 rm(records,total)
-MIG_Dx_during_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Dx_during_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_Dx_during_2[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_Dx_during_2[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -857,23 +857,23 @@ fwrite(MIG_Dx_baseline_2,paste0(projectFolder,"/g_output/Migraine algorithm/Step
 rm(MIG_Dx_during_2,MIG_Dx_baseline_2)
 
 #by year group and maternal age
-records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by=c("year_group","maternal_age"), .N]
+records<-preg_d3_checkbox[include==1 & !duplicated(pregnancy_id),by=c("year_group","maternal_age"), .N]
 names(records)<-c("year_group","maternal_age", "no_diagnosed_pregnancies")
-total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by=c("year_group","maternal_age"),.N]
+total<-preg_d3_checkbox[!duplicated(pregnancy_id),by=c("year_group","maternal_age"),.N]
 names(total)<-c("year_group","maternal_age","no_pregnancies")
 records<-merge.data.table(records,total,by=c("year_group","maternal_age"), all=T)
 MIG_Dx_during_3<-data.table(algorithm="MIG_checkbox_during", records)
 MIG_Dx_during_3[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_Dx_during_3<-MIG_Dx_during_3[order(year_group,maternal_age)]
 rm(records,total)
-MIG_Dx_during_3[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Dx_during_3[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_Dx_during_3[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_Dx_during_3[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
 MIG_Dx_during_3[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
 MIG_Dx_during_3[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
 MIG_Dx_during_3[lower_95_CI<0,lower_95_CI:=0]
-pregnancy_d3_mig[,include:=NULL]
+preg_d3_checkbox[,include:=NULL]
 
 fwrite(MIG_Dx_during_3,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_checkbox_during_year_age.csv"),row.names = F)
 
@@ -903,7 +903,7 @@ saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorith
 
 #export MIG_Dx_first
 MIG_Dx_first_dt<-data.table(algorithm="MIG_Dx_first", no_diagnosed_pregnancies=pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id) & trimester %in% c(1,2,3),.N])
-MIG_Dx_first_dt[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Dx_first_dt[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_Dx_first_dt[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 #lower CI
 MIG_Dx_first_dt[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
@@ -923,7 +923,7 @@ MIG_Dx_first_1<-data.table(algorithm="MIG_Dx_first", records)
 MIG_Dx_first_1[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_Dx_first_1<-MIG_Dx_first_1[order(maternal_age)]
 rm(records,total)
-MIG_Dx_first_1[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Dx_first_1[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_Dx_first_1[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_Dx_first_1[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -944,7 +944,7 @@ MIG_Dx_first_2<-data.table(algorithm="MIG_Dx_first", records)
 MIG_Dx_first_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_Dx_first_2<-MIG_Dx_first_2[order(year)]
 rm(records,total)
-MIG_Dx_first_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Dx_first_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_Dx_first_2[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_Dx_first_2[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -964,7 +964,7 @@ MIG_Dx_first_3<-data.table(algorithm="MIG_Dx_first", records)
 MIG_Dx_first_3[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_Dx_first_3<-MIG_Dx_first_3[order(year_group,maternal_age)]
 rm(records,total)
-MIG_Dx_first_3[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Dx_first_3[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_Dx_first_3[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_Dx_first_3[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -987,7 +987,7 @@ saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorith
 
 #export MIG_Rx_first
 MIG_Rx_first_dt<-data.table(algorithm="MIG_Rx_first", no_diagnosed_pregnancies=pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id) & trimester %in% c(1,2,3),.N])
-MIG_Rx_first_dt[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Rx_first_dt[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_Rx_first_dt[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 #lower CI
 MIG_Rx_first_dt[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
@@ -1007,7 +1007,7 @@ MIG_Rx_first_1<-data.table(algorithm="MIG_Rx_first", records)
 MIG_Rx_first_1[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_Rx_first_1<-MIG_Rx_first_1[order(maternal_age)]
 rm(records,total)
-MIG_Rx_first_1[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Rx_first_1[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_Rx_first_1[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_Rx_first_1[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -1029,7 +1029,7 @@ MIG_Rx_first_2<-data.table(algorithm="MIG_Rx_first", records)
 MIG_Rx_first_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_Rx_first_2<-MIG_Rx_first_2[order(year)]
 rm(records,total)
-MIG_Rx_first_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Rx_first_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_Rx_first_2[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_Rx_first_2[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -1050,7 +1050,7 @@ MIG_Rx_first_3<-data.table(algorithm="MIG_Rx_first", records)
 MIG_Rx_first_3[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_Rx_first_3<-MIG_Rx_first_3[order(year_group,maternal_age)]
 rm(records,total)
-MIG_Rx_first_3[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Rx_first_3[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_Rx_first_3[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_Rx_first_3[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -1073,7 +1073,7 @@ saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorith
 
 #export MIG_Dx_a
 MIG_DxRx_first_dt<-data.table(algorithm="MIG_DxRx_first", no_diagnosed_pregnancies=pregnancy_d3_mig[alternative==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id) & trimester%in% c(1,2,3),.N])
-MIG_DxRx_first_dt[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_DxRx_first_dt[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_DxRx_first_dt[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 #lower CI
 MIG_DxRx_first_dt[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
@@ -1093,7 +1093,7 @@ MIG_DxRx_first_1<-data.table(algorithm="MIG_DxRx_first", records)
 MIG_DxRx_first_1[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_DxRx_first_1<-MIG_DxRx_first_1[order(maternal_age)]
 rm(records,total)
-MIG_DxRx_first_1[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_DxRx_first_1[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_DxRx_first_1[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_DxRx_first_1[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -1114,7 +1114,7 @@ MIG_DxRx_first_2<-data.table(algorithm="MIG_DxRx_first", records)
 MIG_DxRx_first_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_DxRx_first_2<-MIG_DxRx_first_2[order(year)]
 rm(records,total)
-MIG_DxRx_first_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_DxRx_first_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_DxRx_first_2[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_DxRx_first_2[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -1136,7 +1136,7 @@ MIG_DxRx_first_3<-data.table(algorithm="MIG_DxRx_first", records)
 MIG_DxRx_first_3[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_DxRx_first_3<-MIG_DxRx_first_3[order(year_group,maternal_age)]
 rm(records,total)
-MIG_DxRx_first_3[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_DxRx_first_3[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_DxRx_first_3[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_DxRx_first_3[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -1162,7 +1162,7 @@ saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorith
 
 #export MIG_Dx_second
 MIG_Dx_second_dt<-data.table(algorithm="MIG_Dx_second", no_diagnosed_pregnancies=pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id) & trimester %in% c(2,3),.N])
-MIG_Dx_second_dt[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Dx_second_dt[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_Dx_second_dt[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 #lower CI
 MIG_Dx_second_dt[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
@@ -1182,7 +1182,7 @@ MIG_Dx_second_1<-data.table(algorithm="MIG_Dx_second", records)
 MIG_Dx_second_1[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_Dx_second_1<-MIG_Dx_second_1[order(maternal_age)]
 rm(records,total)
-MIG_Dx_second_1[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Dx_second_1[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_Dx_second_1[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_Dx_second_1[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -1203,7 +1203,7 @@ MIG_Dx_second_2<-data.table(algorithm="MIG_Dx_second", records)
 MIG_Dx_second_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_Dx_second_2<-MIG_Dx_second_2[order(year)]
 rm(records,total)
-MIG_Dx_second_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Dx_second_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_Dx_second_2[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_Dx_second_2[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -1223,7 +1223,7 @@ MIG_Dx_second_3<-data.table(algorithm="MIG_Dx_second", records)
 MIG_Dx_second_3[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_Dx_second_3<-MIG_Dx_second_3[order(year_group,maternal_age)]
 rm(records,total)
-MIG_Dx_second_3[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Dx_second_3[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_Dx_second_3[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_Dx_second_3[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -1246,7 +1246,7 @@ saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorith
 
 #export MIG_Rx_second
 MIG_Rx_second_dt<-data.table(algorithm="MIG_Rx_second", no_diagnosed_pregnancies=pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id) & trimester%in% c(2,3),.N])
-MIG_Rx_second_dt[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Rx_second_dt[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_Rx_second_dt[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 #lower CI
 MIG_Rx_second_dt[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
@@ -1266,7 +1266,7 @@ MIG_Rx_second_1<-data.table(algorithm="MIG_Rx_second", records)
 MIG_Rx_second_1[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_Rx_second_1<-MIG_Rx_second_1[order(maternal_age)]
 rm(records,total)
-MIG_Rx_second_1[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Rx_second_1[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_Rx_second_1[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_Rx_second_1[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -1288,7 +1288,7 @@ MIG_Rx_second_2<-data.table(algorithm="MIG_Rx_second", records)
 MIG_Rx_second_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_Rx_second_2<-MIG_Rx_second_2[order(year)]
 rm(records,total)
-MIG_Rx_second_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Rx_second_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_Rx_second_2[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_Rx_second_2[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -1309,7 +1309,7 @@ MIG_Rx_second_3<-data.table(algorithm="MIG_Rx_second", records)
 MIG_Rx_second_3[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_Rx_second_3<-MIG_Rx_second_3[order(year_group,maternal_age)]
 rm(records,total)
-MIG_Rx_second_3[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Rx_second_3[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_Rx_second_3[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_Rx_second_3[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -1332,7 +1332,7 @@ saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorith
 
 #export MIG_Dx_a
 MIG_DxRx_second_dt<-data.table(algorithm="MIG_DxRx_second", no_diagnosed_pregnancies=pregnancy_d3_mig[alternative==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id) & trimester%in% c(2,3),.N])
-MIG_DxRx_second_dt[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_DxRx_second_dt[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_DxRx_second_dt[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 #lower CI
 MIG_DxRx_second_dt[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
@@ -1352,7 +1352,7 @@ MIG_DxRx_second_1<-data.table(algorithm="MIG_DxRx_second", records)
 MIG_DxRx_second_1[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_DxRx_second_1<-MIG_DxRx_second_1[order(maternal_age)]
 rm(records,total)
-MIG_DxRx_second_1[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_DxRx_second_1[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_DxRx_second_1[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_DxRx_second_1[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -1373,7 +1373,7 @@ MIG_DxRx_second_2<-data.table(algorithm="MIG_DxRx_second", records)
 MIG_DxRx_second_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_DxRx_second_2<-MIG_DxRx_second_2[order(year)]
 rm(records,total)
-MIG_DxRx_second_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_DxRx_second_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_DxRx_second_2[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_DxRx_second_2[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -1395,7 +1395,7 @@ MIG_DxRx_second_3<-data.table(algorithm="MIG_DxRx_second", records)
 MIG_DxRx_second_3[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_DxRx_second_3<-MIG_DxRx_second_3[order(year_group,maternal_age)]
 rm(records,total)
-MIG_DxRx_second_3[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_DxRx_second_3[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_DxRx_second_3[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_DxRx_second_3[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -1421,7 +1421,7 @@ saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorith
 
 #export MIG_Dx_third
 MIG_Dx_third_dt<-data.table(algorithm="MIG_Dx_third", no_diagnosed_pregnancies=pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id) & trimester == 3,.N])
-MIG_Dx_third_dt[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Dx_third_dt[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_Dx_third_dt[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 #lower CI
 MIG_Dx_third_dt[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
@@ -1441,7 +1441,7 @@ MIG_Dx_third_1<-data.table(algorithm="MIG_Dx_third", records)
 MIG_Dx_third_1[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_Dx_third_1<-MIG_Dx_third_1[order(maternal_age)]
 rm(records,total)
-MIG_Dx_third_1[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Dx_third_1[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_Dx_third_1[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_Dx_third_1[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -1462,7 +1462,7 @@ MIG_Dx_third_2<-data.table(algorithm="MIG_Dx_third", records)
 MIG_Dx_third_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_Dx_third_2<-MIG_Dx_third_2[order(year)]
 rm(records,total)
-MIG_Dx_third_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Dx_third_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_Dx_third_2[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_Dx_third_2[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -1482,7 +1482,7 @@ MIG_Dx_third_3<-data.table(algorithm="MIG_Dx_third", records)
 MIG_Dx_third_3[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_Dx_third_3<-MIG_Dx_third_3[order(year_group,maternal_age)]
 rm(records,total)
-MIG_Dx_third_3[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Dx_third_3[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_Dx_third_3[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_Dx_third_3[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -1505,7 +1505,7 @@ saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorith
 
 #export MIG_Rx_third
 MIG_Rx_third_dt<-data.table(algorithm="MIG_Rx_third", no_diagnosed_pregnancies=pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id) & trimester== 3,.N])
-MIG_Rx_third_dt[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Rx_third_dt[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_Rx_third_dt[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 #lower CI
 MIG_Rx_third_dt[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
@@ -1525,7 +1525,7 @@ MIG_Rx_third_1<-data.table(algorithm="MIG_Rx_third", records)
 MIG_Rx_third_1[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_Rx_third_1<-MIG_Rx_third_1[order(maternal_age)]
 rm(records,total)
-MIG_Rx_third_1[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Rx_third_1[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_Rx_third_1[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_Rx_third_1[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -1547,7 +1547,7 @@ MIG_Rx_third_2<-data.table(algorithm="MIG_Rx_third", records)
 MIG_Rx_third_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_Rx_third_2<-MIG_Rx_third_2[order(year)]
 rm(records,total)
-MIG_Rx_third_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Rx_third_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_Rx_third_2[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_Rx_third_2[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -1568,7 +1568,7 @@ MIG_Rx_third_3<-data.table(algorithm="MIG_Rx_third", records)
 MIG_Rx_third_3[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_Rx_third_3<-MIG_Rx_third_3[order(year_group,maternal_age)]
 rm(records,total)
-MIG_Rx_third_3[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_Rx_third_3[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_Rx_third_3[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_Rx_third_3[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -1591,7 +1591,7 @@ saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorith
 
 #export MIG_Dx_a
 MIG_DxRx_third_dt<-data.table(algorithm="MIG_DxRx_third", no_diagnosed_pregnancies=pregnancy_d3_mig[alternative==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id) & trimester==3,.N])
-MIG_DxRx_third_dt[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_DxRx_third_dt[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_DxRx_third_dt[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 #lower CI
 MIG_DxRx_third_dt[,lower_95_CI:=lower_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence_100_pregnancies)]
@@ -1611,7 +1611,7 @@ MIG_DxRx_third_1<-data.table(algorithm="MIG_DxRx_third", records)
 MIG_DxRx_third_1[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_DxRx_third_1<-MIG_DxRx_third_1[order(maternal_age)]
 rm(records,total)
-MIG_DxRx_third_1[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_DxRx_third_1[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_DxRx_third_1[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_DxRx_third_1[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -1632,7 +1632,7 @@ MIG_DxRx_third_2<-data.table(algorithm="MIG_DxRx_third", records)
 MIG_DxRx_third_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_DxRx_third_2<-MIG_DxRx_third_2[order(year)]
 rm(records,total)
-MIG_DxRx_third_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_DxRx_third_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_DxRx_third_2[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_DxRx_third_2[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
@@ -1654,7 +1654,7 @@ MIG_DxRx_third_3<-data.table(algorithm="MIG_DxRx_third", records)
 MIG_DxRx_third_3[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_DxRx_third_3<-MIG_DxRx_third_3[order(year_group,maternal_age)]
 rm(records,total)
-MIG_DxRx_third_3[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
+MIG_DxRx_third_3[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_DxRx_third_3[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 MIG_DxRx_third_3[no_diagnosed_pregnancies != 0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 #lower CI
