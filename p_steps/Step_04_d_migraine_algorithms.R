@@ -778,6 +778,7 @@ rm(MIG_DxRx_during_3)
 
 
 #### MIG_checkbox_during:Prevalence of migraine during pregnancy when lookback==12 months(3 months) ####
+if(!is.null(preg_d3_checkbox)){
 print("Create algorithm MIG_checkbox_during")
 MIG_checkbox_during<-algorithm_template[NEW_STUDY_VARIABLES=="MIG_checkbox_during"]
 inc_col<-MIG_checkbox_during[TYPE=="AND",STUDY_VARIABLES]
@@ -883,7 +884,27 @@ setcolorder(MIG_Dx_baseline_3, c("algorithm", "year_group","maternal_age", "no_d
 fwrite(MIG_Dx_baseline_3,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_checkbox_baseline_a_year_age.csv"),row.names = F)
 
 rm(MIG_Dx_during_3,MIG_Dx_baseline_3)
-
+}else{
+  MIG_checkbox_during_dt<-data.table(algorithm="MIG_checkbox_during",no_diagnosed_pregnancies=0, no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id),.N], prevalence_100_pregnancies=0, lower_95_CI=0, upper_95_CI=0)  
+  MIG_checkbox_baseline_dt<-data.table(algorithm="MIG_checkbox_baseline_a",no_diagnosed_pregnancies=0, no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id),.N], prevalence_100_pregnancies=0, lower_95_CI=0, upper_95_CI=0)  
+  MIG_Dx_during_1<-data.table(algorithm="MIG_checkbox_during",no_diagnosed_pregnancies=0, no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id),.N], prevalence_100_pregnancies=0, lower_95_CI=0, upper_95_CI=0)  
+  MIG_Dx_baseline_1<-data.table(algorithm="MIG_checkbox_baseline_a",no_diagnosed_pregnancies=0, no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id),.N], prevalence_100_pregnancies=0, lower_95_CI=0, upper_95_CI=0)  
+  MIG_Dx_during_2<-data.table(algorithm="MIG_checkbox_during",no_diagnosed_pregnancies=0, no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id),.N], prevalence_100_pregnancies=0, lower_95_CI=0, upper_95_CI=0)  
+  MIG_Dx_baseline_2<-data.table(algorithm="MIG_checkbox_baseline_a",no_diagnosed_pregnancies=0, no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id),.N], prevalence_100_pregnancies=0, lower_95_CI=0, upper_95_CI=0)  
+  MIG_Dx_during_3<-data.table(algorithm="MIG_checkbox_during",no_diagnosed_pregnancies=0, no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id),.N], prevalence_100_pregnancies=0, lower_95_CI=0, upper_95_CI=0)  
+  MIG_Dx_baseline_3<-data.table(algorithm="MIG_checkbox_baseline_a",no_diagnosed_pregnancies=0, no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id),.N], prevalence_100_pregnancies=0, lower_95_CI=0, upper_95_CI=0)  
+  
+  fwrite(MIG_checkbox_during_dt,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_checkbox_during.csv"),row.names = F)
+  fwrite(MIG_checkbox_baseline_dt,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_checkbox_baseline_a.csv"),row.names = F)
+  fwrite(MIG_Dx_during_1,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_checkbox_during_age.csv"),row.names = F)
+  fwrite(MIG_Dx_baseline_1,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_checkbox_baseline_a_age.csv"),row.names = F)
+  fwrite(MIG_Dx_during_2,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_checkbox_during_year.csv"),row.names = F)
+  fwrite(MIG_Dx_baseline_2,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_checkbox_baseline_a_year.csv"),row.names = F)
+  fwrite(MIG_Dx_during_3,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_checkbox_during_year_age.csv"),row.names = F)
+  fwrite(MIG_Dx_baseline_3,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_checkbox_baseline_a_year_age.csv"),row.names = F)
+  
+  
+}
 #### Select the trimester timepoint ####
 pregnancy_d3_mig[,dif:=pregnancy_end_date-pregnancy_start_date]
 pregnancy_d3_mig[dif<97, trimester:=0]
