@@ -107,25 +107,25 @@ if(sum(sum(so_gdm_diagnoses,so_pe_diagnoses,so_migraine_diagnoses),
     
     if(!is.null(diag_checkbox_gdm_so)>0){
       if("code" %in% not_fixed_gdm_checkbox[table=="SURVEY_OBSERVATIONS",val_1]){
-        code_var_check<-not_fixed_gdm_checkbox[table=="SURVEY_OBSERVATIONS",col_2]
-         date_var_check<-not_fixed_gdm_checkbox[table=="SURVEY_OBSERVATIONS",date_column]
-        col_var_check<-not_fixed_gdm_checkbox[table=="SURVEY_OBSERVATIONS",col_1]
+        code_var_check<-unique(not_fixed_gdm_checkbox[table=="SURVEY_OBSERVATIONS",col_2])
+         date_var_check<-unique(not_fixed_gdm_checkbox[table=="SURVEY_OBSERVATIONS",date_column])
+        col_var_check<-unique(not_fixed_gdm_checkbox[table=="SURVEY_OBSERVATIONS",col_1])
       }else{
-        code_var_check<-not_fixed_gdm_checkbox[table=="SURVEY_OBSERVATIONS",col_2]
-        date_var_check<-not_fixed_gdm_checkbox[table=="SURVEY_OBSERVATIONS",date_column]
-        col_var_check<-not_fixed_gdm_checkbox[table=="SURVEY_OBSERVATIONS",col_1]
+        code_var_check<-unique(not_fixed_gdm_checkbox[table=="SURVEY_OBSERVATIONS",col_2])
+        date_var_check<-unique(not_fixed_gdm_checkbox[table=="SURVEY_OBSERVATIONS",date_column])
+        col_var_check<-unique(not_fixed_gdm_checkbox[table=="SURVEY_OBSERVATIONS",col_1])
       }
     }
     
     if(!is.null(diag_checkbox_pe_so)>0){
       if("code" %in% not_fixed_pe_checkbox[table=="SURVEY_OBSERVATIONS",val_1]){
-        code_var_check<-not_fixed_pe_checkbox[table=="SURVEY_OBSERVATIONS",col_2]
-        date_var_check<-not_fixed_pe_checkbox[table=="SURVEY_OBSERVATIONS",date_column]
-        col_var_check<-not_fixed_pe_checkbox[table=="SURVEY_OBSERVATIONS",col_1]
+        code_var_check<-unique(not_fixed_pe_checkbox[table=="SURVEY_OBSERVATIONS",col_2])
+        date_var_check<-unique(not_fixed_pe_checkbox[table=="SURVEY_OBSERVATIONS",date_column])
+        col_var_check<-unique(not_fixed_pe_checkbox[table=="SURVEY_OBSERVATIONS",col_1])
       }else{
-        code_var_check<-not_fixed_pe_checkbox[table=="SURVEY_OBSERVATIONS",col_2]
-        date_var_check<-not_fixed_pe_checkbox[table=="SURVEY_OBSERVATIONS",date_column]
-        col_var_check<-not_fixed_pe_checkbox[table=="SURVEY_OBSERVATIONS",col_1]
+        code_var_check<-unique(not_fixed_pe_checkbox[table=="SURVEY_OBSERVATIONS",col_2])
+        date_var_check<-unique(not_fixed_pe_checkbox[table=="SURVEY_OBSERVATIONS",date_column])
+        col_var_check<-unique(not_fixed_pe_checkbox[table=="SURVEY_OBSERVATIONS",col_1])
       }
     }
     
