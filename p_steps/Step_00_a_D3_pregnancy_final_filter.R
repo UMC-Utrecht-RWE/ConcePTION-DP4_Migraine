@@ -13,7 +13,7 @@ rm(D3_filtered)
 # SAIL: PROMPT & EUROCAT only quality green and yellow
 #FIX MEANINGS FROM THE PROMPTS, EUROCAT
 if(data_access_provider_name=="USWAN"){
-D3_filtered <- rbind(pregnancy_D3[meaning_of_principal_record %in% c("birth_registry_mother")][imputed_end_of_pregnancy == 0][type_of_end_pregnancy %in% c("LB","SB")], #prompts
+D3_filtered <- rbind(pregnancy_D3[meaning_of_principal_record %in% c("birth_registry_mother")][imputed_end_of_pregnancy == 0][type_of_pregnancy_end %in% c("LB","SB")], #prompts
                      pregnancy_D3[!meaning_of_principal_record %in% c("birth_registry_mother", "PERSON_RELATIONSHIP")][imputed_end_of_pregnancy == 0][type_of_pregnancy_end %in% c("SA", "T", "LB", "SB")]) #eurocat
 
 rm(pregnancy_D3)
