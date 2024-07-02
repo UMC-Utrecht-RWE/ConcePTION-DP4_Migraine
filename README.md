@@ -39,3 +39,15 @@ Algorithms to identify gestational diabetes & preeclampsia in ConcePTION populat
 
 ## License 
 [![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://opensource.org/licenses/)
+
+<!-- ABOUT-THE-PROJECT -->
+## About the project
+[ConcePTION](https://www.imi-conception.eu) aims to build an ecosystem that can use Real World Data (RWD) to generate Real World Evidence (RWE) that may be used for clinical and regulatory decision making, closing the big information gap of medication safety in pregnancy. As part of WP7, level checks were design to assess the quality of the data supporting RWE. Level checks described here has been successfully implemented in VAC4EU, EMA-tendered risk minimization studies, COVID vaccines effectiveness study, Post-Authorization Safety Studies, and CONSIGN.
+
+<!-- FUNDER -->
+## Funder
+The ConcePTION project has received funding from the Innovative Medicines Initiative 2 Joint Undertaking under grant agreement No 821520. This Joint Undertaking receives support from the European Union’s Horizon 2020 research and innovation programme and EFPIA
+
+<!-- CONTACT -->
+## Contact
+Vjola Hoxhaj - v.hoxhaj@umcutrecht.nl
