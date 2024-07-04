@@ -205,6 +205,47 @@ if(sum(length(med_gdm_medicines),length(med_migraine_medicines))>0){
     #create year variable
     df[,year:=year(medicine_date)]
     #merge with the obs_hint table and remove subjects not present in the pregnancy d3 for any of teh studies
+#EFEMERIS MOM-CHILD LINKAGE PERSON ID PATCH                
+      if (data_access_provider_name=='CHUT'){
+
+#just to be sure the paths will work
+setwd(projectFolder)
+source("99_path.R")
+setwd(projectFolder)
+#just to be sure we have dplyr
+library(dplyr)
+
+#get link file from pregnancy alg output folder
+load(paste0(thisdir,"//g_output//D3_mother_child_ids.RData"))
+
+#remove unecessary columns
+link<-D3_mother_child_id[c("person_id","child_id")]
+
+#rename link[person_id] (mom_id) 
+link %>% 
+  rename(mom_id=person_id)
+
+#duplicate person_id column to child_id, to merge with link
+
+df$'child_id'<-df$person_id
+
+
+linked_df<-merge(df, link, by='child_id', all.x = T)
+
+#mutate mom_id and person_id to replace NA child_id values with linked mom_id values
+linked_df_clean<-linked_df %>% mutate(person_id_new = coalesce(mom_id, person_id))
+
+#replace person_id mixed with new ID (all matched mom_id)
+linked_df_clean$person_id<-linked_df_clean$person_id_new
+
+#remove access columns
+linked_df_clean$child_id<-NULL
+linked_df_clean$person_id_new<-NULL
+linked_df_clean$mom_id<-NULL
+
+#reassign to df and continue
+df<-linked_df_clean
+}
     df<-merge.data.table(df, obs_hint_table, by="person_id", all.x = T)
     any_study_no[[w]]<-df[is.na(obs_min), .N]
     df<-df[!is.na(obs_min)]
