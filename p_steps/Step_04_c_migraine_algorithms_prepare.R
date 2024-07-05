@@ -90,7 +90,6 @@ names_mg<-names_events[names_events %in% "MG"]
 mig_dt<-readRDS(paste0(projectFolder,"/g_intermediate/migraine_algorithm/", files_mg))
 names_mig_dt<-names(mig_dt)
 names_mig_dt<-names_mig_dt[!names_mig_dt %in% "keep"]
-names_mig_dt<-c(names_mig_dt, "event_date_old")
 #merge with the pregnancy d3
 mig_dt<-merge.data.table(pregnancy_d3_mig, mig_dt, by="person_id", all.x=T, allow.cartesian = T)
 mig_dt<-mig_dt[!is.na(event_date)]
@@ -163,8 +162,13 @@ if(mig_dt[,.N]>0){
     mig_dt<-merge.data.table(mig_dt,prior_diag, by=c("person_id","pregnancy_id"), all.x=T)
     rm(prior_diag)
     mig_dt[is.na(preg_diag),preg_diag:=0] #preg_diag are onset diagnoses in pregnancy
-    mig_dt[,event_date_old:=event_date]
-    mig_dt[preg_diag>=1, event_date:=pregnancy_start_date - 3] #set event date to 3 days before start of pregnancy
+    #separate onset migraine
+    onset_mig_dt<-mig_dt[preg_diag>=1]
+    onset_mig_dt[,event_date:=NULL]
+    onset_mig_dt[, event_date:=pregnancy_start_date - 3]
+    mig_dt<-rbind(mig_dt,onset_mig_dt)
+    rm(onset_mig_dt)
+    #set event date to 3 days before start of pregnancy
     mig_dt[,prior_diag:=NULL][,preg_diag:=NULL][,preg_diag_old:=NULL]
     saveRDS(mig_dt[,names_mig_dt, with=F],paste0(projectFolder, "/g_intermediate/migraine_algorithm_sensitivity/migraine_diagnoses/MG_S.rds"))
     
@@ -205,7 +209,7 @@ if(length(mig_med_fl)>0){
   mig_med<-mig_med[truncated_atc == "N02CC"]
   mig_med[,truncated_atc:=NULL]
   names_mig_med<-names(mig_med)
-  names_mig_med<-c(names_mig_med, "medicines_date_old")
+  
   mig_med<-merge.data.table(pregnancy_d3_mig, mig_med, by="person_id", all.x=T, allow.cartesian = T)
   mig_med<-mig_med[!is.na(medicine_date)]
   mig_med[,pregnancy_start_date:=as.IDate(pregnancy_start_date)][,pregnancy_end_date:=as.IDate(pregnancy_end_date)][,birth_date:=as.IDate(birth_date)][,death_date:=as.IDate(death_date)][,op_start_date_mig:=as.IDate(op_start_date_mig)][,op_end_date_mig:=as.IDate(op_end_date_mig)][,medicine_date:=as.IDate(medicine_date)]
@@ -281,8 +285,13 @@ if(length(mig_med_fl)>0){
       mig_med<-merge.data.table(mig_med,prior_med, by=c("person_id","pregnancy_id"), all.x=T)
       rm(prior_med)
       mig_med[is.na(preg_med),preg_med:=0] #preg_diag are onset diagnoses in pregnancy
-      mig_med[,medicine_date_old:=medicine_date]
-      mig_med[preg_med>=1, medicine_date:=pregnancy_start_date - 3] #set event date to 3 days before start of pregnancy
+      #separate onset migraine
+      onset_mig_med<-mig_med[preg_med>=1]
+      onset_mig_med[,medicine_date:=NULL]
+      onset_mig_med[, medicine_date:=pregnancy_start_date - 3]
+      mig_med<-rbind(mig_med,onset_mig_med)
+      rm(onset_mig_med)
+    #set event date to 3 days before start of pregnancy
       mig_med[,prior_med:=NULL][,preg_med:=NULL][,preg_med_old:=NULL]
       saveRDS(mig_med[,names_mig_med, with=F],paste0(projectFolder, "/g_intermediate/migraine_algorithm_sensitivity/migraine_medicines/Migraine_medicines_S.rds"))
       rm(mig_med)
