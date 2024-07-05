@@ -88,6 +88,9 @@ files_mg<-mig_files[str_detect(mig_files,"MG.rds")]
 names_mg<-names_events[names_events %in% "MG"]
 
 mig_dt<-readRDS(paste0(projectFolder,"/g_intermediate/migraine_algorithm/", files_mg))
+names_mig_dt<-names(mig_dt)
+names_mig_dt<-names_mig_dt[!names_mig_dt %in% "keep"]
+names_mig_dt<-c(names_mig_dt, "event_date_old")
 #merge with the pregnancy d3
 mig_dt<-merge.data.table(pregnancy_d3_mig, mig_dt, by="person_id", all.x=T, allow.cartesian = T)
 mig_dt<-mig_dt[!is.na(event_date)]
@@ -149,11 +152,22 @@ if(mig_dt[,.N]>0){
     prior_diag[,prior_diag:=NULL]
     #Add the identifier pregnancy id to the main pregnancy D3
     pregnancy_d3_mig<-merge.data.table(pregnancy_d3_mig,prior_diag, by=c("person_id","pregnancy_id"), all.x=T)
-    rm(prior_diag)
+    
     #update the exclude variable
     pregnancy_d3_mig[preg_diag>0, onset_diag:=1]
     pregnancy_d3_mig[,preg_diag:=NULL]
     pregnancy_d3_mig[is.na(onset_diag), onset_diag:=0]
+
+    #Reclassify all records in mig_dt from during pregnancy to baseline pregnancy by replacing the event_date with pregnancy_start_date-1
+    setnames(mig_dt, "preg_diag", "preg_diag_old")
+    mig_dt<-merge.data.table(mig_dt,prior_diag, by=c("person_id","pregnancy_id"), all.x=T)
+    rm(prior_diag)
+    mig_dt[is.na(preg_diag),preg_diag:=0] #preg_diag are onset diagnoses in pregnancy
+    mig_dt[,event_date_old:=event_date]
+    mig_dt[preg_diag>=1, event_date:=pregnancy_start_date - 3] #set event date to 3 days before start of pregnancy
+    mig_dt[,prior_diag:=NULL][,preg_diag:=NULL][,preg_diag_old:=NULL]
+    saveRDS(mig_dt[,names_mig_dt, with=F],paste0(projectFolder, "/g_intermediate/migraine_algorithm_sensitivity/migraine_diagnoses/MG_S.rds"))
+    
   }
 }
 rm(mig_dt) 
@@ -190,11 +204,13 @@ if(length(mig_med_fl)>0){
   mig_med[,truncated_atc:=substr(atc_code,1,5)]
   mig_med<-mig_med[truncated_atc == "N02CC"]
   mig_med[,truncated_atc:=NULL]
-  
+  names_mig_med<-names(mig_med)
+  names_mig_med<-c(names_mig_med, "medicines_date_old")
   mig_med<-merge.data.table(pregnancy_d3_mig, mig_med, by="person_id", all.x=T, allow.cartesian = T)
   mig_med<-mig_med[!is.na(medicine_date)]
   mig_med[,pregnancy_start_date:=as.IDate(pregnancy_start_date)][,pregnancy_end_date:=as.IDate(pregnancy_end_date)][,birth_date:=as.IDate(birth_date)][,death_date:=as.IDate(death_date)][,op_start_date_mig:=as.IDate(op_start_date_mig)][,op_end_date_mig:=as.IDate(op_end_date_mig)][,medicine_date:=as.IDate(medicine_date)]
-  if(mig_med[,.N]>0){
+ 
+   if(mig_med[,.N]>0){
     #remove all records before lookback
     if(obs_period_med[med_fl,lookback]>0){
       mig_med[,lookback:=obs_period_med[med_fl,lookback]]
@@ -242,7 +258,7 @@ if(length(mig_med_fl)>0){
       setnames(prior_med,"N","prior_med")
       preg_med<-mig_med[preg_med==1,.N, by=c("person_id","pregnancy_id")]
       setnames(preg_med,"N","preg_med")
-      rm(mig_med)
+   
       prior_med<-merge.data.table(prior_med,preg_med, all=T, by=c("person_id","pregnancy_id"))
       rm(preg_med)
       prior_med[is.na(prior_med),prior_med:=0]
@@ -254,11 +270,22 @@ if(length(mig_med_fl)>0){
       prior_med[,prior_med:=NULL]
       #Add the identifier pregnancy id to the main pregnancy D3
       pregnancy_d3_mig<-merge.data.table(pregnancy_d3_mig,prior_med, by=c("person_id","pregnancy_id"), all.x=T)
-      rm(prior_med)
+      
       #update the exclude variable
       pregnancy_d3_mig[!is.na(preg_med), onset_med:=1]
       pregnancy_d3_mig[,preg_med:=NULL]
       pregnancy_d3_mig[is.na(onset_med),onset_med:=0]
+      
+      #Reclassify all records in mig_dt from during pregnancy to baseline pregnancy by replacing the event_date with pregnancy_start_date-1
+      setnames(mig_med, "preg_med", "preg_med_old")
+      mig_med<-merge.data.table(mig_med,prior_med, by=c("person_id","pregnancy_id"), all.x=T)
+      rm(prior_med)
+      mig_med[is.na(preg_med),preg_med:=0] #preg_diag are onset diagnoses in pregnancy
+      mig_med[,medicine_date_old:=medicine_date]
+      mig_med[preg_med>=1, medicine_date:=pregnancy_start_date - 3] #set event date to 3 days before start of pregnancy
+      mig_med[,prior_med:=NULL][,preg_med:=NULL][,preg_med_old:=NULL]
+      saveRDS(mig_med[,names_mig_med, with=F],paste0(projectFolder, "/g_intermediate/migraine_algorithm_sensitivity/migraine_medicines/Migraine_medicines_S.rds"))
+      rm(mig_med)
     }
   }
 }else{print("There are no migraine medicines records.")}
