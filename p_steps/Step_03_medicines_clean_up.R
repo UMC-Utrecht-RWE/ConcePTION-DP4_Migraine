@@ -208,15 +208,11 @@ if(sum(length(med_gdm_medicines),length(med_migraine_medicines))>0){
 #EFEMERIS MOM-CHILD LINKAGE PERSON ID PATCH                
       if (data_access_provider_name=='CHUT'){
 
-#just to be sure the paths will work
-setwd(projectFolder)
-source("99_path.R")
-setwd(projectFolder)
 #just to be sure we have dplyr
 library(dplyr)
 
 #get link file from pregnancy alg output folder
-load(paste0(thisdir,"//g_output//D3_mother_child_ids.RData"))
+load(paste0(projectFolder, "/p_steps/Pregnancy algorithm/g_output/D3_mother_child_ids.RData"))
 
 #remove unecessary columns
 link<-D3_mother_child_id[c("person_id","child_id")]
