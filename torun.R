@@ -76,6 +76,7 @@ setwd(projectFolder)
 
 load(paste0(projectFolder,"/g_intermediate/environment.RData"))
 source(paste0(pre_dir,"Step_04_algorithms.R"))
+source(paste0(pre_dir,"Step_05_algorithms_sensitivity.R"))
 render(paste0(pre_dir,"Report_4_gdm_pe_algorithms.Rmd"), output_dir = output_dir, output_file = paste0(format(Sys.Date(), "%Y"),format(Sys.Date(), "%m"),format(Sys.Date(), "%d"),"_",data_access_provider_name,"_", "Report_4_gdm_pe_algorithms.html")) 
 render(paste0(pre_dir,"Report_4_migraine_algorithms.Rmd"), output_dir = output_dir, output_file = paste0(format(Sys.Date(), "%Y"),format(Sys.Date(), "%m"),format(Sys.Date(), "%d"),"_",data_access_provider_name,"_", "Report_4_migraine_algorithms.html")) 
 render(paste0(pre_dir,"Report_4_migraine_algorithms_type.Rmd"), output_dir = output_dir, output_file = paste0(format(Sys.Date(), "%Y"),format(Sys.Date(), "%m"),format(Sys.Date(), "%d"),"_",data_access_provider_name,"_", "Report_4_migraine_algorithms_type.html")) 
