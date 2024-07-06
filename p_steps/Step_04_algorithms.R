@@ -71,6 +71,13 @@ if("sex_at_instance_creation" %in% names(pregnancy_d3_mig)){pregnancy_d3_mig[,se
 if("final_d3" %in% list.files(paste0(projectFolder,"/g_intermediate/migraine_algorithm/"))){
  unlink(paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3"), recursive = T)
 }
+
+dir.create(paste0(projectFolder,"/g_intermediate/migraine_algorithm_sensitivity/migraine_diagnoses/"))
+dir.create(paste0(projectFolder,"/g_intermediate/migraine_algorithm_sensitivity/migraine_medicines/"))
+dir.create(paste0(projectFolder,"/g_intermediate/migraine_algorithm_sensitivity/pregnancy_D3_sensitivity/"))
+
+saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorithm_sensitivity/pregnancy_D3_sensitivity/MIG_Pregnancy_D3_S.rds"))
+
 source(paste0(projectFolder,"/p_steps/Step_04_c_migraine_algorithms_prepare.R"))
 source(paste0(projectFolder,"/p_steps/Step_04_d_migraine_algorithms.R"))
 source(paste0(projectFolder,"/p_steps/Step_04_e_migraine_algorithms_type.R"))
