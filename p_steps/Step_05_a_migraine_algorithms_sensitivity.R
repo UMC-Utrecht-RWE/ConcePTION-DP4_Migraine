@@ -7,7 +7,7 @@ algorithm_template<-fread(paste0(projectFolder, "/p_steps/parameters/algorithms.
 
 
 #### MIG_DxRx_a:Prevalence of migraine at baseline when lookback==12 months(3 months) ####
-print("Create algorithm MIG_DxRx_a")
+print("Create algorithm MIG_DxRx_a_S")
 MIG_DxRx_a<-algorithm_template[NEW_STUDY_VARIABLES=="MIG_DxRx_a"]
 alt_col<-MIG_DxRx_a[TYPE=="OR",STUDY_VARIABLES]
 
@@ -16,7 +16,7 @@ if(length(alt_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("|" , lapply(.SD
 saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorithm_sensitivity/MIG_DxRx_a_D3.rds"))
 
 #export MIG_Dx_a
-MIG_DxRx_a_dt<-data.table(algorithm="MIG_DxRx_a", no_diagnosed_pregnancies=pregnancy_d3_mig[alternative==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id),.N])
+MIG_DxRx_a_dt<-data.table(algorithm="MIG_DxRx_a_S", no_diagnosed_pregnancies=pregnancy_d3_mig[alternative==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id),.N])
 MIG_DxRx_a_dt[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_DxRx_a_dt[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 #lower CI
@@ -33,7 +33,7 @@ names(records)<-c("maternal_age","no_diagnosed_pregnancies")
 total<-pregnancy_d3_mig[!duplicated(pregnancy_id), by="maternal_age",.N]
 names(total)<-c("maternal_age","no_pregnancies")
 records<-merge.data.table(records,total,by="maternal_age",all=T)
-MIG_DxRx_a_1<-data.table(algorithm="MIG_DxRx_a", records)
+MIG_DxRx_a_1<-data.table(algorithm="MIG_DxRx_a_S", records)
 MIG_DxRx_a_1[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_DxRx_a_1<-MIG_DxRx_a_1[order(maternal_age)]
 rm(records,total)
@@ -54,7 +54,7 @@ names(records)<-c("year","no_diagnosed_pregnancies")
 total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by="year",.N]
 names(total)<-c("year","no_pregnancies")
 records<-merge.data.table(records,total,by="year",all=T)
-MIG_DxRx_a_2<-data.table(algorithm="MIG_DxRx_a", records)
+MIG_DxRx_a_2<-data.table(algorithm="MIG_DxRx_a_S", records)
 MIG_DxRx_a_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_DxRx_a_2<-MIG_DxRx_a_2[order(year)]
 rm(records,total)
@@ -76,7 +76,7 @@ names(records)<-c("year_group","maternal_age", "no_diagnosed_pregnancies")
 total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by=c("year_group","maternal_age"),.N]
 names(total)<-c("year_group","maternal_age","no_pregnancies")
 records<-merge.data.table(records,total,by=c("year_group","maternal_age"), all=T)
-MIG_DxRx_a_3<-data.table(algorithm="MIG_DxRx_a", records)
+MIG_DxRx_a_3<-data.table(algorithm="MIG_DxRx_a_S", records)
 MIG_DxRx_a_3[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_DxRx_a_3<-MIG_DxRx_a_3[order(year_group,maternal_age)]
 rm(records,total)
@@ -94,7 +94,7 @@ rm(MIG_DxRx_a_3)
 
 
 #### MIG_DxRx_b:Prevalence of migraine at baseline when lookback==3 months ####
-print("Create algorithm MIG_DxRx_b")
+print("Create algorithm MIG_DxRx_b_S")
 MIG_DxRx_b<-algorithm_template[NEW_STUDY_VARIABLES=="MIG_DxRx_b"]
 alt_col<-MIG_DxRx_b[TYPE=="OR",STUDY_VARIABLES]
 
@@ -103,7 +103,7 @@ if(length(alt_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("|" , lapply(.SD
 saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorithm_sensitivity/MIG_DxRx_b_D3.rds"))
 
 #export MIG_Dx_a
-MIG_DxRx_b_dt<-data.table(algorithm="MIG_DxRx_b", no_diagnosed_pregnancies=pregnancy_d3_mig[alternative==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id),.N])
+MIG_DxRx_b_dt<-data.table(algorithm="MIG_DxRx_b_S", no_diagnosed_pregnancies=pregnancy_d3_mig[alternative==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id),.N])
 MIG_DxRx_b_dt[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_DxRx_b_dt[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 #lower CI
@@ -120,7 +120,7 @@ names(records)<-c("maternal_age","no_diagnosed_pregnancies")
 total<-pregnancy_d3_mig[!duplicated(pregnancy_id), by="maternal_age",.N]
 names(total)<-c("maternal_age","no_pregnancies")
 records<-merge.data.table(records,total,by="maternal_age",all=T)
-MIG_DxRx_b_1<-data.table(algorithm="MIG_DxRx_b", records)
+MIG_DxRx_b_1<-data.table(algorithm="MIG_DxRx_b_S", records)
 MIG_DxRx_b_1[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_DxRx_b_1<-MIG_DxRx_b_1[order(maternal_age)]
 rm(records,total)
@@ -141,7 +141,7 @@ names(records)<-c("year","no_diagnosed_pregnancies")
 total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by="year",.N]
 names(total)<-c("year","no_pregnancies")
 records<-merge.data.table(records,total,by="year",all=T)
-MIG_DxRx_b_2<-data.table(algorithm="MIG_DxRx_b", records)
+MIG_DxRx_b_2<-data.table(algorithm="MIG_DxRx_b_S", records)
 MIG_DxRx_b_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_DxRx_b_2<-MIG_DxRx_b_2[order(year)]
 rm(records,total)
@@ -163,7 +163,7 @@ names(records)<-c("year_group","maternal_age", "no_diagnosed_pregnancies")
 total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by=c("year_group","maternal_age"),.N]
 names(total)<-c("year_group","maternal_age","no_pregnancies")
 records<-merge.data.table(records,total,by=c("year_group","maternal_age"), all=T)
-MIG_DxRx_b_3<-data.table(algorithm="MIG_DxRx_b", records)
+MIG_DxRx_b_3<-data.table(algorithm="MIG_DxRx_b_S", records)
 MIG_DxRx_b_3[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_DxRx_b_3<-MIG_DxRx_b_3[order(year_group,maternal_age)]
 rm(records,total)
@@ -180,7 +180,7 @@ fwrite(MIG_DxRx_b_3,paste0(projectFolder,"/g_output/Migraine algorithm/Step_05_M
 rm(MIG_DxRx_b_3)
 
 #### MIG_DxRx_during:Prevalence of migraine at baseline when lookback==12 months(3 months) ####
-print("Create algorithm MIG_DxRx_during")
+print("Create algorithm MIG_DxRx_during_S")
 MIG_DxRx_during<-algorithm_template[NEW_STUDY_VARIABLES=="MIG_DxRx_during"]
 alt_col<-MIG_DxRx_during[TYPE=="OR",STUDY_VARIABLES]
 
@@ -189,7 +189,7 @@ if(length(alt_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("|" , lapply(.SD
 saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorithm_sensitivity/MIG_DxRx_during_D3.rds"))
 
 #export MIG_Dx_a
-MIG_DxRx_during_dt<-data.table(algorithm="MIG_DxRx_during", no_diagnosed_pregnancies=pregnancy_d3_mig[alternative==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id),.N])
+MIG_DxRx_during_dt<-data.table(algorithm="MIG_DxRx_during_S", no_diagnosed_pregnancies=pregnancy_d3_mig[alternative==1 & !duplicated(pregnancy_id),.N], no_pregnancies=pregnancy_d3_mig[!duplicated(pregnancy_id),.N])
 MIG_DxRx_during_dt[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,3)]
 MIG_DxRx_during_dt[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
 #lower CI
@@ -206,7 +206,7 @@ names(records)<-c("maternal_age","no_diagnosed_pregnancies")
 total<-pregnancy_d3_mig[!duplicated(pregnancy_id), by="maternal_age",.N]
 names(total)<-c("maternal_age","no_pregnancies")
 records<-merge.data.table(records,total,by="maternal_age",all=T)
-MIG_DxRx_during_1<-data.table(algorithm="MIG_DxRx_during", records)
+MIG_DxRx_during_1<-data.table(algorithm="MIG_DxRx_during_S", records)
 MIG_DxRx_during_1[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_DxRx_during_1<-MIG_DxRx_during_1[order(maternal_age)]
 rm(records,total)
@@ -227,7 +227,7 @@ names(records)<-c("year","no_diagnosed_pregnancies")
 total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by="year",.N]
 names(total)<-c("year","no_pregnancies")
 records<-merge.data.table(records,total,by="year",all=T)
-MIG_DxRx_during_2<-data.table(algorithm="MIG_DxRx_during", records)
+MIG_DxRx_during_2<-data.table(algorithm="MIG_DxRx_during_S", records)
 MIG_DxRx_during_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_DxRx_during_2<-MIG_DxRx_during_2[order(year)]
 rm(records,total)
@@ -249,7 +249,7 @@ names(records)<-c("year_group","maternal_age", "no_diagnosed_pregnancies")
 total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by=c("year_group","maternal_age"),.N]
 names(total)<-c("year_group","maternal_age","no_pregnancies")
 records<-merge.data.table(records,total,by=c("year_group","maternal_age"), all=T)
-MIG_DxRx_during_3<-data.table(algorithm="MIG_DxRx_during", records)
+MIG_DxRx_during_3<-data.table(algorithm="MIG_DxRx_during_S", records)
 MIG_DxRx_during_3[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_DxRx_during_3<-MIG_DxRx_during_3[order(year_group,maternal_age)]
 rm(records,total)
