@@ -314,7 +314,8 @@ for(med_fl in 1:length(obs_period_med[,.N])){
 rm(mig_med)
 #### Save preganncy cohort ####
 saveRDS(pregnancy_d3_mig, paste0(projectFolder,"/g_intermediate/migraine_algorithm_sensitivity/pregnancy_D3_sensitivity/final_d3/MIG_Pregnancy_D3_S.rds"))
-
+#### Apply the algorithm ####
+source(paste0(projectFolder,"/p_steps/Step_05_a_migraine_algorithms_sensitivity.R"))
 date_running_end_05<-Sys.Date()
 end_time_05<-Sys.time()
 
