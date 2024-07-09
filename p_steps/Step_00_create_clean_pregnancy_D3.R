@@ -330,6 +330,27 @@ summary[is.na(Safety),Safety:=0]
 fwrite(summary,paste0(output_dir, "Pregnancy algorithm/Step_00_included_records_pregnancy_D3.csv"), row.names = F)
 rm(summary)
 
+#EMA Update Maternal age 9/7/2024
+# categories (15-24, 25-34, 35-49)
+#  Update calendar year
+# categories (2009-2012, 2013- 2016, 2017-2020)
+#AND 6 MONTHS FOLLOW UP DATE (180 days? )
+
+pregnancy_D3$age_category<-NA
+
+pregnancy_D3$age_category[pregnancy_D3$age_at_start_of_pregnancy>=15 & pregnancy_D3$age_at_start_of_pregnancy<25]<-1 
+pregnancy_D3$age_category[pregnancy_D3$age_at_start_of_pregnancy>=25 & pregnancy_D3$age_at_start_of_pregnancy<35]<-2
+pregnancy_D3$age_category[pregnancy_D3$age_at_start_of_pregnancy>=35 & pregnancy_D3$age_at_start_of_pregnancy<50]<-3 
+
+pregnancy_D3$year<- as.numeric(format(pregnancy_D3$pregnancy_start_date,'%Y'))
+pregnancy_D3$year_category<-NA
+
+pregnancy_D3$year_category[pregnancy_D3$year>=2009 & pregnancy_D3$year<2013]<-1 
+pregnancy_D3$year_category[pregnancy_D3$year>=2013 & pregnancy_D3$year<2017]<-2
+pregnancy_D3$year_category[pregnancy_D3$year>=2017 & pregnancy_D3$year<2021]<-3 
+
+pregnancy_D3$follow_up_180_days<- (pregnancy_D3$pregnancy_end_date+180)
+
 #save pregnancy population to g_intermediate
 saveRDS(pregnancy_D3,paste0(g_intermediate,"pregnancy_algorithm/pregnancy_D3.rds"))
 rm(pregnancy_D3)
