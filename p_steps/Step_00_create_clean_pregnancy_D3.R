@@ -330,6 +330,11 @@ summary[is.na(Safety),Safety:=0]
 fwrite(summary,paste0(output_dir, "Pregnancy algorithm/Step_00_included_records_pregnancy_D3.csv"), row.names = F)
 rm(summary)
 
+#EMA Update 9/7/2024
+# 6 MONTHS FOLLOW UP DATE (180 days? )
+
+pregnancy_D3$follow_up_180_days<- (pregnancy_D3$pregnancy_end_date+180)
+
 #save pregnancy population to g_intermediate
 saveRDS(pregnancy_D3,paste0(g_intermediate,"pregnancy_algorithm/pregnancy_D3.rds"))
 rm(pregnancy_D3)
