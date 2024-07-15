@@ -330,10 +330,56 @@ summary[is.na(Safety),Safety:=0]
 fwrite(summary,paste0(output_dir, "Pregnancy algorithm/Step_00_included_records_pregnancy_D3.csv"), row.names = F)
 rm(summary)
 
-#EMA Update 9/7/2024
+#EMA Update 9/7/2024 and 15/7/2024 step 1 to follow Hedvig requests
+
 # 6 MONTHS FOLLOW UP DATE (180 days? )
 
 pregnancy_D3$follow_up_180_days<- (pregnancy_D3$pregnancy_end_date+180)
+
+# age categories (15-24, 25-34, 35-49)
+# Update calendar year
+#categories (2009-2012, 2013-2016, 2017-2020)
+
+pregnancy_D3$age_category<-NA
+
+pregnancy_D3$age_category[pregnancy_D3$age_at_start_of_pregnancy>=15 & pregnancy_D3$age_at_start_of_pregnancy<25]<-1
+pregnancy_D3$age_category[pregnancy_D3$age_at_start_of_pregnancy>=25 & pregnancy_D3$age_at_start_of_pregnancy<35]<-2
+pregnancy_D3$age_category[pregnancy_D3$age_at_start_of_pregnancy>=35 & pregnancy_D3$age_at_start_of_pregnancy<50]<-3
+
+pregnancy_D3$year<- as.numeric(format(pregnancy_D3$pregnancy_start_date,'%Y'))
+pregnancy_D3$year_category<-NA
+
+pregnancy_D3$year_category[pregnancy_D3$year>=2009 & pregnancy_D3$year<2013]<-1
+pregnancy_D3$year_category[pregnancy_D3$year>=2013 & pregnancy_D3$year<2017]<-2
+pregnancy_D3$year_category[pregnancy_D3$year>=2017 & pregnancy_D3$year<2021]<-3
+
+#ADD TRIMESTERS
+
+days_trim<-97
+
+pregnancy_D3$trim_1_start<- pregnancy_D3$pregnancy_start_date
+pregnancy_D3$trim_1_end<- pregnancy_D3$pregnancy_start_date+97
+
+pregnancy_D3$trim_2_start<-(pregnancy_D3$trim_1_end)+1
+pregnancy_D3$trim_2_end<- pregnancy_D3$trim_2_start+97
+
+pregnancy_D3$trim_3_start<-pregnancy_D3$trim_2_end+1
+pregnancy_D3$trim_3_end<- pregnancy_D3$pregnancy_end_date
+
+pregnancy_D3$trim_1_end[pregnancy_D3$trim_1_end>=pregnancy_D3$pregnancy_end_date]<-pregnancy_D3$pregnancy_end_date[pregnancy_D3$trim_1_end>=pregnancy_D3$pregnancy_end_date]
+
+pregnancy_D3$trim_2_start[pregnancy_D3$trim_1_end==pregnancy_D3$pregnancy_end_date]<-0
+pregnancy_D3$trim_2_end[pregnancy_D3$trim_2_start==0]<-0
+pregnancy_D3$trim_2_end[pregnancy_D3$trim_2_end>=pregnancy_D3$pregnancy_end_date]<-pregnancy_D3$pregnancy_end_date[pregnancy_D3$trim_2_end>=pregnancy_D3$pregnancy_end_date]
+
+pregnancy_D3$trim_3_start[pregnancy_D3$trim_2_end==pregnancy_D3$pregnancy_end_date]<-0
+pregnancy_D3$trim_3_start[pregnancy_D3$trim_2_end==0]<-0
+pregnancy_D3$trim_3_end[pregnancy_D3$trim_3_start==0]<-0
+
+pregnancy_D3$trim_2_start[pregnancy_D3$trim_2_start==0]<-NA
+pregnancy_D3$trim_2_end[pregnancy_D3$trim_2_end==0]<-NA
+pregnancy_D3$trim_3_start[pregnancy_D3$trim_3_start==0]<-NA
+pregnancy_D3$trim_3_end[pregnancy_D3$trim_3_end==0]<-NA
 
 #save pregnancy population to g_intermediate
 saveRDS(pregnancy_D3,paste0(g_intermediate,"pregnancy_algorithm/pregnancy_D3.rds"))
