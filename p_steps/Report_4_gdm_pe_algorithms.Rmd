@@ -381,7 +381,7 @@ if("alg" %in% ls()){rm(alg)}
 <br>
 
 
-### 2.3 GDM Algorithm by year of start pregnancy
+### 2.3 GDM Algorithm by year group of start pregnancy
 
 ```{r , echo=F}
 if("Step_04_GDM_1_year.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
@@ -425,7 +425,7 @@ if(!is.null(alg)){
 
 ```{r,echo=F}
   alg[,prevalence_100_pregnancies:=as.numeric(prevalence_100_pregnancies)]
-  ggplotly(ggplot(alg, aes(x=year, y=prevalence_100_pregnancies, group=algorithm))+
+  ggplotly(ggplot(alg, aes(x=year_group, y=prevalence_100_pregnancies, group=algorithm))+
     geom_line(aes(color=algorithm))+
     geom_point(aes(color=algorithm))+
 theme(axis.text.x = element_text(size = 8,angle = 45),
@@ -433,7 +433,7 @@ theme(axis.text.x = element_text(size = 8,angle = 45),
       axis.title.y = element_text(colour = "#76b82a"),
       plot.title = element_text(colour = "#76b82a"))+
   ggtitle("GDM prevalence rates")+
-  xlab("Year") +
+  xlab("Year Group") +
   ylab("Prevalence_per_100_pregnancies")+
   theme_classic()
   )
@@ -697,7 +697,7 @@ if("alg" %in% ls()){rm(alg)}
 <br>
 
   
-### 3.3 PE Algorithm by year of start pregnancy
+### 3.3 PE Algorithm by year group of start pregnancy
   
 ```{r , echo=F}
 if("Step_04_PE_1_year.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM algorithm/"))){
@@ -736,7 +736,7 @@ if(!is.null(alg)){
 
 ```{r,echo=F}
 alg[,prevalence_100_pregnancies:=as.numeric(prevalence_100_pregnancies)]
-ggplotly(ggplot(alg, aes(x=year, y=prevalence_100_pregnancies, group=algorithm))+
+ggplotly(ggplot(alg, aes(x=year_group, y=prevalence_100_pregnancies, group=algorithm))+
            geom_line(aes(color=algorithm))+
            geom_point(aes(color=algorithm))+
            theme(axis.text.x = element_text(size = 8,angle = 45),
@@ -744,7 +744,7 @@ ggplotly(ggplot(alg, aes(x=year, y=prevalence_100_pregnancies, group=algorithm))
                  axis.title.y = element_text(colour = "#76b82a"),
                  plot.title = element_text(colour = "#76b82a"))+
            ggtitle("PE prevalence rates")+
-           xlab("Year") +
+           xlab("Year Group") +
            ylab("Prevalence_per_100_pregnancies")+
            theme_classic()
 )
