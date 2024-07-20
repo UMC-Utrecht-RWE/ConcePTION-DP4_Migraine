@@ -30,3 +30,6 @@ g_intermediate/tmp/
 g_intermediate/environment.RData
 g_intermediate/pregnancy_d3/obs_period_hint.rds
 g_intermediate/pregnancy_d3/MIGcheckbox_Pregnancy_D3.rds
+g_intermediate/migraine_algorithm_sensitivity/pregnancy_D3_sensitivity/MIG_Pregnancy_D3_S.rds
+g_intermediate/migraine_algorithm_sensitivity/migraine_medicines/Migraine_medicines_S.rds
+g_intermediate/migraine_algorithm_sensitivity/migraine_diagnoses/MG_S.rds
