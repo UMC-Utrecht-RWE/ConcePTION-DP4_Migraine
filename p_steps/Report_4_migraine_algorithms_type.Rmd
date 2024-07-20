@@ -227,7 +227,7 @@ if(!is.null(alg1)){
       ggtitle("Migraine type baseline prevalence rates")+
 xlab("Algorithm") +
   ylab("Counts")+
-  theme(axis.text.x = element_text(size = 8,angle = 45),
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
         axis.title.x = element_text(colour = "#76b82a"),
         axis.title.y = element_text(colour = "#76b82a"),
         plot.title = element_text(colour = "#76b82a"))+
@@ -535,7 +535,7 @@ if(!is.null(alg)){
       ggtitle("Migraine during pregnancy prevalence rates")+
 xlab("Algorithm") +
   ylab("Counts")+
-  theme(axis.text.x = element_text(angle = 90, hjust = 1),
+  theme( axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
         axis.title.x = element_text(colour = "#76b82a"),
         axis.title.y = element_text(colour = "#76b82a"),
         plot.title = element_text(colour = "#76b82a"))+
