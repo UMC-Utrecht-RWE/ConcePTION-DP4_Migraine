@@ -63,15 +63,15 @@ MIG_T1_a_1[lower_95_CI<0,lower_95_CI:=0]
 fwrite(MIG_T1_a_1,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_T1_a_age.csv"),row.names = F)
 rm(MIG_T1_a_1)
 
-#by year
-records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by="year", .N]
-names(records)<-c("year","no_diagnosed_pregnancies")
-total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by="year",.N]
-names(total)<-c("year","no_pregnancies")
-records<-merge.data.table(records,total,by="year",all=T)
+#by year to year_group
+records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by="year_group", .N]
+names(records)<-c("year_group","no_diagnosed_pregnancies")
+total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by="year_group",.N]
+names(total)<-c("year_group","no_pregnancies")
+records<-merge.data.table(records,total,by="year_group",all=T)
 MIG_T1_a_2<-data.table(algorithm="MIG_T1_a", records)
 MIG_T1_a_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
-MIG_T1_a_2<-MIG_T1_a_2[order(year)]
+MIG_T1_a_2<-MIG_T1_a_2[order(year_group)]
 rm(records,total)
 MIG_T1_a_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
 MIG_T1_a_2[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
@@ -84,11 +84,11 @@ fwrite(MIG_T1_a_2,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG
 rm(MIG_T1_a_2)
 
 #number of pregnnacies with baseline migraine
-records_coh<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_baseline==1,by="year",.N]
-names(records_coh)<-c("year","no_diagnosed_pregnancies")
-total_coh<-pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_baseline==1,by="year",.N]
-names(total_coh)<-c("year","no_pregnancies")
-records_coh<-merge.data.table(records_coh,total_coh,by="year",all=T)
+records_coh<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_baseline==1,by="year_group",.N]
+names(records_coh)<-c("year_group","no_diagnosed_pregnancies")
+total_coh<-pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_baseline==1,by="year_group",.N]
+names(total_coh)<-c("year_group","no_pregnancies")
+records_coh<-merge.data.table(records_coh,total_coh,by="year_group",all=T)
 MIG_T1_a_coh_2<-data.table(algorithm="MIG_T1_a", records_coh)
 MIG_T1_a_coh_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_T1_a_coh_2[,percentage:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
@@ -166,15 +166,15 @@ fwrite(MIG_T1_b_1,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG
 rm(MIG_T1_b_1)
 
 
-#by year
-records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by="year", .N]
-names(records)<-c("year","no_diagnosed_pregnancies")
-total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by="year",.N]
-names(total)<-c("year","no_pregnancies")
-records<-merge.data.table(records,total,by="year",all=T)
+#by year to year_group
+records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by="year_group", .N]
+names(records)<-c("year_group","no_diagnosed_pregnancies")
+total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by="year_group",.N]
+names(total)<-c("year_group","no_pregnancies")
+records<-merge.data.table(records,total,by="year_group",all=T)
 MIG_T1_b_2<-data.table(algorithm="MIG_T1_b", records)
 MIG_T1_b_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
-MIG_T1_b_2<-MIG_T1_b_2[order(year)]
+MIG_T1_b_2<-MIG_T1_b_2[order(year_group)]
 rm(records,total)
 MIG_T1_b_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
 MIG_T1_b_2[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
@@ -187,11 +187,11 @@ fwrite(MIG_T1_b_2,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG
 rm(MIG_T1_b_2)
 
 #number of pregnnacies with baseline migraine
-records_coh<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_baseline_2==1,by="year",.N]
-names(records_coh)<-c("year","no_diagnosed_pregnancies")
-total_coh<-pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_baseline_2==1,by="year",.N]
-names(total_coh)<-c("year","no_pregnancies")
-records_coh<-merge.data.table(records_coh,total_coh,by="year",all=T)
+records_coh<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_baseline_2==1,by="year_group",.N]
+names(records_coh)<-c("year_group","no_diagnosed_pregnancies")
+total_coh<-pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_baseline_2==1,by="year_group",.N]
+names(total_coh)<-c("year_group","no_pregnancies")
+records_coh<-merge.data.table(records_coh,total_coh,by="year_group",all=T)
 MIG_T1_b_coh_2<-data.table(algorithm="MIG_T1_b", records_coh)
 MIG_T1_b_coh_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_T1_b_coh_2[,percentage:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
@@ -267,15 +267,15 @@ MIG_T1_during_1[lower_95_CI<0,lower_95_CI:=0]
 fwrite(MIG_T1_during_1,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_T1_during_age.csv"),row.names = F)
 rm(MIG_T1_during_1)
 
-#by year
-records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by="year", .N]
-names(records)<-c("year","no_diagnosed_pregnancies")
-total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by="year",.N]
-names(total)<-c("year","no_pregnancies")
-records<-merge.data.table(records,total,by="year",all=T)
+#by year to year_group
+records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by="year_group", .N]
+names(records)<-c("year_group","no_diagnosed_pregnancies")
+total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by="year_group",.N]
+names(total)<-c("year_group","no_pregnancies")
+records<-merge.data.table(records,total,by="year_group",all=T)
 MIG_T1_during_2<-data.table(algorithm="MIG_T1_during", records)
 MIG_T1_during_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
-MIG_T1_during_2<-MIG_T1_during_2[order(year)]
+MIG_T1_during_2<-MIG_T1_during_2[order(year_group)]
 rm(records,total)
 MIG_T1_during_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
 MIG_T1_during_2[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
@@ -288,11 +288,11 @@ fwrite(MIG_T1_during_2,paste0(projectFolder,"/g_output/Migraine algorithm/Step_0
 rm(MIG_T1_during_2)
 
 #number of pregnnacies with migraine
-records_coh<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_during==1,by="year",.N]
-names(records_coh)<-c("year","no_diagnosed_pregnancies")
-total_coh<-pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_during==1,by="year",.N]
-names(total_coh)<-c("year","no_pregnancies")
-records_coh<-merge.data.table(records_coh,total_coh,by="year",all=T)
+records_coh<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_during==1,by="year_group",.N]
+names(records_coh)<-c("year_group","no_diagnosed_pregnancies")
+total_coh<-pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_during==1,by="year_group",.N]
+names(total_coh)<-c("year_group","no_pregnancies")
+records_coh<-merge.data.table(records_coh,total_coh,by="year_group",all=T)
 MIG_T1_during_coh_2<-data.table(algorithm="MIG_T1_during", records_coh)
 MIG_T1_during_coh_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_T1_during_coh_2[,percentage:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
@@ -391,15 +391,15 @@ MIG_T2_a_1[lower_95_CI<0,lower_95_CI:=0]
 fwrite(MIG_T2_a_1,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_T2_a_age.csv"),row.names = F)
 rm(MIG_T2_a_1)
 
-#by year
-records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by="year", .N]
-names(records)<-c("year","no_diagnosed_pregnancies")
-total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by="year",.N]
-names(total)<-c("year","no_pregnancies")
-records<-merge.data.table(records,total,by="year",all=T)
+#by year to year_group
+records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by="year_group", .N]
+names(records)<-c("year_group","no_diagnosed_pregnancies")
+total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by="year_group",.N]
+names(total)<-c("year_group","no_pregnancies")
+records<-merge.data.table(records,total,by="year_group",all=T)
 MIG_T2_a_2<-data.table(algorithm="MIG_T2_a", records)
 MIG_T2_a_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
-MIG_T2_a_2<-MIG_T2_a_2[order(year)]
+MIG_T2_a_2<-MIG_T2_a_2[order(year_group)]
 rm(records,total)
 MIG_T2_a_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
 MIG_T2_a_2[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
@@ -412,11 +412,11 @@ fwrite(MIG_T2_a_2,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG
 rm(MIG_T2_a_2)
 
 #number of pregnnacies with baseline migraine
-records_coh<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_baseline==1,by="year",.N]
-names(records_coh)<-c("year","no_diagnosed_pregnancies")
-total_coh<-pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_baseline==1,by="year",.N]
-names(total_coh)<-c("year","no_pregnancies")
-records_coh<-merge.data.table(records_coh,total_coh,by="year",all=T)
+records_coh<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_baseline==1,by="year_group",.N]
+names(records_coh)<-c("year_group","no_diagnosed_pregnancies")
+total_coh<-pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_baseline==1,by="year_group",.N]
+names(total_coh)<-c("year_group","no_pregnancies")
+records_coh<-merge.data.table(records_coh,total_coh,by="year_group",all=T)
 MIG_T2_a_coh_2<-data.table(algorithm="MIG_T2_a", records_coh)
 MIG_T2_a_coh_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_T2_a_coh_2[,percentage:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
@@ -494,15 +494,15 @@ fwrite(MIG_T2_b_1,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG
 rm(MIG_T2_b_1)
 
 
-#by year
-records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by="year", .N]
-names(records)<-c("year","no_diagnosed_pregnancies")
-total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by="year",.N]
-names(total)<-c("year","no_pregnancies")
-records<-merge.data.table(records,total,by="year",all=T)
+#by year to year_group
+records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by="year_group", .N]
+names(records)<-c("year_group","no_diagnosed_pregnancies")
+total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by="year_group",.N]
+names(total)<-c("year_group","no_pregnancies")
+records<-merge.data.table(records,total,by="year_group",all=T)
 MIG_T2_b_2<-data.table(algorithm="MIG_T2_b", records)
 MIG_T2_b_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
-MIG_T2_b_2<-MIG_T2_b_2[order(year)]
+MIG_T2_b_2<-MIG_T2_b_2[order(year_group)]
 rm(records,total)
 MIG_T2_b_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
 MIG_T2_b_2[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
@@ -515,11 +515,11 @@ fwrite(MIG_T2_b_2,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG
 rm(MIG_T2_b_2)
 
 #number of pregnnacies with baseline migraine
-records_coh<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_baseline_2==1,by="year",.N]
-names(records_coh)<-c("year","no_diagnosed_pregnancies")
-total_coh<-pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_baseline_2==1,by="year",.N]
-names(total_coh)<-c("year","no_pregnancies")
-records_coh<-merge.data.table(records_coh,total_coh,by="year",all=T)
+records_coh<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_baseline_2==1,by="year_group",.N]
+names(records_coh)<-c("year_group","no_diagnosed_pregnancies")
+total_coh<-pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_baseline_2==1,by="year_group",.N]
+names(total_coh)<-c("year_group","no_pregnancies")
+records_coh<-merge.data.table(records_coh,total_coh,by="year_group",all=T)
 MIG_T2_b_coh_2<-data.table(algorithm="MIG_T2_b", records_coh)
 MIG_T2_b_coh_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_T2_b_coh_2[,percentage:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
@@ -594,15 +594,15 @@ MIG_T2_during_1[lower_95_CI<0,lower_95_CI:=0]
 fwrite(MIG_T2_during_1,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_T2_during_age.csv"),row.names = F)
 rm(MIG_T2_during_1)
 
-#by year
-records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by="year", .N]
-names(records)<-c("year","no_diagnosed_pregnancies")
-total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by="year",.N]
-names(total)<-c("year","no_pregnancies")
-records<-merge.data.table(records,total,by="year",all=T)
+#by year to year_group
+records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by="year_group", .N]
+names(records)<-c("year_group","no_diagnosed_pregnancies")
+total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by="year_group",.N]
+names(total)<-c("year_group","no_pregnancies")
+records<-merge.data.table(records,total,by="year_group",all=T)
 MIG_T2_during_2<-data.table(algorithm="MIG_T2_during", records)
 MIG_T2_during_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
-MIG_T2_during_2<-MIG_T2_during_2[order(year)]
+MIG_T2_during_2<-MIG_T2_during_2[order(year_group)]
 rm(records,total)
 MIG_T2_during_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
 MIG_T2_during_2[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
@@ -615,11 +615,11 @@ fwrite(MIG_T2_during_2,paste0(projectFolder,"/g_output/Migraine algorithm/Step_0
 rm(MIG_T2_during_2)
 
 #number of pregnnacies with migraine
-records_coh<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_during==1,by="year",.N]
-names(records_coh)<-c("year","no_diagnosed_pregnancies")
-total_coh<-pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_during==1,by="year",.N]
-names(total_coh)<-c("year","no_pregnancies")
-records_coh<-merge.data.table(records_coh,total_coh,by="year",all=T)
+records_coh<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_during==1,by="year_group",.N]
+names(records_coh)<-c("year_group","no_diagnosed_pregnancies")
+total_coh<-pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_during==1,by="year_group",.N]
+names(total_coh)<-c("year_group","no_pregnancies")
+records_coh<-merge.data.table(records_coh,total_coh,by="year_group",all=T)
 MIG_T2_during_coh_2<-data.table(algorithm="MIG_T2_during", records_coh)
 MIG_T2_during_coh_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_T2_during_coh_2[,percentage:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
@@ -717,15 +717,15 @@ MIG_T3_a_1[lower_95_CI<0,lower_95_CI:=0]
 fwrite(MIG_T3_a_1,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_T3_a_age.csv"),row.names = F)
 rm(MIG_T3_a_1)
 
-#by year
-records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by="year", .N]
-names(records)<-c("year","no_diagnosed_pregnancies")
-total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by="year",.N]
-names(total)<-c("year","no_pregnancies")
-records<-merge.data.table(records,total,by="year",all=T)
+#by year to year_group
+records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by="year_group", .N]
+names(records)<-c("year_group","no_diagnosed_pregnancies")
+total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by="year_group",.N]
+names(total)<-c("year_group","no_pregnancies")
+records<-merge.data.table(records,total,by="year_group",all=T)
 MIG_T3_a_2<-data.table(algorithm="MIG_T3_a", records)
 MIG_T3_a_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
-MIG_T3_a_2<-MIG_T3_a_2[order(year)]
+MIG_T3_a_2<-MIG_T3_a_2[order(year_group)]
 rm(records,total)
 MIG_T3_a_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
 MIG_T3_a_2[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
@@ -738,11 +738,11 @@ fwrite(MIG_T3_a_2,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG
 rm(MIG_T3_a_2)
 
 #number of pregnnacies with baseline migraine
-records_coh<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_baseline==1,by="year",.N]
-names(records_coh)<-c("year","no_diagnosed_pregnancies")
-total_coh<-pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_baseline==1,by="year",.N]
-names(total_coh)<-c("year","no_pregnancies")
-records_coh<-merge.data.table(records_coh,total_coh,by="year",all=T)
+records_coh<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_baseline==1,by="year_group",.N]
+names(records_coh)<-c("year_group","no_diagnosed_pregnancies")
+total_coh<-pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_baseline==1,by="year_group",.N]
+names(total_coh)<-c("year_group","no_pregnancies")
+records_coh<-merge.data.table(records_coh,total_coh,by="year_group",all=T)
 MIG_T3_a_coh_2<-data.table(algorithm="MIG_T3_a", records_coh)
 MIG_T3_a_coh_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_T3_a_coh_2[,percentage:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
@@ -820,14 +820,14 @@ rm(MIG_T3_b_1)
 
 
 #by year
-records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by="year", .N]
-names(records)<-c("year","no_diagnosed_pregnancies")
-total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by="year",.N]
-names(total)<-c("year","no_pregnancies")
-records<-merge.data.table(records,total,by="year",all=T)
+records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by="year_group", .N]
+names(records)<-c("year_group","no_diagnosed_pregnancies")
+total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by="year_group",.N]
+names(total)<-c("year_group","no_pregnancies")
+records<-merge.data.table(records,total,by="year_group",all=T)
 MIG_T3_b_2<-data.table(algorithm="MIG_T3_b", records)
 MIG_T3_b_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
-MIG_T3_b_2<-MIG_T3_b_2[order(year)]
+MIG_T3_b_2<-MIG_T3_b_2[order(year_group)]
 rm(records,total)
 MIG_T3_b_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
 MIG_T3_b_2[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
@@ -840,11 +840,11 @@ fwrite(MIG_T3_b_2,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG
 rm(MIG_T3_b_2)
 
 #number of pregnnacies with baseline migraine
-records_coh<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_baseline_2==1,by="year",.N]
-names(records_coh)<-c("year","no_diagnosed_pregnancies")
-total_coh<-pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_baseline_2==1,by="year",.N]
-names(total_coh)<-c("year","no_pregnancies")
-records_coh<-merge.data.table(records_coh,total_coh,by="year",all=T)
+records_coh<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_baseline_2==1,by="year_group",.N]
+names(records_coh)<-c("year_group","no_diagnosed_pregnancies")
+total_coh<-pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_baseline_2==1,by="year_group",.N]
+names(total_coh)<-c("year_group","no_pregnancies")
+records_coh<-merge.data.table(records_coh,total_coh,by="year_group",all=T)
 MIG_T3_b_coh_2<-data.table(algorithm="MIG_T3_b", records_coh)
 MIG_T3_b_coh_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_T3_b_coh_2[,percentage:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
@@ -920,14 +920,14 @@ fwrite(MIG_T3_during_1,paste0(projectFolder,"/g_output/Migraine algorithm/Step_0
 rm(MIG_T3_during_1)
 
 #by year
-records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by="year", .N]
-names(records)<-c("year","no_diagnosed_pregnancies")
-total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by="year",.N]
-names(total)<-c("year","no_pregnancies")
-records<-merge.data.table(records,total,by="year",all=T)
+records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by="year_group", .N]
+names(records)<-c("year_group","no_diagnosed_pregnancies")
+total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by="year_group",.N]
+names(total)<-c("year_group","no_pregnancies")
+records<-merge.data.table(records,total,by="year_group",all=T)
 MIG_T3_during_2<-data.table(algorithm="MIG_T3_during", records)
 MIG_T3_during_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
-MIG_T3_during_2<-MIG_T3_during_2[order(year)]
+MIG_T3_during_2<-MIG_T3_during_2[order(year_group)]
 rm(records,total)
 MIG_T3_during_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
 MIG_T3_during_2[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
@@ -940,11 +940,11 @@ fwrite(MIG_T3_during_2,paste0(projectFolder,"/g_output/Migraine algorithm/Step_0
 rm(MIG_T3_during_2)
 
 #number of pregnnacies with migraine
-records_coh<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_during==1,by="year",.N]
-names(records_coh)<-c("year","no_diagnosed_pregnancies")
-total_coh<-pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_during==1,by="year",.N]
-names(total_coh)<-c("year","no_pregnancies")
-records_coh<-merge.data.table(records_coh,total_coh,by="year",all=T)
+records_coh<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_during==1,by="year_group",.N]
+names(records_coh)<-c("year_group","no_diagnosed_pregnancies")
+total_coh<-pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_during==1,by="year_group",.N]
+names(total_coh)<-c("year_group","no_pregnancies")
+records_coh<-merge.data.table(records_coh,total_coh,by="year_group",all=T)
 MIG_T3_during_coh_2<-data.table(algorithm="MIG_T3_during", records_coh)
 MIG_T3_during_coh_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_T3_during_coh_2[,percentage:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
@@ -1041,14 +1041,14 @@ fwrite(MIG_T4_a_1,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG
 rm(MIG_T4_a_1)
 
 #by year
-records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by="year", .N]
-names(records)<-c("year","no_diagnosed_pregnancies")
-total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by="year",.N]
-names(total)<-c("year","no_pregnancies")
-records<-merge.data.table(records,total,by="year",all=T)
+records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by="year_group", .N]
+names(records)<-c("year_group","no_diagnosed_pregnancies")
+total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by="year_group",.N]
+names(total)<-c("year_group","no_pregnancies")
+records<-merge.data.table(records,total,by="year_group",all=T)
 MIG_T4_a_2<-data.table(algorithm="MIG_T4_a", records)
 MIG_T4_a_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
-MIG_T4_a_2<-MIG_T4_a_2[order(year)]
+MIG_T4_a_2<-MIG_T4_a_2[order(year_group)]
 rm(records,total)
 MIG_T4_a_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
 MIG_T4_a_2[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
@@ -1061,11 +1061,11 @@ fwrite(MIG_T4_a_2,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG
 rm(MIG_T4_a_2)
 
 #number of pregnnacies with baseline migraine
-records_coh<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_baseline==1,by="year",.N]
-names(records_coh)<-c("year","no_diagnosed_pregnancies")
-total_coh<-pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_baseline==1,by="year",.N]
-names(total_coh)<-c("year","no_pregnancies")
-records_coh<-merge.data.table(records_coh,total_coh,by="year",all=T)
+records_coh<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_baseline==1,by="year_group",.N]
+names(records_coh)<-c("year_group","no_diagnosed_pregnancies")
+total_coh<-pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_baseline==1,by="year_group",.N]
+names(total_coh)<-c("year_group","no_pregnancies")
+records_coh<-merge.data.table(records_coh,total_coh,by="year_group",all=T)
 MIG_T4_a_coh_2<-data.table(algorithm="MIG_T4_a", records_coh)
 MIG_T4_a_coh_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_T4_a_coh_2[,percentage:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
@@ -1143,14 +1143,14 @@ rm(MIG_T4_b_1)
 
 
 #by year
-records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by="year", .N]
-names(records)<-c("year","no_diagnosed_pregnancies")
-total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by="year",.N]
-names(total)<-c("year","no_pregnancies")
-records<-merge.data.table(records,total,by="year",all=T)
+records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by="year_group", .N]
+names(records)<-c("year_group","no_diagnosed_pregnancies")
+total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by="year_group",.N]
+names(total)<-c("year_group","no_pregnancies")
+records<-merge.data.table(records,total,by="year_group",all=T)
 MIG_T4_b_2<-data.table(algorithm="MIG_T4_b", records)
 MIG_T4_b_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
-MIG_T4_b_2<-MIG_T4_b_2[order(year)]
+MIG_T4_b_2<-MIG_T4_b_2[order(year_group)]
 rm(records,total)
 MIG_T4_b_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
 MIG_T4_b_2[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
@@ -1163,11 +1163,11 @@ fwrite(MIG_T4_b_2,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG
 rm(MIG_T4_b_2)
 
 #number of pregnnacies with baseline migraine
-records_coh<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_baseline_2==1,by="year",.N]
-names(records_coh)<-c("year","no_diagnosed_pregnancies")
-total_coh<-pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_baseline_2==1,by="year",.N]
-names(total_coh)<-c("year","no_pregnancies")
-records_coh<-merge.data.table(records_coh,total_coh,by="year",all=T)
+records_coh<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_baseline_2==1,by="year_group",.N]
+names(records_coh)<-c("year_group","no_diagnosed_pregnancies")
+total_coh<-pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_baseline_2==1,by="year_group",.N]
+names(total_coh)<-c("year_group","no_pregnancies")
+records_coh<-merge.data.table(records_coh,total_coh,by="year_group",all=T)
 MIG_T4_b_coh_2<-data.table(algorithm="MIG_T4_b", records_coh)
 MIG_T4_b_coh_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_T4_b_coh_2[,percentage:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
@@ -1243,14 +1243,14 @@ fwrite(MIG_T4_during_1,paste0(projectFolder,"/g_output/Migraine algorithm/Step_0
 rm(MIG_T4_during_1)
 
 #by year
-records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by="year", .N]
-names(records)<-c("year","no_diagnosed_pregnancies")
-total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by="year",.N]
-names(total)<-c("year","no_pregnancies")
-records<-merge.data.table(records,total,by="year",all=T)
+records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by="year_group", .N]
+names(records)<-c("year_group","no_diagnosed_pregnancies")
+total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by="year_group",.N]
+names(total)<-c("year_group","no_pregnancies")
+records<-merge.data.table(records,total,by="year_group",all=T)
 MIG_T4_during_2<-data.table(algorithm="MIG_T4_during", records)
 MIG_T4_during_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
-MIG_T4_during_2<-MIG_T4_during_2[order(year)]
+MIG_T4_during_2<-MIG_T4_during_2[order(year_group)]
 rm(records,total)
 MIG_T4_during_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
 MIG_T4_during_2[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
@@ -1263,11 +1263,11 @@ fwrite(MIG_T4_during_2,paste0(projectFolder,"/g_output/Migraine algorithm/Step_0
 rm(MIG_T4_during_2)
 
 #number of pregnnacies with migraine
-records_coh<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_during==1,by="year",.N]
-names(records_coh)<-c("year","no_diagnosed_pregnancies")
-total_coh<-pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_during==1,by="year",.N]
-names(total_coh)<-c("year","no_pregnancies")
-records_coh<-merge.data.table(records_coh,total_coh,by="year",all=T)
+records_coh<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_during==1,by="year_group",.N]
+names(records_coh)<-c("year_group","no_diagnosed_pregnancies")
+total_coh<-pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_during==1,by="year_group",.N]
+names(total_coh)<-c("year_group","no_pregnancies")
+records_coh<-merge.data.table(records_coh,total_coh,by="year_group",all=T)
 MIG_T4_during_coh_2<-data.table(algorithm="MIG_T4_during", records_coh)
 MIG_T4_during_coh_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_T4_during_coh_2[,percentage:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
@@ -1364,14 +1364,14 @@ fwrite(MIG_T5_a_1,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG
 rm(MIG_T5_a_1)
 
 #by year
-records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by="year", .N]
-names(records)<-c("year","no_diagnosed_pregnancies")
-total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by="year",.N]
-names(total)<-c("year","no_pregnancies")
-records<-merge.data.table(records,total,by="year",all=T)
+records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by="year_group", .N]
+names(records)<-c("year_group","no_diagnosed_pregnancies")
+total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by="year_group",.N]
+names(total)<-c("year_group","no_pregnancies")
+records<-merge.data.table(records,total,by="year_group",all=T)
 MIG_T5_a_2<-data.table(algorithm="MIG_T5_a", records)
 MIG_T5_a_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
-MIG_T5_a_2<-MIG_T5_a_2[order(year)]
+MIG_T5_a_2<-MIG_T5_a_2[order(year_group)]
 rm(records,total)
 MIG_T5_a_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
 MIG_T5_a_2[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
@@ -1384,11 +1384,11 @@ fwrite(MIG_T5_a_2,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG
 rm(MIG_T5_a_2)
 
 #number of pregnnacies with baseline migraine
-records_coh<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_baseline==1,by="year",.N]
-names(records_coh)<-c("year","no_diagnosed_pregnancies")
-total_coh<-pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_baseline==1,by="year",.N]
-names(total_coh)<-c("year","no_pregnancies")
-records_coh<-merge.data.table(records_coh,total_coh,by="year",all=T)
+records_coh<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_baseline==1,by="year_group",.N]
+names(records_coh)<-c("year_group","no_diagnosed_pregnancies")
+total_coh<-pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_baseline==1,by="year_group",.N]
+names(total_coh)<-c("year_group","no_pregnancies")
+records_coh<-merge.data.table(records_coh,total_coh,by="year_group",all=T)
 MIG_T5_a_coh_2<-data.table(algorithm="MIG_T5_a", records_coh)
 MIG_T5_a_coh_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_T5_a_coh_2[,percentage:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
@@ -1466,14 +1466,14 @@ rm(MIG_T5_b_1)
 
 
 #by year
-records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by="year", .N]
-names(records)<-c("year","no_diagnosed_pregnancies")
-total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by="year",.N]
-names(total)<-c("year","no_pregnancies")
-records<-merge.data.table(records,total,by="year",all=T)
+records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by="year_group", .N]
+names(records)<-c("year_group","no_diagnosed_pregnancies")
+total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by="year_group",.N]
+names(total)<-c("year_group","no_pregnancies")
+records<-merge.data.table(records,total,by="year_group",all=T)
 MIG_T5_b_2<-data.table(algorithm="MIG_T5_b", records)
 MIG_T5_b_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
-MIG_T5_b_2<-MIG_T5_b_2[order(year)]
+MIG_T5_b_2<-MIG_T5_b_2[order(year_group)]
 rm(records,total)
 MIG_T5_b_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
 MIG_T5_b_2[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
@@ -1486,11 +1486,11 @@ fwrite(MIG_T5_b_2,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG
 rm(MIG_T5_b_2)
 
 #number of pregnnacies with baseline migraine
-records_coh<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_baseline_2==1,by="year",.N]
-names(records_coh)<-c("year","no_diagnosed_pregnancies")
-total_coh<-pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_baseline_2==1,by="year",.N]
-names(total_coh)<-c("year","no_pregnancies")
-records_coh<-merge.data.table(records_coh,total_coh,by="year",all=T)
+records_coh<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_baseline_2==1,by="year_group",.N]
+names(records_coh)<-c("year_group","no_diagnosed_pregnancies")
+total_coh<-pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_baseline_2==1,by="year_group",.N]
+names(total_coh)<-c("year_group","no_pregnancies")
+records_coh<-merge.data.table(records_coh,total_coh,by="year_group",all=T)
 MIG_T5_b_coh_2<-data.table(algorithm="MIG_T5_b", records_coh)
 MIG_T5_b_coh_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_T5_b_coh_2[,percentage:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
@@ -1566,14 +1566,14 @@ fwrite(MIG_T5_during_1,paste0(projectFolder,"/g_output/Migraine algorithm/Step_0
 rm(MIG_T5_during_1)
 
 #by year
-records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by="year", .N]
-names(records)<-c("year","no_diagnosed_pregnancies")
-total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by="year",.N]
-names(total)<-c("year","no_pregnancies")
-records<-merge.data.table(records,total,by="year",all=T)
+records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by="year_group", .N]
+names(records)<-c("year_group","no_diagnosed_pregnancies")
+total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by="year_group",.N]
+names(total)<-c("year_group","no_pregnancies")
+records<-merge.data.table(records,total,by="year_group",all=T)
 MIG_T5_during_2<-data.table(algorithm="MIG_T5_during", records)
 MIG_T5_during_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
-MIG_T5_during_2<-MIG_T5_during_2[order(year)]
+MIG_T5_during_2<-MIG_T5_during_2[order(year_group)]
 rm(records,total)
 MIG_T5_during_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
 MIG_T5_during_2[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
@@ -1586,11 +1586,11 @@ fwrite(MIG_T5_during_2,paste0(projectFolder,"/g_output/Migraine algorithm/Step_0
 rm(MIG_T5_during_2)
 
 #number of pregnnacies with migraine
-records_coh<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_during==1,by="year",.N]
-names(records_coh)<-c("year","no_diagnosed_pregnancies")
-total_coh<-pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_during==1,by="year",.N]
-names(total_coh)<-c("year","no_pregnancies")
-records_coh<-merge.data.table(records_coh,total_coh,by="year",all=T)
+records_coh<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_during==1,by="year_group",.N]
+names(records_coh)<-c("year_group","no_diagnosed_pregnancies")
+total_coh<-pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_during==1,by="year_group",.N]
+names(total_coh)<-c("year_group","no_pregnancies")
+records_coh<-merge.data.table(records_coh,total_coh,by="year_group",all=T)
 MIG_T5_during_coh_2<-data.table(algorithm="MIG_T5_during", records_coh)
 MIG_T5_during_coh_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_T5_during_coh_2[,percentage:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
@@ -1688,14 +1688,14 @@ fwrite(MIG_T6_a_1,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG
 rm(MIG_T6_a_1)
 
 #by year
-records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by="year", .N]
-names(records)<-c("year","no_diagnosed_pregnancies")
-total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by="year",.N]
-names(total)<-c("year","no_pregnancies")
-records<-merge.data.table(records,total,by="year",all=T)
+records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by="year_group", .N]
+names(records)<-c("year_group","no_diagnosed_pregnancies")
+total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by="year_group",.N]
+names(total)<-c("year_group","no_pregnancies")
+records<-merge.data.table(records,total,by="year_group",all=T)
 MIG_T6_a_2<-data.table(algorithm="MIG_T6_a", records)
 MIG_T6_a_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
-MIG_T6_a_2<-MIG_T6_a_2[order(year)]
+MIG_T6_a_2<-MIG_T6_a_2[order(year_group)]
 rm(records,total)
 MIG_T6_a_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
 MIG_T6_a_2[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
@@ -1708,11 +1708,11 @@ fwrite(MIG_T6_a_2,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG
 rm(MIG_T6_a_2)
 
 #number of pregnnacies with baseline migraine
-records_coh<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_baseline==1,by="year",.N]
-names(records_coh)<-c("year","no_diagnosed_pregnancies")
-total_coh<-pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_baseline==1,by="year",.N]
-names(total_coh)<-c("year","no_pregnancies")
-records_coh<-merge.data.table(records_coh,total_coh,by="year",all=T)
+records_coh<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_baseline==1,by="year_group",.N]
+names(records_coh)<-c("year_group","no_diagnosed_pregnancies")
+total_coh<-pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_baseline==1,by="year_group",.N]
+names(total_coh)<-c("year_group","no_pregnancies")
+records_coh<-merge.data.table(records_coh,total_coh,by="year_group",all=T)
 MIG_T6_a_coh_2<-data.table(algorithm="MIG_T6_a", records_coh)
 MIG_T6_a_coh_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_T6_a_coh_2[,percentage:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
@@ -1790,14 +1790,14 @@ rm(MIG_T6_b_1)
 
 
 #by year
-records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by="year", .N]
-names(records)<-c("year","no_diagnosed_pregnancies")
-total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by="year",.N]
-names(total)<-c("year","no_pregnancies")
-records<-merge.data.table(records,total,by="year",all=T)
+records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by="year_group", .N]
+names(records)<-c("year_group","no_diagnosed_pregnancies")
+total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by="year_group",.N]
+names(total)<-c("year_group","no_pregnancies")
+records<-merge.data.table(records,total,by="year_group",all=T)
 MIG_T6_b_2<-data.table(algorithm="MIG_T6_b", records)
 MIG_T6_b_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
-MIG_T6_b_2<-MIG_T6_b_2[order(year)]
+MIG_T6_b_2<-MIG_T6_b_2[order(year_group)]
 rm(records,total)
 MIG_T6_b_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
 MIG_T6_b_2[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
@@ -1810,11 +1810,11 @@ fwrite(MIG_T6_b_2,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG
 rm(MIG_T6_b_2)
 
 #number of pregnnacies with baseline migraine
-records_coh<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_baseline_2==1,by="year",.N]
-names(records_coh)<-c("year","no_diagnosed_pregnancies")
-total_coh<-pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_baseline_2==1,by="year",.N]
-names(total_coh)<-c("year","no_pregnancies")
-records_coh<-merge.data.table(records_coh,total_coh,by="year",all=T)
+records_coh<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_baseline_2==1,by="year_group",.N]
+names(records_coh)<-c("year_group","no_diagnosed_pregnancies")
+total_coh<-pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_baseline_2==1,by="year_group",.N]
+names(total_coh)<-c("year_group","no_pregnancies")
+records_coh<-merge.data.table(records_coh,total_coh,by="year_group",all=T)
 MIG_T6_b_coh_2<-data.table(algorithm="MIG_T6_b", records_coh)
 MIG_T6_b_coh_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_T6_b_coh_2[,percentage:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
@@ -1890,14 +1890,14 @@ fwrite(MIG_T6_during_1,paste0(projectFolder,"/g_output/Migraine algorithm/Step_0
 rm(MIG_T6_during_1)
 
 #by year
-records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by="year", .N]
-names(records)<-c("year","no_diagnosed_pregnancies")
-total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by="year",.N]
-names(total)<-c("year","no_pregnancies")
-records<-merge.data.table(records,total,by="year",all=T)
+records<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id),by="year_group", .N]
+names(records)<-c("year_group","no_diagnosed_pregnancies")
+total<-pregnancy_d3_mig[!duplicated(pregnancy_id),by="year_group",.N]
+names(total)<-c("year_group","no_pregnancies")
+records<-merge.data.table(records,total,by="year_group",all=T)
 MIG_T6_during_2<-data.table(algorithm="MIG_T6_during", records)
 MIG_T6_during_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
-MIG_T6_during_2<-MIG_T6_during_2[order(year)]
+MIG_T6_during_2<-MIG_T6_during_2[order(year_group)]
 rm(records,total)
 MIG_T6_during_2[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
 MIG_T6_during_2[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
@@ -1910,11 +1910,11 @@ fwrite(MIG_T6_during_2,paste0(projectFolder,"/g_output/Migraine algorithm/Step_0
 rm(MIG_T6_during_2)
 
 #number of pregnnacies with migraine
-records_coh<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_during==1,by="year",.N]
-names(records_coh)<-c("year","no_diagnosed_pregnancies")
-total_coh<-pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_during==1,by="year",.N]
-names(total_coh)<-c("year","no_pregnancies")
-records_coh<-merge.data.table(records_coh,total_coh,by="year",all=T)
+records_coh<-pregnancy_d3_mig[include==1 & !duplicated(pregnancy_id) & preg_during==1,by="year_group",.N]
+names(records_coh)<-c("year_group","no_diagnosed_pregnancies")
+total_coh<-pregnancy_d3_mig[!duplicated(pregnancy_id) & preg_during==1,by="year_group",.N]
+names(total_coh)<-c("year_group","no_pregnancies")
+records_coh<-merge.data.table(records_coh,total_coh,by="year_group",all=T)
 MIG_T6_during_coh_2<-data.table(algorithm="MIG_T6_during", records_coh)
 MIG_T6_during_coh_2[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
 MIG_T6_during_coh_2[,percentage:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]

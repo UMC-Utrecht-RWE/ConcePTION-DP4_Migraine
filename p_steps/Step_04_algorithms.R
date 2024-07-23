@@ -19,40 +19,6 @@ year_group_creation<-function(x){
   return(y)
 }
 
-#EMA 18/7 add trimester and 6  month follow up from pregnancy end date
-trimester_create<-function(person_id, preg_start, preg_end, trim_days=97){
-
-days_trim<-97
-
-trim_1_start<- preg_start
-trim_1_end<- preg_start+97
-
-trim_2_start<-(trim_1_end)+1
-trim_2_end<- trim_2_start+97
-
-trim_3_start<-trim_2_end+1
-trim_3_end<- preg_end
-
-trim_1_end[trim_1_end>=preg_end]<-preg_end[trim_1_end>=preg_end]
-
-trim_2_start[trim_1_end==preg_end]<-0
-trim_2_end[trim_2_start==0]<-0
-trim_2_end[trim_2_end>=preg_end]<-preg_end[trim_2_end>=preg_end]
-
-trim_3_start[trim_2_end==preg_end]<-0
-trim_3_start[trim_2_end==0]<-0
-trim_3_end[trim_3_start==0]<-0
-
-trim_2_start[trim_2_start==0]<-NA
-trim_2_end[trim_2_end==0]<-NA
-trim_3_start[trim_3_start==0]<-NA
-trim_3_end[trim_3_end==0]<-NA
-
-return(as.data.table(cbind(person_id,trim_1_start, trim_1_end, trim_2_end, trim_3_start, trim_3_end)))
-
-}
-
-
 #### GDM and PE ####
 #Load all gdm_algorithm file and combine with the pregnancy D3
 pregnancy_d3_gdm_pe<-readRDS(paste0(projectFolder,"/g_intermediate/pregnancy_d3/GDM_PE_Pregnancy_D3.rds"))
@@ -91,11 +57,6 @@ pregnancy_d3_mig[,age:=floor((pregnancy_start_date-birth_date)/365.25)]
 pregnancy_d3_mig[,maternal_age:=as.character(lapply(age, age_band_creation))]
 pregnancy_d3_mig[,year:=year(pregnancy_start_date)]
 pregnancy_d3_mig[,year_group:=as.character(lapply(year, year_group_creation))]
-
-#EMA Hedvig wants migraine sensitivity by trimester, add trimester dates here
-trimesters<-trimester_create(person_id = pregnancy_d3_mig$person_id, preg_start = pregnancy_d3_mig$pregnancy_start_date, preg_end =  pregnancy_d3_mig$pregnancy_end_date)
-pregnancy_d3_mig<-merge(pregnancy_d3_mig, trimesters)
-
 
 #remove uneccesary variables
 if("gdm_pe_filter" %in% names(pregnancy_d3_mig)){pregnancy_d3_mig[,gdm_pe_filter:=NULL]}

@@ -195,14 +195,15 @@ PE_1_b[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence
 PE_1_b[lower_95_CI<0,lower_95_CI:=0]
 fwrite(PE_1_b,paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_PE_1_age.csv"),row.names = F)
 
-records<-pregnancy_d3_gdm_pe[include==1 & !duplicated(pregnancy_id),by="year", .N]
-names(records)<-c("year","no_diagnosed_pregnancies")
-total<-pregnancy_d3_gdm_pe[!duplicated(pregnancy_id),by="year",.N]
-names(total)<-c("year","no_pregnancies")
-records<-merge.data.table(records,total,by="year",all=T)
+#Change year to year_group
+records<-pregnancy_d3_gdm_pe[include==1 & !duplicated(pregnancy_id),by="year_group", .N]
+names(records)<-c("year_group","no_diagnosed_pregnancies")
+total<-pregnancy_d3_gdm_pe[!duplicated(pregnancy_id),by="year_group",.N]
+names(total)<-c("year_group","no_pregnancies")
+records<-merge.data.table(records,total,by="year_group",all=T)
 PE_1_c<-data.table(algorithm="PE_1", records)
 PE_1_c[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
-PE_1_c<-PE_1_c[order(year)]
+PE_1_c<-PE_1_c[order(year_group)]
 rm(records,total)
 PE_1_c[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
 PE_1_c[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
@@ -287,15 +288,15 @@ PE_2_b[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence
 PE_2_b[lower_95_CI<0,lower_95_CI:=0]
 fwrite(PE_2_b,paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_PE_2_age.csv"),row.names = F)
 
-
-records<-pregnancy_d3_gdm_pe[include==1 & !duplicated(pregnancy_id),by="year", .N]
-names(records)<-c("year","no_diagnosed_pregnancies")
-total<-pregnancy_d3_gdm_pe[!duplicated(pregnancy_id),by="year",.N]
-names(total)<-c("year","no_pregnancies")
-records<-merge.data.table(records,total,by="year",all=T)
+#Change year to year_group
+records<-pregnancy_d3_gdm_pe[include==1 & !duplicated(pregnancy_id),by="year_group", .N]
+names(records)<-c("year_group","no_diagnosed_pregnancies")
+total<-pregnancy_d3_gdm_pe[!duplicated(pregnancy_id),by="year_group",.N]
+names(total)<-c("year_group","no_pregnancies")
+records<-merge.data.table(records,total,by="year_group",all=T)
 PE_2_c<-data.table(algorithm="PE_2", records)
 PE_2_c[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
-PE_2_c<-PE_2_c[order(year)]
+PE_2_c<-PE_2_c[order(year_group)]
 rm(records,total)
 PE_2_c[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
 PE_2_c[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
@@ -374,14 +375,15 @@ PE_3_b[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence
 PE_3_b[lower_95_CI<0,lower_95_CI:=0]
 fwrite(PE_3_b,paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_PE_3_age.csv"),row.names = F)
 
-records<-pregnancy_d3_gdm_pe[alternative==1 & !duplicated(pregnancy_id),by="year", .N]
-names(records)<-c("year","no_diagnosed_pregnancies")
-total<-pregnancy_d3_gdm_pe[!duplicated(pregnancy_id),by="year",.N]
-names(total)<-c("year","no_pregnancies")
-records<-merge.data.table(records,total,by="year",all=T)
+#Change year to year_group
+records<-pregnancy_d3_gdm_pe[alternative==1 & !duplicated(pregnancy_id),by="year_group", .N]
+names(records)<-c("year_group","no_diagnosed_pregnancies")
+total<-pregnancy_d3_gdm_pe[!duplicated(pregnancy_id),by="year_group",.N]
+names(total)<-c("year_group","no_pregnancies")
+records<-merge.data.table(records,total,by="year_group",all=T)
 PE_3_c<-data.table(algorithm="PE_3", records)
 PE_3_c[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
-PE_3_c<-PE_3_c[order(year)]
+PE_3_c<-PE_3_c[order(year_group)]
 rm(records,total)
 PE_3_c[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
 PE_3_c[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
@@ -515,15 +517,15 @@ PE_4_b[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence
 PE_4_b[lower_95_CI<0,lower_95_CI:=0]
 fwrite(PE_4_b,paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_PE_4_age.csv"),row.names = F)
 
-
-records<-pregnancy_d3_gdm_pe[include==1 & !duplicated(pregnancy_id),by="year", .N]
-names(records)<-c("year","no_diagnosed_pregnancies")
-total<-pregnancy_d3_gdm_pe[!duplicated(pregnancy_id),by="year",.N]
-names(total)<-c("year","no_pregnancies")
-records<-merge.data.table(records,total,by="year",all=T)
+#Change year to year_group
+records<-pregnancy_d3_gdm_pe[include==1 & !duplicated(pregnancy_id),by="year_group", .N]
+names(records)<-c("year_group","no_diagnosed_pregnancies")
+total<-pregnancy_d3_gdm_pe[!duplicated(pregnancy_id),by="year_group",.N]
+names(total)<-c("year_group","no_pregnancies")
+records<-merge.data.table(records,total,by="year_group",all=T)
 PE_4_c<-data.table(algorithm="PE_4", records)
 PE_4_c[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
-PE_4_c<-PE_4_c[order(year)]
+PE_4_c<-PE_4_c[order(year_group)]
 rm(records,total)
 PE_4_c[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
 PE_4_c[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
@@ -598,15 +600,15 @@ PE_5_b[,upper_95_CI:=upper_ci(no_diagnosed_pregnancies,no_pregnancies,prevalence
 PE_5_b[lower_95_CI<0,lower_95_CI:=0]
 fwrite(PE_5_b,paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_PE_5_age.csv"),row.names = F)
 
-
-records<-pregnancy_d3_gdm_pe[include==1 & !duplicated(pregnancy_id),by="year", .N]
-names(records)<-c("year","no_diagnosed_pregnancies")
-total<-pregnancy_d3_gdm_pe[!duplicated(pregnancy_id),by="year",.N]
-names(total)<-c("year","no_pregnancies")
-records<-merge.data.table(records,total,by="year",all=T)
+#Change year to year group
+records<-pregnancy_d3_gdm_pe[include==1 & !duplicated(pregnancy_id),by="year_group", .N]
+names(records)<-c("year_group","no_diagnosed_pregnancies")
+total<-pregnancy_d3_gdm_pe[!duplicated(pregnancy_id),by="year_group",.N]
+names(total)<-c("year_group","no_pregnancies")
+records<-merge.data.table(records,total,by="year_group",all=T)
 PE_5_c<-data.table(algorithm="PE_5", records)
 PE_5_c[is.na(no_diagnosed_pregnancies),no_diagnosed_pregnancies:=0]
-PE_5_c<-PE_5_c[order(year)]
+PE_5_c<-PE_5_c[order(year_group)]
 rm(records,total)
 PE_5_c[,prevalence_100_pregnancies:=round((no_diagnosed_pregnancies/no_pregnancies)*100,1)]
 PE_5_c[,no_diagnosed_pregnancies:=as.numeric(no_diagnosed_pregnancies)][,no_pregnancies:=as.numeric(no_pregnancies)]
