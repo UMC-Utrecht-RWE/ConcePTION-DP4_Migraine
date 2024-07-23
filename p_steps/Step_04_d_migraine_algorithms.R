@@ -28,7 +28,7 @@ fwrite(MIG_Dx_a_dt,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MI
 age_band_creation<-function(x){
   y<-vector()
   if(x>=15 & x<=24){y<-"15-24"}
-  if(x>=D25 & x<=34){y<-"25-34"}
+  if(x>=25 & x<=34){y<-"25-34"}
   if(x>=35){y<-"35+"}
   return(y)
 }
