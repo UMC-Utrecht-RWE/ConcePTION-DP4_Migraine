@@ -3,6 +3,7 @@ date_running_start_04<-Sys.Date()
 
 
 age_band_creation<-function(x){
+  y<-vector()
   if(x>=15 & x<=24){y<-"15-24"}
   if(x>=25 & x<=34){y<-"25-34"}
   if(x>=35){y<-"35+"}
@@ -10,6 +11,7 @@ age_band_creation<-function(x){
 }
 
 year_group_creation<-function(x){
+  y<-vector()
   if(x>=2009 & x<=2012){y<-"2009-2012"}
   if(x>=2013 & x<=2016){y<-"2013-2016"}
   if(x>=2017 & x<=2020){y<-"2017-2020"}
