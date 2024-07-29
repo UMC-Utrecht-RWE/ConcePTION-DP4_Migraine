@@ -401,7 +401,7 @@ if(!is.null(alg)){
 
 ```{r,echo=F}
   alg[,prevalence_100_pregnancies:=as.numeric(prevalence_100_pregnancies)]
-ggplotly(ggplot(alg, aes(x=maternal_age, y=prevalence_100_pregnancies, group=algorithm))+
+ggplotly(ggplot(alg, aes(x=age_band, y=prevalence_100_pregnancies, group=algorithm))+
     geom_line(aes(color=algorithm))+
     geom_point(aes(color=algorithm))+
 theme(axis.text.x = element_text(size = 8,angle = 45),
@@ -832,7 +832,7 @@ if("alg" %in% ls()){rm(alg)}
 
 <br>
 
-### 4.2 By trimester: Migraine Algorithm by maternal age at start pregnancy
+### 4.2 By trimester: Migraine Algorithm by maternal age group at start pregnancy
 
 ```{r , echo=F}
 if("Step_04_MIG_Dx_first_age.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
@@ -900,7 +900,7 @@ if(!is.null(alg)){
 
 ```{r,echo=F}
   alg[,prevalence_100_pregnancies:=as.numeric(prevalence_100_pregnancies)]
-  ggplotly(ggplot(alg, aes(x=maternal_age, y=prevalence_100_pregnancies, group=algorithm))+
+  ggplotly(ggplot(alg, aes(x=age_band, y=prevalence_100_pregnancies, group=algorithm))+
     geom_line(aes(color=algorithm))+
     geom_point(aes(color=algorithm))+
 theme(axis.text.x = element_text(size = 8,angle = 45),
