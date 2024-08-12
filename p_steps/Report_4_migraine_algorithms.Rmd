@@ -298,7 +298,7 @@ if("Step_05_MIG_DxRx_b_S.csv" %in% list.files(paste0(projectFolder,"/g_output/Mi
 alg_9<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_05_MIG_DxRx_b_S.csv"))
 }else{alg_9<-NULL}
 
-alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6,alg_7,alg_8,alg_9)
+alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6,alg_7,alg_8,alg_9, fill=TRUE)
 alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 
 if(!is.null(alg)){
@@ -385,7 +385,7 @@ if("Step_05_MIG_DxRx_b_age_S.csv" %in% list.files(paste0(projectFolder,"/g_outpu
 alg_9<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_05_MIG_DxRx_b_age_S.csv"))
 }else{alg_9<-NULL}
 
-alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6, alg_7,alg_8,alg_9)
+alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6, alg_7,alg_8,alg_9, fill=TRUE)
 alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 
 if(!is.null(alg)){
@@ -473,7 +473,7 @@ if("Step_05_MIG_DxRx_b_year_S.csv" %in% list.files(paste0(projectFolder,"/g_outp
 alg_9<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_05_MIG_DxRx_b_year_S.csv"))
 }else{alg_9<-NULL}
 
-alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6,alg_7,alg_8,alg_9)
+alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6,alg_7,alg_8,alg_9, fill=TRUE)
 alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 
 if(!is.null(alg)){
@@ -550,7 +550,7 @@ if("Step_05_MIG_DxRx_during_S.csv" %in% list.files(paste0(projectFolder,"/g_outp
 alg_5<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_05_MIG_DxRx_during_S.csv"))
 }else{alg_5<-NULL}
 
-alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5)
+alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5, fill=TRUE)
 alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 
 if(!is.null(alg)){
@@ -616,7 +616,7 @@ if("Step_05_MIG_DxRx_during_age_S.csv" %in% list.files(paste0(projectFolder,"/g_
 alg_5<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_05_MIG_DxRx_during_age_S.csv"))
 }else{alg_5<-NULL}
 
-alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5)
+alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5, fill=TRUE)
 alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 
 if(!is.null(alg)){
@@ -681,7 +681,7 @@ if("Step_05_MIG_DxRx_during_year_S.csv" %in% list.files(paste0(projectFolder,"/g
 alg_5<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_05_MIG_DxRx_during_year_S.csv"))
 }else{alg_5<-NULL}
 
-alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5)
+alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5, fill=TRUE)
 alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 
 if(!is.null(alg)){
@@ -782,7 +782,7 @@ if("Step_05_MIG_DxRx_third_S.csv" %in% list.files(paste0(projectFolder,"/g_outpu
 alg_11<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_05_MIG_DxRx_third_S.csv"))
 }else{alg_11<-NULL}
 
-alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6,alg_7,alg_8,alg_9,alg_10,alg_11)
+alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6,alg_7,alg_8,alg_9,alg_10,alg_11, fill=TRUE)
 alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 
 if(!is.null(alg)){
@@ -884,7 +884,7 @@ if("Step_05_MIG_DxRx_third_age_S.csv" %in% list.files(paste0(projectFolder,"/g_o
 alg_12<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_05_MIG_DxRx_third_age_S.csv"))
 }else{alg_12<-NULL}
 
-alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6,alg_7,alg_8,alg_9,alg_10,alg_11,alg_12)
+alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6,alg_7,alg_8,alg_9,alg_10,alg_11,alg_12, fill=TRUE)
 alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 
 if(!is.null(alg)){
@@ -985,7 +985,7 @@ if("Step_05_MIG_DxRx_third_year_S.csv" %in% list.files(paste0(projectFolder,"/g_
 alg_12<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_05_MIG_DxRx_third_year_S.csv"))
 }else{alg_12<-NULL}
 
-alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6,alg_7,alg_8,alg_9,alg_10,alg_11,alg_12)
+alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6,alg_7,alg_8,alg_9,alg_10,alg_11,alg_12, fill=TRUE)
 alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 
 if(!is.null(alg)){
