@@ -84,6 +84,10 @@ render(paste0(pre_dir,"Report_4_migraine_algorithms_severity.Rmd"), output_dir =
 source(paste0(pre_dir,"save_environment.R"))
 
 
+#create masked output csv
+
+source(paste0(pre_dir,"mask.R"))
+
 
 
 
