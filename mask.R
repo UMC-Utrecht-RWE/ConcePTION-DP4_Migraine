@@ -36,9 +36,6 @@ my_cols<-list("removed_rec", "included_records", "no_records", "no_diagnosed_pre
     return (x)}
 
 
- my_file$included_records<-sample(c(2,6,5), size=8, replace=T)
- my_file$removed_rec<-sample(c(2,6,5), size=8, replace=T)
-
 for (i in 1:length(raw_file)){
   #print(i)
   print(raw_file[i])
