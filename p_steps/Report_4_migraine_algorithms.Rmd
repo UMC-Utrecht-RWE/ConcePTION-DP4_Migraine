@@ -299,6 +299,7 @@ alg_9<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_05_MIG_DxRx
 }else{alg_9<-NULL}
 
 alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6,alg_7,alg_8,alg_9, fill=TRUE)
+alg$age_band<-alg$maternal_age
 alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 
 if(!is.null(alg)){
@@ -386,6 +387,7 @@ alg_9<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_05_MIG_DxRx
 }else{alg_9<-NULL}
 
 alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6, alg_7,alg_8,alg_9, fill=TRUE)
+alg$age_band<-alg$maternal_age
 alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 
 if(!is.null(alg)){
@@ -474,6 +476,7 @@ alg_9<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_05_MIG_DxRx
 }else{alg_9<-NULL}
 
 alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6,alg_7,alg_8,alg_9, fill=TRUE)
+alg$age_band<-alg$maternal_age
 alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 
 if(!is.null(alg)){
@@ -551,6 +554,7 @@ alg_5<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_05_MIG_DxRx
 }else{alg_5<-NULL}
 
 alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5, fill=TRUE)
+alg$age_band<-alg$maternal_age
 alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 
 if(!is.null(alg)){
@@ -617,6 +621,7 @@ alg_5<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_05_MIG_DxRx
 }else{alg_5<-NULL}
 
 alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5, fill=TRUE)
+alg$age_band<-alg$maternal_age
 alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 
 if(!is.null(alg)){
@@ -632,7 +637,7 @@ if(!is.null(alg)){
 
 ```{r,echo=F}
   alg[,prevalence_100_pregnancies:=as.numeric(prevalence_100_pregnancies)]
-  ggplotly(ggplot(alg, aes(x=maternal_age, y=prevalence_100_pregnancies, group=algorithm))+
+  ggplotly(ggplot(alg, aes(x=age_band, y=prevalence_100_pregnancies, group=algorithm))+
     geom_line(aes(color=algorithm))+
     geom_point(aes(color=algorithm))+
 theme(axis.text.x = element_text(size = 8,angle = 45),
@@ -682,6 +687,7 @@ alg_5<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_05_MIG_DxRx
 }else{alg_5<-NULL}
 
 alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5, fill=TRUE)
+alg$age_band<-alg$maternal_age
 alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 
 if(!is.null(alg)){
@@ -783,6 +789,7 @@ alg_11<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_05_MIG_DxR
 }else{alg_11<-NULL}
 
 alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6,alg_7,alg_8,alg_9,alg_10,alg_11, fill=TRUE)
+alg$age_band<-alg$maternal_age
 alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 
 if(!is.null(alg)){
@@ -885,6 +892,7 @@ alg_12<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_05_MIG_DxR
 }else{alg_12<-NULL}
 
 alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6,alg_7,alg_8,alg_9,alg_10,alg_11,alg_12, fill=TRUE)
+alg$age_band<-alg$maternal_age
 alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 
 if(!is.null(alg)){
@@ -986,6 +994,7 @@ alg_12<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_05_MIG_DxR
 }else{alg_12<-NULL}
 
 alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6,alg_7,alg_8,alg_9,alg_10,alg_11,alg_12, fill=TRUE)
+alg$age_band<-alg$maternal_age
 alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 
 if(!is.null(alg)){
