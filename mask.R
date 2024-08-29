@@ -31,9 +31,9 @@ my_cols<-list("removed_rec", "included_records", "no_records", "no_diagnosed_pre
            "no_pregnancies", "no_pregnancies_same_type", "Count", "original_records",
            "before_start", "after_end") 
 
- mask= function(x){
-  x[x<6]<-"<=5" 
-    return (x)}
+mask= function(x){
+  x[between(x, 1,5,incbounds = T)]<-"<=5" 
+  return (x)}
 
 
 for (i in 1:length(raw_file)){
