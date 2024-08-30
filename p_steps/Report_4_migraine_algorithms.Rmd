@@ -298,8 +298,24 @@ if("Step_05_MIG_DxRx_b_S.csv" %in% list.files(paste0(projectFolder,"/g_output/Mi
 alg_9<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_05_MIG_DxRx_b_S.csv"))
 }else{alg_9<-NULL}
 
-alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6,alg_7,alg_8,alg_9, fill=TRUE)
-alg$age_band<-alg$maternal_age
+alg_list<-list(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6,alg_7,alg_8,alg_9, fill=TRUE)
+
+for (i in 1:length(alg_list)){
+  if(is.null(alg_list[[i]]$age_band)){
+    print('NULL')
+    age_band<-alg_list[[i]]$maternal_age
+  if(is.numeric(age_band)){
+    age_band[between(age_band, 15, 24, incbounds = T)]<-"15-24"
+    age_band[between(age_band, 25, 34, incbounds = T)]<-"25-34"
+    age_band[age_band>34 ]<-"35+"
+  }
+    print(age_band)
+    alg_list[[i]]$age_band<- age_band
+  }
+}
+
+alg<-do.call("rbind", alg_list)
+
 alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 
 if(!is.null(alg)){
@@ -386,8 +402,24 @@ if("Step_05_MIG_DxRx_b_age_S.csv" %in% list.files(paste0(projectFolder,"/g_outpu
 alg_9<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_05_MIG_DxRx_b_age_S.csv"))
 }else{alg_9<-NULL}
 
-alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6, alg_7,alg_8,alg_9, fill=TRUE)
-alg$age_band<-alg$maternal_age
+alg_list<-list(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6, alg_7,alg_8,alg_9, fill=TRUE)
+
+for (i in 1:length(alg_list)){
+  if(is.null(alg_list[[i]]$age_band)){
+    print('NULL')
+    age_band<-alg_list[[i]]$maternal_age
+  if(is.numeric(age_band)){
+    age_band[between(age_band, 15, 24, incbounds = T)]<-"15-24"
+    age_band[between(age_band, 25, 34, incbounds = T)]<-"25-34"
+    age_band[age_band>34 ]<-"35+"
+  }
+    print(age_band)
+    alg_list[[i]]$age_band<- age_band
+  }
+}
+
+alg<-do.call("rbind", alg_list)
+
 alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 
 if(!is.null(alg)){
@@ -475,8 +507,25 @@ if("Step_05_MIG_DxRx_b_year_S.csv" %in% list.files(paste0(projectFolder,"/g_outp
 alg_9<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_05_MIG_DxRx_b_year_S.csv"))
 }else{alg_9<-NULL}
 
-alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6,alg_7,alg_8,alg_9, fill=TRUE)
-alg$age_band<-alg$maternal_age
+alg_list<-list(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6,alg_7,alg_8,alg_9, fill=TRUE)
+
+for (i in 1:length(alg_list)){
+  if(is.null(alg_list[[i]]$age_band)){
+    print('NULL')
+    age_band<-alg_list[[i]]$maternal_age
+  if(is.numeric(age_band)){
+    age_band[between(age_band, 15, 24, incbounds = T)]<-"15-24"
+    age_band[between(age_band, 25, 34, incbounds = T)]<-"25-34"
+    age_band[age_band>34 ]<-"35+"
+  }
+    print(age_band)
+    alg_list[[i]]$age_band<- age_band
+  }
+}
+
+alg<-do.call("rbind", alg_list)
+
+
 alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 
 if(!is.null(alg)){
@@ -553,8 +602,24 @@ if("Step_05_MIG_DxRx_during_S.csv" %in% list.files(paste0(projectFolder,"/g_outp
 alg_5<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_05_MIG_DxRx_during_S.csv"))
 }else{alg_5<-NULL}
 
-alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5, fill=TRUE)
-alg$age_band<-alg$maternal_age
+alg_list<-list(alg_1,alg_2,alg_3,alg_4,alg_5, fill=TRUE)
+
+for (i in 1:length(alg_list)){
+  if(is.null(alg_list[[i]]$age_band)){
+    print('NULL')
+    age_band<-alg_list[[i]]$maternal_age
+  if(is.numeric(age_band)){
+    age_band[between(age_band, 15, 24, incbounds = T)]<-"15-24"
+    age_band[between(age_band, 25, 34, incbounds = T)]<-"25-34"
+    age_band[age_band>34 ]<-"35+"
+  }
+    print(age_band)
+    alg_list[[i]]$age_band<- age_band
+  }
+}
+
+alg<-do.call("rbind", alg_list)
+
 alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 
 if(!is.null(alg)){
@@ -620,8 +685,25 @@ if("Step_05_MIG_DxRx_during_age_S.csv" %in% list.files(paste0(projectFolder,"/g_
 alg_5<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_05_MIG_DxRx_during_age_S.csv"))
 }else{alg_5<-NULL}
 
-alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5, fill=TRUE)
-alg$age_band<-alg$maternal_age
+alg_list<-list(alg_1,alg_2,alg_3,alg_4,alg_5, fill=TRUE)
+
+for (i in 1:length(alg_list)){
+  if(is.null(alg_list[[i]]$age_band)){
+    print('NULL')
+    age_band<-alg_list[[i]]$maternal_age
+  if(is.numeric(age_band)){
+    age_band[between(age_band, 15, 24, incbounds = T)]<-"15-24"
+    age_band[between(age_band, 25, 34, incbounds = T)]<-"25-34"
+    age_band[age_band>34 ]<-"35+"
+  }
+    print(age_band)
+    alg_list[[i]]$age_band<- age_band
+  }
+}
+
+alg<-do.call("rbind", alg_list)
+
+
 alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 
 if(!is.null(alg)){
@@ -686,8 +768,25 @@ if("Step_05_MIG_DxRx_during_year_S.csv" %in% list.files(paste0(projectFolder,"/g
 alg_5<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_05_MIG_DxRx_during_year_S.csv"))
 }else{alg_5<-NULL}
 
-alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5, fill=TRUE)
-alg$age_band<-alg$maternal_age
+alg_list<-list(alg_1,alg_2,alg_3,alg_4,alg_5, fill=TRUE)
+
+for (i in 1:length(alg_list)){
+  if(is.null(alg_list[[i]]$age_band)){
+    print('NULL')
+    age_band<-alg_list[[i]]$maternal_age
+  if(is.numeric(age_band)){
+    age_band[between(age_band, 15, 24, incbounds = T)]<-"15-24"
+    age_band[between(age_band, 25, 34, incbounds = T)]<-"25-34"
+    age_band[age_band>34 ]<-"35+"
+  }
+    print(age_band)
+    alg_list[[i]]$age_band<- age_band
+  }
+}
+
+alg<-do.call("rbind", alg_list)
+
+
 alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 
 if(!is.null(alg)){
@@ -788,8 +887,24 @@ if("Step_05_MIG_DxRx_third_S.csv" %in% list.files(paste0(projectFolder,"/g_outpu
 alg_11<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_05_MIG_DxRx_third_S.csv"))
 }else{alg_11<-NULL}
 
-alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6,alg_7,alg_8,alg_9,alg_10,alg_11, fill=TRUE)
-alg$age_band<-alg$maternal_age
+alg_list<-list(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6,alg_7,alg_8,alg_9,alg_10,alg_11)
+
+for (i in 1:length(alg_list)){
+  if(is.null(alg_list[[i]]$age_band)){
+    print('NULL')
+    age_band<-alg_list[[i]]$maternal_age
+  if(is.numeric(age_band)){
+    age_band[between(age_band, 15, 24, incbounds = T)]<-"15-24"
+    age_band[between(age_band, 25, 34, incbounds = T)]<-"25-34"
+    age_band[age_band>34 ]<-"35+"
+  }
+    print(age_band)
+    alg_list[[i]]$age_band<- age_band
+  }
+}
+
+alg<-do.call("rbind", alg_list)
+
 alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 
 if(!is.null(alg)){
@@ -891,8 +1006,24 @@ if("Step_05_MIG_DxRx_third_age_S.csv" %in% list.files(paste0(projectFolder,"/g_o
 alg_12<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_05_MIG_DxRx_third_age_S.csv"))
 }else{alg_12<-NULL}
 
-alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6,alg_7,alg_8,alg_9,alg_10,alg_11,alg_12, fill=TRUE)
-alg$age_band<-alg$maternal_age
+alg_list<-list(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6,alg_7,alg_8,alg_9,alg_10,alg_11,alg_12, fill=TRUE)
+
+for (i in 1:length(alg_list)){
+  if(is.null(alg_list[[i]]$age_band)){
+    print('NULL')
+    age_band<-alg_list[[i]]$maternal_age
+  if(is.numeric(age_band)){
+    age_band[between(age_band, 15, 24, incbounds = T)]<-"15-24"
+    age_band[between(age_band, 25, 34, incbounds = T)]<-"25-34"
+    age_band[age_band>34 ]<-"35+"
+  }
+    print(age_band)
+    alg_list[[i]]$age_band<- age_band
+  }
+}
+
+alg<-do.call("rbind", alg_list)
+
 alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 
 if(!is.null(alg)){
@@ -993,8 +1124,24 @@ if("Step_05_MIG_DxRx_third_year_S.csv" %in% list.files(paste0(projectFolder,"/g_
 alg_12<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_05_MIG_DxRx_third_year_S.csv"))
 }else{alg_12<-NULL}
 
-alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6,alg_7,alg_8,alg_9,alg_10,alg_11,alg_12, fill=TRUE)
-alg$age_band<-alg$maternal_age
+alg_list<-list(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6,alg_7,alg_8,alg_9,alg_10,alg_11,alg_12, fill=TRUE)
+
+for (i in 1:length(alg_list)){
+  if(is.null(alg_list[[i]]$age_band)){
+    print('NULL')
+    age_band<-alg_list[[i]]$maternal_age
+  if(is.numeric(age_band)){
+    age_band[between(age_band, 15, 24, incbounds = T)]<-"15-24"
+    age_band[between(age_band, 25, 34, incbounds = T)]<-"25-34"
+    age_band[age_band>34 ]<-"35+"
+  }
+    print(age_band)
+    alg_list[[i]]$age_band<- age_band
+  }
+}
+
+alg<-do.call("rbind", alg_list)
+
 alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
 
 if(!is.null(alg)){

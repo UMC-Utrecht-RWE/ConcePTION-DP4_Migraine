@@ -23,7 +23,7 @@ dir.create(masked_folder, showWarnings = FALSE)
 #list all files in g_output
 
 raw_file<-list.files(output_dir, pattern=".csv", recursive = TRUE)
-raw_file<-raw_file[!grepl('^Time$|log|flowchart|issues', raw_file)]
+raw_file<-raw_file[!grepl('^Time$|log|issues', raw_file)]
 
 #loop read and add column "x___masked" and make all values 5 or less ==5 for each of the target columns
 
@@ -50,6 +50,7 @@ for (i in 1:length(raw_file)){
      colnames(newcol)<-(paste0("mask_", target_col))
      #print(newcol)
      my_file<-cbind(my_file, newcol)
+     my_file[,(target_col):=NULL] 
      #print(my_file)
   }
     filename<-str_split(raw_file[i],"/")
