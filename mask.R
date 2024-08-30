@@ -27,7 +27,7 @@ raw_file<-raw_file[!grepl('^Time$|log|issues', raw_file)]
 
 #loop read and add column "x___masked" and make all values 5 or less ==5 for each of the target columns
 
-my_cols<-list("removed_rec", "included_records", "no_records", "no_diagnosed_pregnancies", 
+my_cols<-c("removed_rec", "included_records", "no_records", "no_diagnosed_pregnancies", 
            "no_pregnancies", "no_pregnancies_same_type", "Count", "original_records",
            "before_start", "after_end") 
 
@@ -54,7 +54,14 @@ for (i in 1:length(raw_file)){
      #print(my_file)
   }
     filename<-str_split(raw_file[i],"/")
-  fwrite(my_file, paste0(masked_folder,"masked_",filename[[1]][1],"_",filename[[1]][2]))}
+    file_name<-file.path(masked_folder, raw_file[i])
+    dir.create(dirname(file_name), showWarnings = FALSE)
+    fwrite(my_file,file_name)
+  
+}else{
+  file_name<-file.path(masked_folder, raw_file[i])
+  dir.create(dirname(file_name), showWarnings = FALSE)
+  file.copy(paste0(output_dir, raw_file[i]),file_name,overwrite=TRUE)}
 }
   
 
