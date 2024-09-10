@@ -17,7 +17,7 @@ source("packages.R")
 source("99_path.R")
 setwd(projectFolder)
 
-masked_folder<-paste0(output_dir,'masked/')
+masked_folder<-file.path(dirname(output_dir), paste0(basename(output_dir),'_masked/'))
 dir.create(masked_folder, showWarnings = FALSE)
 
 #list all files in g_output
@@ -32,7 +32,7 @@ my_cols<-c("removed_rec", "included_records", "no_records", "no_diagnosed_pregna
            "before_start", "after_end") 
 
 mask= function(x){
-  x[between(x, 1,5,incbounds = T)]<-"<=5" 
+  x[between(x, 1,4,incbounds = T)]<-"<5" 
   return (x)}
 
 

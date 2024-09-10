@@ -86,7 +86,10 @@ source(paste0(pre_dir,"save_environment.R"))
 
 #create masked output csv
 
-source(paste0(projectFolder,"mask.R"))
+source(file.path(projectFolder,"mask.R"))
+
+
+
 
 
 

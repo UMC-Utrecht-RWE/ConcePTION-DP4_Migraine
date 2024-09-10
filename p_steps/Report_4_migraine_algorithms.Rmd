@@ -26,6 +26,14 @@ h3
 ```{r set_locale, include=FALSE}
 Sys.setlocale("LC_ALL", "C")
 `%!in%` = Negate(`%in%`)
+
+fread <-function(file,...){
+  dt = data.table::fread(file=file,...)
+  if("maternal_age" %in% colnames(dt) && ! "age_band" %in% colnames(dt)){
+    data.table::setnames(dt, "maternal_age", "age_band")
+  }
+  dt
+}
 ```
 
 
@@ -300,19 +308,6 @@ alg_9<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_05_MIG_DxRx
 
 alg_list<-list(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6,alg_7,alg_8,alg_9, fill=TRUE)
 
-for (i in 1:length(alg_list)){
-  if(is.null(alg_list[[i]]$age_band)){
-    print('NULL')
-    age_band<-alg_list[[i]]$maternal_age
-  if(is.numeric(age_band)){
-    age_band[between(age_band, 15, 24, incbounds = T)]<-"15-24"
-    age_band[between(age_band, 25, 34, incbounds = T)]<-"25-34"
-    age_band[age_band>34 ]<-"35+"
-  }
-    print(age_band)
-    alg_list[[i]]$age_band<- age_band
-  }
-}
 
 alg<-do.call("rbind", alg_list)
 
@@ -404,19 +399,6 @@ alg_9<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_05_MIG_DxRx
 
 alg_list<-list(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6, alg_7,alg_8,alg_9, fill=TRUE)
 
-for (i in 1:length(alg_list)){
-  if(is.null(alg_list[[i]]$age_band)){
-    print('NULL')
-    age_band<-alg_list[[i]]$maternal_age
-  if(is.numeric(age_band)){
-    age_band[between(age_band, 15, 24, incbounds = T)]<-"15-24"
-    age_band[between(age_band, 25, 34, incbounds = T)]<-"25-34"
-    age_band[age_band>34 ]<-"35+"
-  }
-    print(age_band)
-    alg_list[[i]]$age_band<- age_band
-  }
-}
 
 alg<-do.call("rbind", alg_list)
 
@@ -509,19 +491,6 @@ alg_9<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_05_MIG_DxRx
 
 alg_list<-list(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6,alg_7,alg_8,alg_9, fill=TRUE)
 
-for (i in 1:length(alg_list)){
-  if(is.null(alg_list[[i]]$age_band)){
-    print('NULL')
-    age_band<-alg_list[[i]]$maternal_age
-  if(is.numeric(age_band)){
-    age_band[between(age_band, 15, 24, incbounds = T)]<-"15-24"
-    age_band[between(age_band, 25, 34, incbounds = T)]<-"25-34"
-    age_band[age_band>34 ]<-"35+"
-  }
-    print(age_band)
-    alg_list[[i]]$age_band<- age_band
-  }
-}
 
 alg<-do.call("rbind", alg_list)
 
@@ -604,19 +573,6 @@ alg_5<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_05_MIG_DxRx
 
 alg_list<-list(alg_1,alg_2,alg_3,alg_4,alg_5, fill=TRUE)
 
-for (i in 1:length(alg_list)){
-  if(is.null(alg_list[[i]]$age_band)){
-    print('NULL')
-    age_band<-alg_list[[i]]$maternal_age
-  if(is.numeric(age_band)){
-    age_band[between(age_band, 15, 24, incbounds = T)]<-"15-24"
-    age_band[between(age_band, 25, 34, incbounds = T)]<-"25-34"
-    age_band[age_band>34 ]<-"35+"
-  }
-    print(age_band)
-    alg_list[[i]]$age_band<- age_band
-  }
-}
 
 alg<-do.call("rbind", alg_list)
 
@@ -687,19 +643,6 @@ alg_5<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_05_MIG_DxRx
 
 alg_list<-list(alg_1,alg_2,alg_3,alg_4,alg_5, fill=TRUE)
 
-for (i in 1:length(alg_list)){
-  if(is.null(alg_list[[i]]$age_band)){
-    print('NULL')
-    age_band<-alg_list[[i]]$maternal_age
-  if(is.numeric(age_band)){
-    age_band[between(age_band, 15, 24, incbounds = T)]<-"15-24"
-    age_band[between(age_band, 25, 34, incbounds = T)]<-"25-34"
-    age_band[age_band>34 ]<-"35+"
-  }
-    print(age_band)
-    alg_list[[i]]$age_band<- age_band
-  }
-}
 
 alg<-do.call("rbind", alg_list)
 
@@ -770,19 +713,6 @@ alg_5<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_05_MIG_DxRx
 
 alg_list<-list(alg_1,alg_2,alg_3,alg_4,alg_5, fill=TRUE)
 
-for (i in 1:length(alg_list)){
-  if(is.null(alg_list[[i]]$age_band)){
-    print('NULL')
-    age_band<-alg_list[[i]]$maternal_age
-  if(is.numeric(age_band)){
-    age_band[between(age_band, 15, 24, incbounds = T)]<-"15-24"
-    age_band[between(age_band, 25, 34, incbounds = T)]<-"25-34"
-    age_band[age_band>34 ]<-"35+"
-  }
-    print(age_band)
-    alg_list[[i]]$age_band<- age_band
-  }
-}
 
 alg<-do.call("rbind", alg_list)
 
@@ -889,20 +819,6 @@ alg_11<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_05_MIG_DxR
 
 alg_list<-list(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6,alg_7,alg_8,alg_9,alg_10,alg_11)
 
-for (i in 1:length(alg_list)){
-  if(is.null(alg_list[[i]]$age_band)){
-    print('NULL')
-    age_band<-alg_list[[i]]$maternal_age
-  if(is.numeric(age_band)){
-    age_band[between(age_band, 15, 24, incbounds = T)]<-"15-24"
-    age_band[between(age_band, 25, 34, incbounds = T)]<-"25-34"
-    age_band[age_band>34 ]<-"35+"
-  }
-    print(age_band)
-    alg_list[[i]]$age_band<- age_band
-  }
-}
-
 alg<-do.call("rbind", alg_list)
 
 alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
@@ -1008,19 +924,6 @@ alg_12<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_05_MIG_DxR
 
 alg_list<-list(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6,alg_7,alg_8,alg_9,alg_10,alg_11,alg_12, fill=TRUE)
 
-for (i in 1:length(alg_list)){
-  if(is.null(alg_list[[i]]$age_band)){
-    print('NULL')
-    age_band<-alg_list[[i]]$maternal_age
-  if(is.numeric(age_band)){
-    age_band[between(age_band, 15, 24, incbounds = T)]<-"15-24"
-    age_band[between(age_band, 25, 34, incbounds = T)]<-"25-34"
-    age_band[age_band>34 ]<-"35+"
-  }
-    print(age_band)
-    alg_list[[i]]$age_band<- age_band
-  }
-}
 
 alg<-do.call("rbind", alg_list)
 
@@ -1126,19 +1029,6 @@ alg_12<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_05_MIG_DxR
 
 alg_list<-list(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6,alg_7,alg_8,alg_9,alg_10,alg_11,alg_12, fill=TRUE)
 
-for (i in 1:length(alg_list)){
-  if(is.null(alg_list[[i]]$age_band)){
-    print('NULL')
-    age_band<-alg_list[[i]]$maternal_age
-  if(is.numeric(age_band)){
-    age_band[between(age_band, 15, 24, incbounds = T)]<-"15-24"
-    age_band[between(age_band, 25, 34, incbounds = T)]<-"25-34"
-    age_band[age_band>34 ]<-"35+"
-  }
-    print(age_band)
-    alg_list[[i]]$age_band<- age_band
-  }
-}
 
 alg<-do.call("rbind", alg_list)
 
