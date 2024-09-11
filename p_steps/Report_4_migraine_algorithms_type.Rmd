@@ -26,6 +26,13 @@ h3
 ```{r set_locale, include=FALSE}
 Sys.setlocale("LC_ALL", "C")
 `%!in%` = Negate(`%in%`)
+fread <-function(file,...){
+  dt = data.table::fread(file=file,...)
+  if(!"maternal_age" %in% colnames(dt) && "age_band" %in% colnames(dt)){
+    data.table::setnames(dt, "age_band", "maternal_age")
+  }
+  dt
+}
 ```
 
 
@@ -1082,3 +1089,7 @@ Organisation: UMC Utrecht, Utrecht, The Netherlands
 
 </div>
 
+
+```{r include=FALSE}
+rm(list="fread")
+```
