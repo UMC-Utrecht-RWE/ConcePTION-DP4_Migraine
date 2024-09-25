@@ -498,6 +498,8 @@ if("op_start_date_du" %in% names(preg_d3_checkbox)){preg_d3_checkbox[,op_start_d
 if("op_start_date_saf" %in% names(preg_d3_checkbox)){preg_d3_checkbox[,op_start_date_saf:=NULL]}
 if("sex_at_instance_creation" %in% names(preg_d3_checkbox)){preg_d3_checkbox[,sex_at_instance_creation:=NULL]}
 preg_d3_checkbox[,age:=floor((pregnancy_start_date-birth_date)/365.25)]
+age_band<-age_band_creation(preg_d3_checkbox$age)
+preg_d3_checkbox$age_band<-age_band
 preg_d3_checkbox[,maternal_age:=as.character(lapply(age, age_band_creation))]
 preg_d3_checkbox[,year:=year(pregnancy_start_date)]
 preg_d3_checkbox[,year_group:=as.character(lapply(year, year_group_creation))]
