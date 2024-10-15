@@ -23,6 +23,10 @@ pregnancy_D3<-D3_pregnancy_final
 rm(D3_pregnancy_final)
 pregnancy_D3[,pregnancy_start_date:=as.IDate(pregnancy_start_date)]
 pregnancy_D3[,pregnancy_end_date:=as.IDate(pregnancy_end_date)]
+if("type_end_of_pregnancy"%in%colnames(pregnancy_D3)){
+  pregnancy_D3$type_of_pregnancy_end<-pregnancy_D3$type_end_of_pregnancy
+}
+
 
 original_rows<-pregnancy_D3[,.N]
 
