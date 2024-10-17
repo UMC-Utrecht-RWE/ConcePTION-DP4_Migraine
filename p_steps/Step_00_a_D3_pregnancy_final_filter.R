@@ -24,7 +24,7 @@ rm(D3_filtered)
 if(data_access_provider_name=="FISABIO"){
   
   # FISABIO: only birth registry
-  D3_filtered <-pregnancy_D3[meaning_of_principal_record %in% c("birth_registry_mother", "perinatal_death_registry_mother", "anomalies_mother_registry","perinatal_death_registry_child", "birth_registry_child")][imputed_end_of_pregnancy == 0][type_of_end_pregnancy=="LB" | type_of_end_pregnancy=="SB"] #prompts
+  D3_filtered <-pregnancy_D3[meaning_of_principal_record %in% c("birth_registry_mother", "perinatal_death_registry_mother", "anomalies_mother_registry","perinatal_death_registry_child", "birth_registry_child")][imputed_end_of_pregnancy == 0][type_of_pregnancy_end=="LB" | type_of_pregnancy_end=="SB"] #prompts
 
   rm(pregnancy_D3)
 pregnancy_D3<-D3_filtered
