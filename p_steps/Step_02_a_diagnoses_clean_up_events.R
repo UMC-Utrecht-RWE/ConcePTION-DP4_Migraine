@@ -97,7 +97,7 @@ if(sum(events_gdm_diagnoses,events_pe_diagnoses,events_migraine_diagnoses)>0){
 load(paste0(projectFolder,"/p_steps/Pregnancy algorithm/g_output/D3_mother_child_ids.RData"))
 
 #remove unecessary columns
-link<-as.data.table(D3_mother_child_id[c("person_id","child_id")])
+link<-as.data.table(D3_mother_child_ids[c("person_id","child_id")])
 
 #rename link[person_id] (mom_id) 
 setnames(link, "person_id", "mom_id") 
