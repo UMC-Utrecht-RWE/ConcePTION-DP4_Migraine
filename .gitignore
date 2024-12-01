@@ -40,3 +40,5 @@ g_intermediate/migraine_algorithm_sensitivity/MIG_DxRx_first_D3.rds
 g_intermediate/migraine_algorithm_sensitivity/MIG_DxRx_second_D3.rds
 g_intermediate/migraine_algorithm_sensitivity/MIG_DxRx_third_D3.rds
 g_intermediate/migraine_algorithm_sensitivity/pregnancy_D3_sensitivity/final_d3/MIG_Pregnancy_D3_S.rds
+.Rproj.user
+g_output_masked/
