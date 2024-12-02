@@ -497,7 +497,7 @@ rm(flowchart_max_age)
 ####Apply specific criteria to each project####
 #Check if the records have at least 3 months of lookback
 if (DAP_name == "CHUT"){
-lookback_3_months<-2.5*30.25
+lookback_3_months<-3*30.4375-14
 }else{
   lookback_3_months<-3*30.25  
 }
