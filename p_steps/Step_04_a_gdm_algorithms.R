@@ -162,9 +162,9 @@ sum<-list()
 w<-1
 for(med_fl in 1:length(obs_period_med[,.N])){
 if(gdm_med[,.N]>0){
-    gdm_med[,lookback:=obs_period_med[med_fl,lookback]]
+    gdm_med[,lookback:=as.numeric(obs_period_med[med_fl,lookback])]
     gdm_med[,start_preg:=as.IDate(get(obs_period_med[med_fl,start_date]) -lookback)]
-    gdm_med[,start_preg:=as.IDate(get(obs_period_med[med_fl,start_date]) + as.numeric(obs_period_med[med_fl,add_start]))]
+    gdm_med[,start_preg:=as.IDate(start_preg + as.numeric(obs_period_med[med_fl,add_start]))]
     #exclude all pregnancies that are outside observation period of interest
     gdm_med[,diff:=medicine_date-start_preg]
     #remove all records with date before start date pregnancy+lookback
@@ -173,7 +173,7 @@ if(gdm_med[,.N]>0){
     gdm_med[,diff:=NULL][,lookback:=NULL][,start_preg:=NULL]
   
   if(gdm_med[,.N]>0){
-    gdm_med[,after:=obs_period_med[med_fl,after]]
+    gdm_med[,after:=as.numeric(obs_period_med[med_fl,after])]
     gdm_med[,end_preg:=as.IDate(get(obs_period_med[med_fl,end_date]) + after)]
     #exclude all pregnancies that are outside observation period of interest
     gdm_med[,diff:=medicine_date-end_preg]
