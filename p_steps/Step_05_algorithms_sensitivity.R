@@ -8,37 +8,42 @@ orig_mig<-pregnancy_d3_mig[,.N]
 
 if(DAP_name == "CHUT"){
   obs_period_diag<-data.table(StudyVar=c("MG","MG_NO_AURA","MG_AURA","MG_STACOMP","MG_OTHER","MG_UNSP","MG_UPC", "Migraine_checkbox"),
-                              lookback=c(2.5*30.25,2.5*30.25,2.5*30.25,2.5*30.25,2.5*30.25,2.5*30.25,2.5*30.25,2.5*30.25),
-                              start_date=c(0,0,0,0,0,0,0,0),
-                              end_date=c(7*40,7*40,7*40,7*40,7*40,7*40,7*40,7*40),
-                              after=c(0,0,0,0,0,0,0,0))  
+                              lookback=c(rep(3*30.4375-14,7),5),
+                              start_date="pregnancy_start_date",
+                              add_start=rep(0,8),
+                              end_date="pregnancy_end_date",
+                              after=rep(0,8))  
 }else{
   obs_period_diag<-data.table(StudyVar=c("MG","MG_NO_AURA","MG_AURA","MG_OTHER","MG_UNSP","MG_STACOMP","MG_UPC","Migraine_checkbox"),
-                              lookback=c(365.25,365.25,365.25,365.25,365.25,365.25,365.25,5),
-                              start_date=c(0,0,0,0,0,0,0,0),
-                              end_date=c(7*40,7*40,7*40,7*40,7*40,7*40,7*40,7*40),
-                              after=c(0,0,0,0,0,0,0,0))
+                              lookback=c(rep(365.25,7),5),
+                              start_date="pregnancy_start_date",
+                              add_start=0,
+                              end_date="pregnancy_end_date",
+                              after=0)
 }
 
 if (DAP_name == "NIHW"){
   obs_period_med<-data.table(StudyVar=c("Migraine_medicines"),
                              lookback=c(3*30.25),
-                             start_date=c(0),
-                             end_date=c(40*7),
-                             after=c(0))}
+                             start_date="pregnancy_start_date",
+                             add_start=0,
+                             end_date="pregnancy_end_date",
+                             after=0)}
 if (DAP_name == "CHUT"){
   obs_period_med<-data.table(StudyVar=c("Migraine_medicines"),
-                             lookback=c(2.5*30.25),
-                             start_date=c(0),
-                             end_date=c(40*7),
-                             after=c(0))}
+                             lookback=3*30.4375-14,
+                             start_date="pregnancy_start_date",
+                             add_start=0,
+                             end_date="pregnancy_end_date",
+                             after=0)}
 
 if (!DAP_name %in% c("NIHW", "CHUT")){
   obs_period_med<-data.table(StudyVar=c("Migraine_medicines"),
-                             lookback=c(365.25),
-                             start_date=c(0),
-                             end_date=c(40*7),
-                             after=c(0))
+                             lookback=365.25,
+                             start_date="pregnancy_start_date",
+                             add_start=0,
+                             end_date="pregnancy_end_date",
+                             after=0)
 }
 
 if("final_d3" %in% list.files(paste0(projectFolder,"/g_intermediate/migraine_algorithm_sensitivity/migraine_diagnoses/"))){
@@ -63,38 +68,22 @@ for(mig_fl in 1:length(mig_files)){
   if(mig_dt[,.N]>0){
     mig_dt[,event_date:=as.IDate(event_date)]
     
-    if(obs_period_diag[StudyVar==names_events[mig_fl],lookback]>0){
-      mig_dt[,lookback:=obs_period_diag[StudyVar==names_events[mig_fl],lookback]]
-      mig_dt[,start_preg:=as.IDate(pregnancy_start_date-lookback)]
-      #exclude all events that are outside observation period of interest
-      mig_dt[,diff:=event_date-start_preg]
-      #remove all records with date before start date pregnancy+lookback
-      mig_dt<-mig_dt[diff>=0]
-      mig_dt[,diff:=NULL][,lookback:=NULL][,start_preg:=NULL]
-    }else{
-      #remove all records before start obs
-      mig_dt[,start:=obs_period_diag[StudyVar==names_events[mig_fl],start_date]]
-      mig_dt[,start_preg:=as.IDate(pregnancy_start_date+start)]
-      mig_dt[,diff:=event_date-start_preg]
-      mig_dt<-mig_dt[diff>=0]
-      mig_dt[,diff:=NULL][,start:=NULL][,start_preg:=NULL]
-    }
+    mig_dt[,lookback:=as.numeric(obs_period_diag[StudyVar==names_events[mig_fl],lookback])]
+    mig_dt[,start_preg:=as.IDate(get(obs_period_diag[StudyVar==names_events[mig_fl],start_date])-lookback)]
+    mig_dt[,start_preg:=as.IDate(start_preg+as.numeric(obs_period_diag[StudyVar==names_events[mig_fl],add_start]))]
+    #exclude all events that are outside observation period of interest
+    mig_dt[,diff:=event_date-start_preg]
+    #remove all records with date before start date pregnancy+lookback
+    mig_dt<-mig_dt[diff>=0]
+    mig_dt[,diff:=NULL][,lookback:=NULL][,start_preg:=NULL]
     
     if(mig_dt[,.N]>0){
-      if(obs_period_diag[StudyVar==names_events[mig_fl],after]>0){
-        mig_dt[,after:=obs_period_diag[StudyVar==names_events[mig_fl],after]]
-        mig_dt[,end_preg:=as.IDate(pregnancy_end_date+after)]
-        mig_dt[,diff:=event_date-end_preg]
-        mig_dt<-mig_dt[diff<=0]
-        mig_dt[,diff:=NULL][,after:=NULL][,end_preg:=NULL]
-      }else{
-        #mig_dt[,end:=obs_period_diag[StudyVar==names_events[mig_fl],end_date]]
-        mig_dt[,end_preg:=as.IDate(pregnancy_end_date)]
-        mig_dt[,diff:=event_date-end_preg]
-        mig_dt<-mig_dt[diff<=0]
-        mig_dt[,diff:=NULL][,end_preg:=NULL]
+      mig_dt[,after:=as.numeric(obs_period_diag[StudyVar==names_events[mig_fl],after])]
+      mig_dt[,end_preg:=as.IDate(get(obs_period_diag[StudyVar==names_events[mig_fl],end_date])+after)]
+      mig_dt[,diff:=event_date-end_preg]
+      mig_dt<-mig_dt[diff<=0]
+      mig_dt[,diff:=NULL][,after:=NULL][,end_preg:=NULL]
       }
-    }
     
     if(mig_dt[,.N]>0){
 
@@ -132,7 +121,9 @@ for(mig_fl in 1:length(mig_files)){
       rm(mig_during)
       pregnancy_d3_mig[is.na(get(paste0(names_events[mig_fl],"_during"))),eval(paste0(names_events[mig_fl],"_during")):=0]
       #first
-      mig_dt[,start:=pregnancy_start_date + trimester_timepoint[Indicator=="first",as.numeric(start)]][,end:=pregnancy_start_date + trimester_timepoint[Indicator=="first",as.numeric(end)]]
+      mig_dt[,start:=get(trimester_timepoint[Indicator=="first", start]) + as.numeric(trimester_timepoint[Indicator=="first",add_start])][,end:=get(trimester_timepoint[Indicator=="first", start]) + as.numeric(trimester_timepoint[Indicator=="first",end])]
+      #Replace end date with end of pregnancy if this comes before
+      mig_dt[end>pregnancy_end_date, end:=pregnancy_end_date]
       mig_dt[event_date>=start & event_date<end,paste0(names_events[mig_fl],"_first"):=1]
       mig_first<-mig_dt[get(paste0(names_events[mig_fl],"_first"))==1,lapply(.SD, sum),.SDcols = paste0(names_events[mig_fl],"_first"), by=c("person_id","pregnancy_id","pregnancy_start_date","pregnancy_end_date")]
       mig_dt[,eval(paste0(names_events[mig_fl],"_first")):=NULL]
@@ -140,7 +131,9 @@ for(mig_fl in 1:length(mig_files)){
       rm(mig_first)
       pregnancy_d3_mig[is.na(get(paste0(names_events[mig_fl],"_first"))),eval(paste0(names_events[mig_fl],"_first")):=0]
       #second
-      mig_dt[,start:=pregnancy_start_date + trimester_timepoint[Indicator=="second",as.numeric(start)]][,end:=pregnancy_start_date + trimester_timepoint[Indicator=="second",as.numeric(end)]]
+      mig_dt[,start:=get(trimester_timepoint[Indicator=="second", start]) + as.numeric(trimester_timepoint[Indicator=="second",add_start])][,end:=get(trimester_timepoint[Indicator=="second", start]) + as.numeric(trimester_timepoint[Indicator=="second",end])]
+      #Replace end date with end of pregnancy if this comes before
+      mig_dt[end>pregnancy_end_date, end:=pregnancy_end_date]
       mig_dt[event_date>=start & event_date<end,paste0(names_events[mig_fl],"_second"):=1]
       mig_second<-mig_dt[get(paste0(names_events[mig_fl],"_second"))==1,lapply(.SD, sum),.SDcols = paste0(names_events[mig_fl],"_second"), by=c("person_id","pregnancy_id","pregnancy_start_date","pregnancy_end_date")]
       mig_dt[,eval(paste0(names_events[mig_fl],"_second")):=NULL]
@@ -148,7 +141,9 @@ for(mig_fl in 1:length(mig_files)){
       rm(mig_second)
       pregnancy_d3_mig[is.na(get(paste0(names_events[mig_fl],"_second"))),eval(paste0(names_events[mig_fl],"_second")):=0]
       #third
-      mig_dt[,start:=pregnancy_start_date + trimester_timepoint[Indicator=="third",as.numeric(start)]][,end:=pregnancy_start_date + trimester_timepoint[Indicator=="third",as.numeric(end)]]
+      mig_dt[,start:=get(trimester_timepoint[Indicator=="third", start]) + as.numeric(trimester_timepoint[Indicator=="third",add_start])][,end:=get(trimester_timepoint[Indicator=="third", start]) + as.numeric(trimester_timepoint[Indicator=="third",end])]
+      #Replace end date with end of pregnancy if this comes before
+      mig_dt[end>pregnancy_end_date, end:=pregnancy_end_date]
       mig_dt[event_date>=start & event_date<end,paste0(names_events[mig_fl],"_third"):=1]
       mig_third<-mig_dt[get(paste0(names_events[mig_fl],"_third"))==1,lapply(.SD, sum),.SDcols = paste0(names_events[mig_fl],"_third"), by=c("person_id","pregnancy_id","pregnancy_start_date","pregnancy_end_date")]
       mig_dt[,eval(paste0(names_events[mig_fl],"_third")):=NULL]
@@ -202,38 +197,24 @@ mig_med[,pregnancy_start_date:=as.IDate(pregnancy_start_date)][,pregnancy_end_da
 w<-1
 for(med_fl in 1:length(obs_period_med[,.N])){
   if(mig_med[,.N]>0){
-    if(obs_period_med[med_fl,lookback]>0){
-      mig_med[,lookback:=obs_period_med[med_fl,lookback]]
-      mig_med[,start_preg:=as.IDate(pregnancy_start_date-lookback)]
-      #exclude all pregnancies that are outside observation period of interest
-      mig_med[,diff:=medicine_date-start_preg]
-      #remove all records with date before start date pregnancy+lookback
-      mig_med<-mig_med[diff>=0]
-      mig_med[,diff:=NULL][,lookback:=NULL][,start_preg:=NULL]
-    }else{
-      #remove all records before start obs
-      mig_med[,start:=obs_period_med[med_fl,start_date]]
-      mig_med[,start_preg:=as.IDate(pregnancy_start_date+start)]
-      mig_med[,diff:=medicine_date-start_preg]
-      mig_med<-mig_med[diff>=0]
-      mig_med[,diff:=NULL][,start:=NULL][,start_preg:=NULL]
-    }
     
+    mig_dt[,lookback:=as.numeric(obs_period_med[med_fl,lookback])]
+    mig_dt[,start_preg:=as.IDate(get(obs_period_med[med_fl,start_date])-lookback)]
+    mig_dt[,start_preg:=as.IDate(start_preg+as.numeric(obs_period_med[med_fl,add_start]))]
+    #exclude all pregnancies that are outside observation period of interest
+    mig_med[,diff:=medicine_date-start_preg]
+    #remove all records with date before start date pregnancy+lookback
+    mig_med<-mig_med[diff>=0]
+    mig_med[,diff:=NULL][,lookback:=NULL][,start_preg:=NULL]
+  }
+  
     if(mig_med[,.N]>0){
-      if(obs_period_med[med_fl,after]>0){
-        mig_med[,after:=obs_period_med[med_fl,after]]
-        mig_med[,end_preg:=as.IDate(pregnancy_end_date+after)]
+      mig_dt[,after:=as.numeric(obs_period_med[med_fl,after])]
+      mig_dt[,end_preg:=as.IDate(get(obs_period_med[med_fl,start_date])+after)]
         mig_med[,diff:=medicine_date-end_preg]
         mig_med<-mig_med[diff<=0]
         mig_med[,diff:=NULL][,after:=NULL][,end_preg:=NULL]
-      }else{
-        #mig_med[,end:=after]
-        mig_med[,end_preg:=as.IDate(pregnancy_end_date)]
-        mig_med[,diff:=medicine_date-end_preg]
-        mig_med<-mig_med[diff<=0]
-        mig_med[,diff:=NULL][,end_preg:=NULL]
       }
-    }
     
     if(mig_med[,.N]>0){
       cols<-c("person_id","pregnancy_id","pregnancy_start_date","pregnancy_end_date","medicine_date")
@@ -271,7 +252,9 @@ for(med_fl in 1:length(obs_period_med[,.N])){
       pregnancy_d3_mig[is.na(get(paste0(obs_period_med[med_fl, StudyVar],"_during"))),eval(paste0(obs_period_med[med_fl, StudyVar],"_during")):=0]
       cols<-cols[!cols %in% c("medicinal_product_id","injection")]
       #first
-      mig_med[,start:=pregnancy_start_date + trimester_timepoint[Indicator=="first",as.numeric(start)]][,end:=pregnancy_start_date + trimester_timepoint[Indicator=="first",as.numeric(end)]]
+      mig_med[,start:=get(trimester_timepoint[Indicator=="first", start]) + as.numeric(trimester_timepoint[Indicator=="first",add_start])][,end:=get(trimester_timepoint[Indicator=="first", start]) + as.numeric(trimester_timepoint[Indicator=="first",end])]
+      #Replace end date with end of pregnancy if this comes before
+      mig_med[end>pregnancy_end_date, end:=pregnancy_end_date]
       mig_med[medicine_date>=start & medicine_date<end,paste0(obs_period_med[med_fl, StudyVar],"_first"):=1]
       mig_med_first<-mig_med[get(paste0(obs_period_med[med_fl, StudyVar],"_first"))==1,lapply(.SD, sum),.SDcols = paste0(obs_period_med[med_fl, StudyVar],"_first"), by=c("person_id","pregnancy_id","pregnancy_start_date","pregnancy_end_date")]
       mig_med[,eval(paste0(obs_period_med[med_fl, StudyVar],"_first")):=NULL]
@@ -279,7 +262,9 @@ for(med_fl in 1:length(obs_period_med[,.N])){
       rm(mig_med_first)
       pregnancy_d3_mig[is.na(get(paste0(obs_period_med[med_fl, StudyVar],"_first"))),eval(paste0(obs_period_med[med_fl, StudyVar],"_first")):=0]
       #second
-      mig_med[,start:=pregnancy_start_date + trimester_timepoint[Indicator=="second",as.numeric(start)]][,end:=pregnancy_start_date + trimester_timepoint[Indicator=="second",as.numeric(end)]]
+      mig_med[,start:=get(trimester_timepoint[Indicator=="second", start]) + as.numeric(trimester_timepoint[Indicator=="second",add_start])][,end:=get(trimester_timepoint[Indicator=="second", start]) + as.numeric(trimester_timepoint[Indicator=="second",end])]
+      #Replace end date with end of pregnancy if this comes before
+      mig_med[end>pregnancy_end_date, end:=pregnancy_end_date]
       mig_med[medicine_date>=start & medicine_date<end,paste0(obs_period_med[med_fl, StudyVar],"_second"):=1]
       mig_med_second<-mig_med[get(paste0(obs_period_med[med_fl, StudyVar],"_second"))==1,lapply(.SD, sum),.SDcols = paste0(obs_period_med[med_fl, StudyVar],"_second"), by=c("person_id","pregnancy_id","pregnancy_start_date","pregnancy_end_date")]
       mig_med[,eval(paste0(obs_period_med[med_fl, StudyVar],"_second")):=NULL]
@@ -287,7 +272,9 @@ for(med_fl in 1:length(obs_period_med[,.N])){
       rm(mig_med_second)
       pregnancy_d3_mig[is.na(get(paste0(obs_period_med[med_fl, StudyVar],"_second"))),eval(paste0(obs_period_med[med_fl, StudyVar],"_second")):=0]
       #third
-      mig_med[,start:=pregnancy_start_date + trimester_timepoint[Indicator=="third",as.numeric(start)]][,end:=pregnancy_start_date + trimester_timepoint[Indicator=="third",as.numeric(end)]]
+      mig_med[,start:=get(trimester_timepoint[Indicator=="third", start]) + as.numeric(trimester_timepoint[Indicator=="third",add_start])][,end:=get(trimester_timepoint[Indicator=="third", start]) + as.numeric(trimester_timepoint[Indicator=="third",end])]
+      #Replace end date with end of pregnancy if this comes before
+      mig_med[end>pregnancy_end_date, end:=pregnancy_end_date]
       mig_med[medicine_date>=start & medicine_date<end,paste0(obs_period_med[med_fl, StudyVar],"_third"):=1]
       mig_med_third<-mig_med[get(paste0(obs_period_med[med_fl, StudyVar],"_third"))==1,lapply(.SD, sum),.SDcols = paste0(obs_period_med[med_fl, StudyVar],"_third"), by=c("person_id","pregnancy_id","pregnancy_start_date","pregnancy_end_date")]
       mig_med[,eval(paste0(obs_period_med[med_fl, StudyVar],"_third")):=NULL]
@@ -310,7 +297,7 @@ for(med_fl in 1:length(obs_period_med[,.N])){
     pregnancy_d3_mig[,eval(paste0(obs_period_med[med_fl,StudyVar],"_second")):=0]
     pregnancy_d3_mig[,eval(paste0(obs_period_med[med_fl,StudyVar],"_third")):=0]
   }
-}
+
 rm(mig_med)
 #### Save preganncy cohort ####
 saveRDS(pregnancy_d3_mig, paste0(projectFolder,"/g_intermediate/migraine_algorithm_sensitivity/pregnancy_D3_sensitivity/final_d3/MIG_Pregnancy_D3_S.rds"))
