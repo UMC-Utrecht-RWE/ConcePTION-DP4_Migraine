@@ -99,18 +99,14 @@ load(paste0(projectFolder,"/p_steps/Pregnancy algorithm/g_output/D3_mother_child
 #remove unecessary columns
 link<-as.data.table(D3_mother_child_ids[c("person_id","child_id")])
 
-#rename link[person_id] (mom_id) 
-setnames(link, "person_id", "mom_id") 
-
-#duplicate person_id column to child_id, to merge with link
-
-df[,child_id:=person_id]
+#rename df[person_id] (child_id) 
+setnames(df, "person_id", "child_id") 
 
 df<-merge.data.table(df, link, by="child_id", all.x=T) 
 
 #mutate mom_id and person_id to replace NA child_id values with linked mom_id values
-df[!is.na(mom_id), person_id:=mom_id]
-df[,mom_id:=NULL][,child_id:=NULL]
+df[,child_id:=NULL]
+df<-df[!is.na(person_id)]
 rm(link)
 }
       df<-merge.data.table(df, obs_hint_table, by="person_id", all.x = T)
