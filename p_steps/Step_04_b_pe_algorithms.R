@@ -26,16 +26,18 @@ if(length(pe_checkbox_files)>0){
 ####PE DIAGNOSES####
 print("Loading all PE diagnoses D3 and merge with the pregnancy D3.")
 if(DAP_name=="CHUT"){
-obs_period_diag<-data.table(StudyVar=c("PE","ECL","HELLP","PE_checkbox"),
-                       lookback=c(0,0,0,0),
-                       start_date=c(20*7,20*7,20*7,20*7),
-                       end_date=c(7*40,7*40,7*40,7*40),
-                       after=c(0,0,0,0))
+  obs_period_diag<-data.table(StudyVar=c("PE","ECL","HELLP","PE_checkbox"),
+                              lookback=c(0,0,0,0),
+                              start_date="pregnancy_start_date",
+                              add_start=c(20*7, 20*7, 20*7, 20*7),
+                              end_date="pregnancy_end_date",
+                              after=c(0,0,0,0)) 
 }else{
   obs_period_diag<-data.table(StudyVar=c("PE","ECL","HELLP","PE_checkbox"),
                               lookback=c(0,0,0,0),
-                              start_date=c(20*7,20*7,20*7,20*7),
-                              end_date=c(7*40,7*40,7*40,7*40),
+                              start_date="pregnancy_start_date",
+                              add_start=c(20*7, 20*7, 20*7, 20*7),
+                              end_date="pregnancy_end_date",
                               after=c(7,7,7,7)) 
 }
 fwrite(obs_period_diag, paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_observation_periods_pe.csv"),row.names = F)
@@ -64,42 +66,23 @@ for(pe_fl in 1:length(pe_files)){
   if(pe_dt[,.N]>0){
     original[[w]]<-data.table(StudyVar=names_events[pe_fl], event_records=pe_dt[,.N])
     pe_dt[,event_date:=as.IDate(event_date)]
-    
-    if(obs_period_diag[StudyVar==names_events[pe_fl],lookback]>0){
-      pe_dt[,lookback:=obs_period_diag[StudyVar==names_events[pe_fl],lookback]]
-      pe_dt[,start_preg:=as.IDate(pregnancy_start_date-lookback)]
-      #exclude all pregnancies that are outside observation period of interest
-      pe_dt[,diff:=event_date-start_preg]
-      #remove all records with date before start date pregnancy+lookback
-      before[[w]]<-data.table(StudyVar=names_events[pe_fl], before_start=pe_dt[diff<0,.N])
-      pe_dt<-pe_dt[diff>=0]
-      pe_dt[,diff:=NULL][,lookback:=NULL][,start_preg:=NULL]
-    }else{
-      #remove all records before start obs
-      pe_dt[,start:=obs_period_diag[StudyVar==names_events[pe_fl],start_date]]
-      pe_dt[,start_preg:=as.IDate(pregnancy_start_date+start)]
-      pe_dt[,diff:=event_date-start_preg]
-      before[[w]]<-data.table(StudyVar=names_events[pe_fl], before_start=pe_dt[diff<0,.N])
-      pe_dt<-pe_dt[diff>=0]
-      pe_dt[,diff:=NULL][,start:=NULL][,start_preg:=NULL]
-    }
+    pe_dt[,lookback:=as.numeric(obs_period_diag[StudyVar==names_events[pe_fl],lookback])]
+    pe_dt[,start_preg:=as.IDate(get(obs_period_diag[StudyVar==names_events[pe_fl],start_date])-lookback)]
+    pe_dt[,start_preg:=as.IDate(start_preg + as.numeric(obs_period_diag[StudyVar==names_events[pe_fl],add_start]))]
+    #exclude all pregnancies that are outside observation period of interest
+    pe_dt[,diff:=event_date-start_preg]
+    #remove all records with date before start date pregnancy+lookback
+    before[[w]]<-data.table(StudyVar=names_events[pe_fl], before_start=pe_dt[diff<0,.N])
+    pe_dt<-pe_dt[diff>=0]
+    pe_dt[,diff:=NULL][,lookback:=NULL][,start_preg:=NULL]
     
     if(pe_dt[,.N]>0){
-      if(obs_period_diag[StudyVar==names_events[pe_fl],after]>0){
-        pe_dt[,after:=obs_period_diag[StudyVar==names_events[pe_fl],after]]
-        pe_dt[,end_preg:=as.IDate(pregnancy_end_date+after)]
+      pe_dt[,after:=as.numeric(obs_period_diag[StudyVar==names_events[pe_fl],after])]
+      pe_dt[,end_preg:=as.IDate(get(obs_period_diag[StudyVar==names_events[pe_fl],end_date])+ after)]
         pe_dt[,diff:=event_date-end_preg]
-        after[[w]]<-data.table(StudyVar=names_events[pe_fl], after_end=pe_dt[diff>0,.N])
-        pe_dt<-pe_dt[diff<=0]
+        after[[w]]<-data.table(StudyVar=names_events[pe_fl], after_end=pe_dt[diff>=0,.N])
+        pe_dt<-pe_dt[diff<0]
         pe_dt[,diff:=NULL][,after:=NULL][,end_preg:=NULL]
-      }else{
-        pe_dt[,end:=obs_period_diag[StudyVar==names_events[pe_fl],end_date]]
-        pe_dt[,end_preg:=as.IDate(pregnancy_start_date+end)]
-        pe_dt[,diff:=event_date-end_preg]
-        after[[w]]<-data.table(StudyVar=names_events[pe_fl], after_end=pe_dt[diff>0,.N])
-        pe_dt<-pe_dt[diff<=0]
-        pe_dt[,diff:=NULL][,end:=NULL][,end_preg:=NULL]
-      }
     }else{
       after[[w]]<-data.table(StudyVar=names_events[pe_fl], after_end=0)
     }
