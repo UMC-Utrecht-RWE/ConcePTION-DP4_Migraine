@@ -206,28 +206,24 @@ if(sum(length(med_gdm_medicines),length(med_migraine_medicines))>0){
     df[,year:=year(medicine_date)]
     #merge with the obs_hint table and remove subjects not present in the pregnancy d3 for any of teh studies
 #EFEMERIS MOM-CHILD LINKAGE PERSON ID PATCH                
-      if (data_access_provider_name=='CHUT'){
-
-#get link file from pregnancy alg output folder
-load(paste0(projectFolder,"/p_steps/Pregnancy algorithm/g_output/D3_mother_child_ids.RData"))
-
-#remove unecessary columns
-link<-as.data.table(D3_mother_child_ids[c("person_id","child_id")])
-
-#rename link[person_id] (mom_id) 
-setnames(link, "person_id", "mom_id") 
-
-#duplicate person_id column to child_id, to merge with link
-
-df[,child_id:=person_id]
-
-df<-merge.data.table(df, link, by="child_id", all.x=T) 
-
-#mutate mom_id and person_id to replace NA child_id values with linked mom_id values
-df[!is.na(mom_id), person_id:=mom_id]
-df[,mom_id:=NULL][,child_id:=NULL]
-rm(link)
-}
+    if (data_access_provider_name=='CHUT'){
+      
+      #get link file from pregnancy alg output folder
+      load(paste0(projectFolder,"/p_steps/Pregnancy algorithm/g_output/D3_mother_child_ids.RData"))
+      
+      #remove unecessary columns
+      link<-as.data.table(D3_mother_child_ids[c("person_id","child_id")])
+      
+      #rename df[person_id] (child_id) 
+      setnames(df, "person_id", "child_id") 
+      
+      df<-merge.data.table(df, link, by="child_id", all.x=T) 
+      
+      #mutate mom_id and person_id to replace NA child_id values with linked mom_id values
+      df[,child_id:=NULL]
+      df<-df[!is.na(person_id)]
+      rm(link)
+    }
     df<-merge.data.table(df, obs_hint_table, by="person_id", all.x = T)
     any_study_no[[w]]<-df[is.na(obs_min), .N]
     df<-df[!is.na(obs_min)]
