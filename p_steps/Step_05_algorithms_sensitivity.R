@@ -198,19 +198,19 @@ w<-1
 for(med_fl in 1:length(obs_period_med[,.N])){
   if(mig_med[,.N]>0){
     
-    mig_dt[,lookback:=as.numeric(obs_period_med[med_fl,lookback])]
-    mig_dt[,start_preg:=as.IDate(get(obs_period_med[med_fl,start_date])-lookback)]
-    mig_dt[,start_preg:=as.IDate(start_preg+as.numeric(obs_period_med[med_fl,add_start]))]
+    mig_med[,lookback:=as.numeric(obs_period_med[med_fl,lookback])]
+    mig_med[,start_preg:=as.IDate(get(obs_period_med[med_fl,start_date])-lookback)]
+    mig_med[,start_preg:=as.IDate(start_preg+as.numeric(obs_period_med[med_fl,add_start]))]
     #exclude all pregnancies that are outside observation period of interest
     mig_med[,diff:=medicine_date-start_preg]
     #remove all records with date before start date pregnancy+lookback
     mig_med<-mig_med[diff>=0]
     mig_med[,diff:=NULL][,lookback:=NULL][,start_preg:=NULL]
-  }
+  
   
     if(mig_med[,.N]>0){
-      mig_dt[,after:=as.numeric(obs_period_med[med_fl,after])]
-      mig_dt[,end_preg:=as.IDate(get(obs_period_med[med_fl,start_date])+after)]
+      mig_med[,after:=as.numeric(obs_period_med[med_fl,after])]
+      mig_med[,end_preg:=as.IDate(get(obs_period_med[med_fl,start_date])+after)]
         mig_med[,diff:=medicine_date-end_preg]
         mig_med<-mig_med[diff<=0]
         mig_med[,diff:=NULL][,after:=NULL][,end_preg:=NULL]
@@ -297,6 +297,7 @@ for(med_fl in 1:length(obs_period_med[,.N])){
     pregnancy_d3_mig[,eval(paste0(obs_period_med[med_fl,StudyVar],"_second")):=0]
     pregnancy_d3_mig[,eval(paste0(obs_period_med[med_fl,StudyVar],"_third")):=0]
   }
+}
 
 rm(mig_med)
 #### Save preganncy cohort ####
