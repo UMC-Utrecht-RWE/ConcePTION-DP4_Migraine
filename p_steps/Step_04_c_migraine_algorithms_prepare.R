@@ -52,16 +52,16 @@ print("Loading all Migraine diagnoses D3 and merge with the pregnancy D3.")
 
 if(DAP_name == "CHUT"){
   obs_period_diag<-data.table(StudyVar=c("MG","MG_NO_AURA","MG_AURA","MG_STACOMP","MG_OTHER","MG_UNSP","MG_UPC", "Migraine_checkbox"),
-                              lookback=c(2.5*30.25,2.5*30.25,2.5*30.25,2.5*30.25,2.5*30.25,2.5*30.25,2.5*30.25,2.5*30.25),
+                              lookback=c(rep(3*30.4375-14, 7), 5),
                               start_date="pregnancy_start_date",
                               end_date="pregnancy_end_date",
-                              after=c(0,0,0,0,0,0,0,0))  
+                              after=c(rep(0,8))  )
 }else{
   obs_period_diag<-data.table(StudyVar=c("MG","MG_NO_AURA","MG_AURA","MG_OTHER","MG_UNSP","MG_STACOMP","MG_UPC","Migraine_checkbox"),
-                              lookback=c(365.25,365.25,365.25,365.25,365.25,365.25,365.25,5),
+                              lookback=c(rep(365.25,7),5),
                               start_date="pregnancy_start_date",
                               end_date="pregnancy_end_date",
-                              after=c(0,0,0,0,0,0,0,0))
+                              after=c(rep(0,8)))
 }
 
 
@@ -194,7 +194,7 @@ if (DAP_name == "NIHW"){
                              after=c(0))}
 if (DAP_name == "CHUT"){
   obs_period_med<-data.table(StudyVar=c("Migraine_medicines"),
-                             lookback=c(2.5*30.25),
+                             lookback=c(3*30.4375-14),
                              start_date="pregnancy_start_date",
                              end_date="pregnancy_end_date",
                              after=c(0))}
@@ -311,10 +311,10 @@ onset_med<-pregnancy_d3_mig[onset_diag==0 & onset_med==1,.N]
 #number of pregnancies with onset of diag and pres
 onset_both<-pregnancy_d3_mig[onset_diag==1 & onset_med==1,.N]
 #excluded preg
-excluded_preg<-pregnancy_d3_mig[onset_diag==1 | onset_med==1,.N]
+excluded_preg<-0
 
 
-pregnancy_d3_mig<-pregnancy_d3_mig[onset_diag==0 & onset_med==0]
+#pregnancy_d3_mig<-pregnancy_d3_mig[onset_diag==0 & onset_med==0]
 included_preg<-pregnancy_d3_mig[,.N]
 pregnancy_d3_mig[,onset_diag:=NULL][,onset_med:=NULL]
 
