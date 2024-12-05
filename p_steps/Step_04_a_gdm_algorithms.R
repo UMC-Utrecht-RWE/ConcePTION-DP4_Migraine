@@ -31,7 +31,7 @@ if(DAP_name=="CHUT"){
                               lookback=c(0,0,0,3*30.4375-14,0,0),
                               start_date="pregnancy_start_date",
                               add_start=c(97,97,0,0,0,0),
-                              end_date=c("pregnancy_end_date","preganncy_end_date","pregnancy_start_date","pregnancy_start_date","pregnancy_end_date","pregnancy_end_date"),
+                              end_date=c("pregnancy_end_date","pregnancy_end_date","pregnancy_start_date","pregnancy_start_date","pregnancy_end_date","pregnancy_end_date"),
                               after=c(0,0,97,97,97,0))
   
 }else{
@@ -39,7 +39,7 @@ obs_period_diag<-data.table(StudyVar=c("GD","UNK_GD","PRE_GD","DM","DM_PREG","GD
                        lookback=c(0,0,0,6*30.25,0,0),
                        start_date="pregnancy_start_date",
                        add_start=c(97,97,0,0,0,0),
-                       end_date=c("pregnancy_end_date","preganncy_end_date","pregnancy_start_date","pregnancy_start_date","pregnancy_end_date","pregnancy_end_date"),
+                       end_date=c("pregnancy_end_date","pregnancy_end_date","pregnancy_start_date","pregnancy_start_date","pregnancy_end_date","pregnancy_end_date"),
                        after=c(7,7,97,97,97,7))
 }
 #gdm files
