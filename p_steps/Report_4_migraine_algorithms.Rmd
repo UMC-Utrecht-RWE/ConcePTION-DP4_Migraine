@@ -802,22 +802,22 @@ alg_8<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_Rx_t
 }else{alg_8<-NULL}
 
 if("Step_04_MIG_DxRx_third.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
-alg_8<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_DxRx_third.csv"))
-}else{alg_8<-NULL}
-
-if("Step_05_MIG_DxRx_first_S.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
-alg_9<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_05_MIG_DxRx_first_S.csv"))
+alg_9<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_MIG_DxRx_third.csv"))
 }else{alg_9<-NULL}
 
-if("Step_05_MIG_DxRx_second_S.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
-alg_10<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_05_MIG_DxRx_second_S.csv"))
+if("Step_05_MIG_DxRx_first_S.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
+alg_10<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_05_MIG_DxRx_first_S.csv"))
 }else{alg_10<-NULL}
 
-if("Step_05_MIG_DxRx_third_S.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
-alg_11<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_05_MIG_DxRx_third_S.csv"))
+if("Step_05_MIG_DxRx_second_S.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
+alg_11<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_05_MIG_DxRx_second_S.csv"))
 }else{alg_11<-NULL}
 
-alg_list<-list(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6,alg_7,alg_8,alg_9,alg_10,alg_11)
+if("Step_05_MIG_DxRx_third_S.csv" %in% list.files(paste0(projectFolder,"/g_output/Migraine algorithm/"))){
+alg_12<-fread(paste0(projectFolder,"/g_output/Migraine algorithm/Step_05_MIG_DxRx_third_S.csv"))
+}else{alg_12<-NULL}
+
+alg_list<-list(alg_1,alg_2,alg_3,alg_4,alg_5,alg_6,alg_7,alg_8,alg_9,alg_10,alg_11,alg_12)
 
 alg<-do.call("rbind", alg_list)
 
@@ -865,6 +865,7 @@ if("alg_8" %in% ls()){rm(alg_8)}
 if("alg_9" %in% ls()){rm(alg_9)}
 if("alg_10" %in% ls()){rm(alg_10)}
 if("alg_11" %in% ls()){rm(alg_11)}
+if("alg_12" %in% ls()){rm(alg_11)}
 if("alg" %in% ls()){rm(alg)}
 ```
 
