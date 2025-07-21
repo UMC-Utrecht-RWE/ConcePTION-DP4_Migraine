@@ -29,10 +29,10 @@ to describe drug utilization patterns in women with migraine over the course of 
 1. Download the repository in your local setting.
 2. Check whether the information in the additional_concepts.xlsx is correct. Check for types, values, column names, etc. This is important to avoid the script stopping. 
 3. Open the porject in RStudio.
-4. Open to_run.R script and set CDM_dir and PregnancyAlgorithm_g_output_dir in lines 7 and 10. CDM_dir is the path of COncePTION CDM instance and PregnancyAlgorithm_g_output_dir is the path to the Conception PregnancyAlgorithm outputs (the path should end with /g_output/). 
-5. Run the to_run script. 
+4. Open `to_run.R` script and set `CDM_dir` and `PregnancyAlgorithm_g_output_dir` in lines 7 and 10. `CDM_dir` is the path of ConcePTION CDM instance and `PregnancyAlgorithm_g_output_dir` is the path of the Conception PregnancyAlgorithm's output (the path should end with /g_output/). 
+5. Run the `to_run.R` script. 
 7. Once the script has ran, please cross-check the outputs generated in g_output folder.
-8. Zim the g_output folder (or g_output_masked folder for masked results) and upload it to myDRE.
+8. Zip the g_output folder (or g_output_masked folder for masked results) and upload it to myDRE.
 ## License 
 [![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://opensource.org/licenses/)
 
