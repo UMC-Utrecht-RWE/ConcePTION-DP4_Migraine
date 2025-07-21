@@ -4,10 +4,10 @@
 #####################################################################
 
 ## PATH to the CDM direcory
-CDM_dir<-"N:/durable/ConcePTION/CDMInstances/ConcePTION_2023/"
+CDM_dir<-"../path/to/ConcePTION_CDM/"
 
 ## PATH to the PregnancyAlgorithm outputs directory
-PregnancyAlgorithm_g_output_dir <- "N:/durable/ConcePTION/Data characterisation/ConcePTIONAlgorithmPregnancies/v5.2.1_overCDM(ConcePTION2023)/g_output/"
+PregnancyAlgorithm_g_output_dir <- "../path/to/ConcePTIONAlgorithmPregnancies/g_output/"
 
 
 ######################################################################
