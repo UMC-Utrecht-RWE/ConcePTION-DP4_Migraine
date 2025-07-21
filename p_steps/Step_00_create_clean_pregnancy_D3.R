@@ -3,7 +3,8 @@
 #source(paste0(pre_dir,"Pregnancy algorithm/to_run.R"))
 
 #Load the final pregnancy D3
-rm(list=setdiff(ls(), "projectFolder"))
+rm(list=setdiff(ls(), c("projectFolder", "CDM_dir", "PregnancyAlgorithm_g_output_dir")))
+
 setwd(projectFolder)
 source("99_path.R")
 setwd(projectFolder)
@@ -14,11 +15,11 @@ source(paste0(projectFolder,"/p_steps/info/DAP_info.R"))
 source(paste0(projectFolder,"/p_steps/parameters/study_parameters.R"))
 
 ####Load the final pregnancy D3####
-preg_file<-list.files(paste0(thisdir,"/g_output/"), "pregnancy_final")
+preg_file<-list.files(dirpregnancy, "pregnancy_final")
 
 #decluter environment and set up the 99_path again
 
-get(load(paste0(thisdir,"/g_output/", preg_file)))
+get(load(file.path(dirpregnancy, preg_file)))
 pregnancy_D3<-D3_pregnancy_final
 rm(D3_pregnancy_final)
 pregnancy_D3[,pregnancy_start_date:=as.IDate(pregnancy_start_date)]

@@ -254,7 +254,7 @@ if(sum(sum(so_gdm_diagnoses,so_pe_diagnoses,so_migraine_diagnoses),
       if (data_access_provider_name=='CHUT'){
 
 #get link file from pregnancy alg output folder
-load(paste0(projectFolder,"/p_steps/Pregnancy algorithm/g_output/D3_mother_child_ids.RData"))
+load(file.path(dirpregnancy, "D3_mother_child_ids.RData"))
 
 #remove unecessary columns
 link<-as.data.table(D3_mother_child_ids[c("person_id","child_id")])

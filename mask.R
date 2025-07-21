@@ -8,7 +8,7 @@
 
 #set packages and paths so file can be run independently
 
-rm(list=ls())
+rm(list=setdiff(ls(), c("CDM_dir","PregnancyAlgorithm_g_output_dir")))
 if(!require(rstudioapi)){install.packages("rstudioapi")}
 library(rstudioapi)
 projectFolder<-dirname(rstudioapi::getSourceEditorContext()$path)
@@ -32,7 +32,7 @@ my_cols<-c("removed_rec", "included_records", "no_records", "no_diagnosed_pregna
            "before_start", "after_end") 
 
 mask= function(x){
-  x[between(x, 1,4,incbounds = T)]<-"<5" 
+  x[x>=1 & x<=4]<-"<5" 
   return (x)}
 
 

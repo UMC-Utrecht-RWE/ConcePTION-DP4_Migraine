@@ -101,11 +101,11 @@ Mig_T4;Menstrual migraine;ICD9;346.4;;;;narrow;;MG_OTHER;;;;
 Mig_T4;Other migraine;READ;Fyu5300;;;;narrow;;MG_OTHER;;;;
 Mig_T4;Menstrual migraine;READ;K584.11;;;;narrow;;MG_OTHER;;;;
 Mig_T4;Migraine menstrual;READ;Xa07H;;;;narrow;;MG_OTHER;;;;
-Mig_T5;Migraine unspecified;ICD10;G43.9;;;;narrow;;MG_UNSP;;;Unspecified;
-Mig_T5;Migraine unspecified;ICD9;346.9;;;;narrow;;MG_UNSP;;;;
-Mig_T5;Other forms of migraine NOS;READ;F26yz00;;;;narrow;;MG_UNSP;;;;
-Mig_T5;Migraine NOS;READ;F26z.00;;;;narrow;;MG_UNSP;;;;
-Mig_T5;Other forms of migraine NOS;READ;F26yz00;;;;narrow;;MG_UNSP;;;;
-Mig_T5;Migraine unspecified, not intractable;CUI;C2875184;;;;narrow;R;MG_UNSP;VAR;;;Mig_T6
-Mig_T5;Migraine  prophylaxis;READ;8B6N.00;;;;narrow;;MG_UNSP;;;;
+Mig_T6;Migraine unspecified;ICD10;G43.9;;;;narrow;;MG_UNSP;;;Unspecified;
+Mig_T6;Migraine unspecified;ICD9;346.9;;;;narrow;;MG_UNSP;;;;
+Mig_T6;Other forms of migraine NOS;READ;F26yz00;;;;narrow;;MG_UNSP;;;;
+Mig_T6;Migraine NOS;READ;F26z.00;;;;narrow;;MG_UNSP;;;;
+Mig_T6;Other forms of migraine NOS;READ;F26yz00;;;;narrow;;MG_UNSP;;;;
+Mig_T6;Migraine unspecified, not intractable;CUI;C2875184;;;;narrow;R;MG_UNSP;VAR;;;Mig_T6
+Mig_T6;Migraine  prophylaxis;READ;8B6N.00;;;;narrow;;MG_UNSP;;;;
 Mig_T5;Migraine;ICPC2;N89;;;;narrow;;MG_UPC;;;;

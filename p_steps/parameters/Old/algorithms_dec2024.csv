@@ -1,0 +1,120 @@
+NEW_STUDY_VARIABLES;STUDY_VARIABLES;TYPE;COMPLEXITY;RULE;VALUE;SCRIPT;START;END
+GDM_1;GD;AND;simple;;;;;
+GDM_1;PRE_GD;AND_NOT;simple;;;;;
+GDM_1;DM;AND_NOT;simple;;;;;
+GDM_2;GD;OR;simple;;;;;
+GDM_2;GD_med;OR;simple;;;;;
+GDM_2;PRE_GD;AND_NOT;simple;;;;;
+GDM_2;DM;AND_NOT;simple;;;;;
+GDM_2;PRE_GD_med;AND_NOT;simple;;;;;
+GDM_3;GD;OR;complex;>=;2;;;
+GDM_3;GD_med;OR;complex;>=;2;;;
+GDM_3;PRE_GD;AND_NOT;simple;;;;;
+GDM_3;DM;AND_NOT;simple;;;;;
+GDM_3;PRE_GD_med;AND_NOT;simple;;;;;
+GDM_4;GD;OR;simple;;;;;
+GDM_4;UNK_GD;OR;simple;;;;;
+GDM_4;GD_med;OR;simple;;;;;
+GDM_4;PRE_GD;AND_NOT;simple;;;;;
+GDM_4;DM;AND_NOT;simple;;;;;
+GDM_4;PRE_GD_med;AND_NOT;simple;;;;;
+GDM_5;GD;OR;simple;;;;;
+GDM_5;GD_med;OR;simple;;;;;
+GDM_5;PRE_GD;AND_NOT;simple;;;;;
+GDM_4;DM;AND_NOT;simple;;;;;
+GDM_5;DM_PREG;AND_NOT;simple;;;;;
+GDM_5;PRE_GD_med;AND_NOT;simple;;;;;
+GDM_8;GDM_checkbox;AND;simple;;;;;
+PE_1;PE;AND;simple;;;;;
+PE_2;PE;AND;complex;>=;2;;;
+PE_3;PE;OR;simple;;;;;
+PE_3;ECL;OR;simple;;;;;
+PE_3;HELLP;OR;simple;;;;;
+PE_4_a;PE;AND; complex;>=;2;;;
+PE_4_b;PE;AND; simple;;;;;
+PE_4_b;ECL;AND; simple;;;;;
+PE_4_c;PE;AND; simple;;;;;
+PE_4_c;HELLP;AND; simple;;;;;
+PE_4_d;ECL;AND; complex;>=;2;;;
+PE_4_e;ECL;AND; simple;;;;;
+PE_4_e;HELLP;AND; simple;;;;;
+PE_4_f;HELLP;AND; complex;>=;2;;;
+PE_5;PE_checkbox;AND;simple;;;;;
+MIG_Dx_a;MG_baseline;AND;simple;;;;365.25;1
+MIG_Dx_b;MG_baseline_2;AND;simple;;;;365.25;1
+MIG_Rx_a;Migraine_medicines_baseline;AND;simple;;;;365.25;1
+MIG_Rx_b;Migraine_medicines_baseline_2;AND;simple;;;;365.25;1
+MIG_DxRx_a;MG_baseline;OR;simple;;;;;
+MIG_DxRx_a;Migraine_medicines_baseline;OR;simple;;;;;
+MIG_DxRx_b;MG_baseline_2;OR;simple;;;;;
+MIG_DxRx_b;Migraine_medicines_baseline_2;OR;simple;;;;;
+MIG_Dx_during;MG_during;AND;simple;;;;365.25;1
+MIG_Rx_during;Migraine_medicines_during;AND;simple;;;;365.25;1
+MIG_DxRx_during; MG_during;OR;simple;;;;;
+MIG_DxRx_during; Migraine_medicines_during;OR;simple;;;;;
+MIG_Dx_first;MG_first;AND;simple;;;;365.25;1
+MIG_Rx_first;Migraine_medicines_first;AND;simple;;;;365.25;1
+MIG_DxRx_first; MG_first;OR;simple;;;;;
+MIG_DxRx_first; Migraine_medicines_first;OR;simple;;;;;
+MIG_Dx_second;MG_second;AND;simple;;;;365.25;1
+MIG_Rx_second;Migraine_medicines_second;AND;simple;;;;365.25;1
+MIG_DxRx_second; MG_second;OR;simple;;;;;
+MIG_DxRx_second; Migraine_medicines_second;OR;simple;;;;;
+MIG_Dx_third;MG_third;AND;simple;;;;365.25;1
+MIG_Rx_third;Migraine_medicines_third;AND;simple;;;;365.25;1
+MIG_DxRx_third; MG_third;OR;simple;;;;;
+MIG_DxRx_third; Migraine_medicines_third;OR;simple;;;;;
+MIG_checkbox_a;Migraine_checkbox_baseline;AND;simple;;;;;
+MIG_checkbox_during;Migraine_checkbox_during;AND;simple;;;;;
+MIG_T1_a;MG_NO_AURA_baseline;AND;simple;;;;365.25;1
+MIG_T1_b;MG_NO_AURA_baseline_2;AND;simple;;;;365.25;1
+MIG_T1_during;MG_NO_AURA_during;AND;simple;;;;365.25;1
+MIG_T2_a;MG_AURA_baseline;AND;simple;;;;365.25;1
+MIG_T2_b;MG_AURA_baseline_2;AND;simple;;;;365.25;1
+MIG_T2_during;MG_AURA_during;AND;simple;;;;365.25;1
+MIG_T3_a;MG_STACOMP_baseline;AND;simple;;;;365.25;1
+MIG_T3_b;MG_STACOMP_baseline_2;AND;simple;;;;365.25;1
+MIG_T3_during;MG_STACOMP_during;AND;simple;;;;365.25;1
+MIG_T4_a;MG_OTHER_baseline;AND;simple;;;;365.25;1
+MIG_T4_b;MG_OTHER_baseline_2;AND;simple;;;;365.25;1
+MIG_T4_during;MG_OTHER_during;AND;simple;;;;365.25;1
+MIG_T5_a;MG_UPC_baseline;AND;simple;;;;365.25;1
+MIG_T5_b;MG_UPC_baseline_2;AND;simple;;;;365.25;1
+MIG_T5_during;MG_UPC_during;AND;simple;;;;365.25;1
+MIG_T6_a;MG_UNSP_baseline;AND;simple;;;;365.25;1
+MIG_T6_b;MG_UNSP_baseline_2;AND;simple;;;;365.25;1
+MIG_T6_during;MG_UNSP_during;AND;simple;;;;365.25;1
+MIG_S1_a;MG_baseline;AND;simple;;;;;
+MIG_S1_a;Migraine_medicines_baseline;AND_NOT;simple;;;;;
+MIG_S1_a;Migraine_medicines_during;AND_NOT;simple;;;;;
+MIG_S1_a;Migraine_med_profilactic_baseline;AND_NOT;simple;;;;;
+MIG_S1_a;Migraine_med_profilactic_during;AND_NOT;simple;;;;;
+MIG_S1_b;MG_baseline_2;AND;simple;;;;;
+MIG_S1_b;Migraine_medicines_baseline_2;AND_NOT;simple;;;;;
+MIG_S1_b;Migraine_medicines_during;AND_NOT;simple;;;;;
+MIG_S1_b;Migraine_med_profilactic_baseline_2;AND_NOT;simple;;;;;
+MIG_S1_b;Migraine_med_profilactic_during;AND_NOT;simple;;;;;
+MIG_S1_during;MG_during;AND;simple;;;;;
+MIG_S1_during;Migraine_medicines_baseline;AND_NOT;simple;;;;;
+MIG_S1_during;Migraine_medicines_during;AND_NOT;simple;;;;;
+MIG_S1_during;Migraine_med_profilactic_baseline;AND_NOT;simple;;;;;
+MIG_S1_during;Migraine_med_profilactic_during;AND_NOT;simple;;;;;
+MIG_S2_a;Migraine_medicines_baseline;AND;simple;;;;;
+MIG_S2_a;Migraine_injections_baseline;AND_NOT;simple;;;;;
+MIG_S2_a;Migraine_injections_during;AND_NOT;simple;;;;;
+MIG_S2_b;Migraine_medicines_baseline_2;AND;simple;;;;;
+MIG_S2_b;Migraine_injections_baseline;AND_NOT;simple;;;;;
+MIG_S2_b;Migraine_injections_during;AND_NOT;simple;;;;;
+MIG_S2_during;Migraine_medicines_during;AND;simple;;;;;
+MIG_S2_during;Migraine_injections_baseline;AND_NOT;simple;;;;;
+MIG_S2_during;Migraine_injections_during;AND_NOT;simple;;;;;
+MIG_S3_a;Migraine_injections_baseline;AND;simple;;;;;
+MIG_S3_a;Migraine_med_profilactic_during;AND_NOT;simple;;;;;
+MIG_S3_b;Migraine_injections_baseline_2;AND;simple;;;;;
+MIG_S3_b;Migraine_med_profilactic_during;AND_NOT;simple;;;;;
+MIG_S3_during;Migraine_injections_during;AND;simple;;;;;
+MIG_S3_during;Migraine_med_profilactic_during;AND_NOT;simple;;;;;
+MIG_S4_during;MG_during;OR;simple;;;;;
+MIG_S4_during;Migraine_medicines_during;OR;simple;;;;;
+MIG_S4_during;Migraine_med_profilactic_during;AND;simple;;;;;
+

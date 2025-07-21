@@ -1,0 +1,188 @@
+---
+title: "DP4 - Drug Utilization Study Triptans (main analysis)" #Adapt DEAP name
+date: "Last compiled on `r format(Sys.Date(), '%A %d %B %Y')`"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook, which produces the output for the DP4 Drug Utilization Study on triptan use as outlined in the Statistical Analysis Plan (SAP) V5.0. When you execute code within the notebook, the results appear beneath the code, with cell counts <5 masked. No figures will be created for this study. All output will be saved in an HTML-file. The tables will also be saved as separate csv-files.
+
+**Load necessary libraries**
+```{r message=FALSE, warning=TRUE, include=FALSE}
+library(tidyverse)
+library(data.table)
+library(dplyr)
+library(kableExtra)
+```
+
+**TABLE 1**
+Prevalence of >=1 or >=2 triptans prescribed/dispensed before, during, and after pregnancy among women with migraine during each time period.
+```{r echo=FALSE}
+dt = table1_prim
+if(exists("masking") && masking) dt = mask_dt(dt)
+dt %>%
+  kbl(caption = "Table 1: Primary exposure definition") %>%
+  kable_minimal()
+```
+
+```{r echo=FALSE}
+dt = table1_cons
+if(exists("masking") && masking) dt = mask_dt(dt)
+dt %>%
+  kbl(caption = "Table 1: Conservative exposure definition") %>%
+  kable_minimal()
+```
+
+
+**TABLE 2**
+Trends over time of prevalence of >= prescribed/dispensed triptan prescription before, during, and after pregnancy among women with migraine.
+
+```{r echo=FALSE}
+dt = table2_0912
+if(exists("masking") && masking) dt = mask_dt(dt)
+dt %>%
+  kbl(caption = "Table 2: Prevalence of >=1 triptan prescription, 2009-2012") %>%
+  kable_minimal()
+```
+
+```{r echo=FALSE}
+dt = table2_1316
+if(exists("masking") && masking) dt = mask_dt(dt)
+dt %>%
+  kbl(caption = "Table 2: Prevalence of >=1 triptan prescription, 2013-2016") %>%
+  kable_minimal()
+
+```
+
+```{r echo=FALSE}
+dt = table2_1720
+if(exists("masking") && masking) dt = mask_dt(dt)
+dt %>%
+  kbl(caption = "Table 2: Prevalence of >=1 triptan prescription, 2017-2020") %>%
+  kable_minimal()
+```
+
+  
+**TABLE 3**
+Prevalence of prescribed/dispensed triptan prescriptions among women with migraine by maternal age at pregnancy start.
+
+```{r echo=FALSE}
+dt = table3_1524
+if(exists("masking") && masking) dt = mask_dt(dt)
+dt %>%
+  kbl(caption = "Table 3: Prevalence of >=1 triptan prescription, maternal age 15-24 years") %>%
+  kable_minimal()
+```
+
+```{r echo=FALSE}
+dt = table3_2534
+if(exists("masking") && masking) dt = mask_dt(dt)
+dt %>%
+  kbl(caption = "Table 3: Prevalence of >=1 triptan prescription, maternal age 25-34 years") %>%
+  kable_minimal()
+```
+
+
+```{r echo=FALSE}
+dt = table3_3549
+if(exists("masking") && masking) dt = mask_dt(dt)
+dt %>%
+  kbl(caption = "Table 3: Prevalence of >=1 triptan prescription, maternal age 35-49 years") %>%
+  kable_minimal()
+```
+
+
+**TABLE 4**
+Patterns of prescribed/dispensed acute and preventive migraine prescriptions other than triptans before and during pregnancy among women with migraine.
+
+This table is constructed for the total population, as well as by triptan use group (continuers, discontinuers, and non-users). Exposure to comedication in time periods of interest for Table 6 (Table 5 does not exist in the SAP) are also created in this step for efficiency reasons.
+  
+
+```{r echo=FALSE}
+dt = table4_total
+if(exists("masking") && masking) dt = mask_dt(dt)
+dt %>%
+  kbl(caption = "Table 4: Prevalence of acute and preventive migraine medication other than triptans, total study population") %>%
+  kable_minimal()
+```
+
+```{r echo=FALSE}
+dt = table4_continuer
+if(exists("masking") && masking) dt = mask_dt(dt)
+dt %>%
+  kbl(caption = "Table 4: Prevalence of acute and preventive migraine medication other than triptans, continuers only") %>%
+  kable_minimal()
+```
+
+```{r echo=FALSE}
+dt = table4_discontinuer
+if(exists("masking") && masking) dt = mask_dt(dt)
+dt %>%
+  kbl(caption = "Table 4: Prevalence of acute and preventive migraine medication other than triptans, discontinuers only") %>%
+  kable_minimal()
+```
+
+```{r echo=FALSE}
+dt = table4_nonuser
+if(exists("masking") && masking) dt = mask_dt(dt)
+dt %>%
+  kbl(caption = "Table 4: Prevalence of acute and preventive migraine medication other than triptans, non-users only") %>%
+  kable_minimal()
+```
+
+**TABLE 5**
+Does not exist in SAP
+
+**TABLE 6**
+Prevalence of co-medication in triptan users within pregnancy (polypharmacy) who continued triptans in pregnancy, per trimester.
+```{r echo=FALSE}
+dt = table6
+if(exists("masking") && masking) dt = mask_dt(dt)
+dt %>%
+  kbl(caption = "Table 6: Patterns of other acute and preventive migraine medication") %>%
+  kable_minimal()
+```
+
+**TABLE 7**
+Baseline characteristics of the pregnancy cohort among women with migraine, overall and by pattern of triptan use during pregnancy.
+
+```{r echo=FALSE}
+dt = table7
+if(exists("masking") && masking) dt = mask_dt(dt)
+dt %>%
+  kbl(caption = "Table 7: Baseline characteristics") %>%
+  kable_minimal()
+```
+
+**TABLE 8**
+Migraine characteristics of the pregnancy cohort among women with migraine, overall and by patterns of triptan use during pregnancy.
+```{r echo=FALSE}
+dt = table8
+if(exists("masking") && masking) dt = mask_dt(dt)
+dt %>%
+  kbl(caption = "Table 8: Migraine characteristics") %>%
+  kable_minimal()
+```
+
+**TABLE 9**
+Number of triptan prescriptions filled before and during pregnancy among women with migraine, by pattern of triptan use during pregnancy.
+```{r echo=FALSE}
+dt = table9
+if(exists("masking") && masking) dt = mask_dt(dt)
+dt %>%
+  kbl(caption = "Table 9: Number of triptan prescription fills") %>%
+  kable_minimal()
+```
+
+**TABLE 10**
+Migraine characteristics of the pregnancy cohort among women with migraine by the more conservative exposure definition.
+
+In this table, only pregnancies with at least 2 triptan prescription fills during pregnancy are included.
+```{r echo=FALSE}
+dt = table10
+if(exists("masking") && masking) dt = mask_dt(dt)
+dt %>%
+  kbl(caption = "Table 10: Migraine characteristics among pregnancies with >=2 triptan prescription fills") %>%
+  kable_minimal()
+```
+
+

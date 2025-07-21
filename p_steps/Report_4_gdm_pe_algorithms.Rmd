@@ -338,7 +338,7 @@ alg_8<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_GDM_8_
 alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_8)
 
 alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
-
+if("age_band" %in% colnames(alg)){setnames(alg, "age_band", "maternal_age")}
 if(!is.null(alg)){
   datatable(alg, extensions = "Buttons", options = list(scrollX=T,
                                                                     dom = "Blfrtip",
@@ -411,7 +411,7 @@ alg_8<-fread(paste0(projectFolder,"/g_output/PE and GDM algorithm/Step_04_GDM_8_
 
 alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5,alg_8)
 alg[no_diagnosed_pregnancies>0 & prevalence_100_pregnancies==0, prevalence_100_pregnancies:=0.0001]
-
+if("age_band" %in% colnames(alg)){setnames(alg, "age_band", "maternal_age")}
 if(!is.null(alg)){
   datatable(alg, extensions = "Buttons", options = list(scrollX=T,
                                                                     dom = "Blfrtip",
@@ -509,7 +509,7 @@ if("Step_04_PE_5.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and GDM
 
 
 alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5)
-
+if("age_band" %in% colnames(alg)){setnames(alg, "age_band", "maternal_age")}
 if(!is.null(alg)){
   datatable(alg, extensions = "Buttons", options = list(scrollX=T,
                                                                     dom = "Blfrtip",
@@ -575,7 +575,7 @@ if("Step_04_PE_5_age.csv" %in% list.files(paste0(projectFolder,"/g_output/PE and
 }else{alg_5<-NULL}
 
 alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5)
-
+if("age_band" %in% colnames(alg)){setnames(alg, "age_band", "maternal_age")}
 if(!is.null(alg)){
   datatable(alg, extensions = "Buttons", options = list(scrollX=T,
                                                                     dom = "Blfrtip",
@@ -641,7 +641,7 @@ if("Step_04_PE_5_year.csv" %in% list.files(paste0(projectFolder,"/g_output/PE an
 }else{alg_5<-NULL}
 
 alg<-rbind(alg_1,alg_2,alg_3,alg_4,alg_5)
-
+if("age_band" %in% colnames(alg)){setnames(alg, "age_band", "maternal_age")}
 if(!is.null(alg)){
   datatable(alg, extensions = "Buttons", options = list(scrollX=T,
                                                                     dom = "Blfrtip",

@@ -70,7 +70,7 @@ for(mig_fl in 1:length(mig_files)){
     
     mig_dt[,lookback:=as.numeric(obs_period_diag[StudyVar==names_events[mig_fl],lookback])]
     mig_dt[,start_preg:=as.IDate(get(obs_period_diag[StudyVar==names_events[mig_fl],start_date])-lookback)]
-    mig_dt[,start_preg:=as.IDate(start_preg+as.numeric(obs_period_diag[StudyVar==names_events[mig_fl],add_start]))]
+    mig_dt[,start_preg:=as.IDate(start_preg+as.numeric(obs_period_diag[StudyVar==names_events[mig_fl],add_start]))] ##### DIFF(05>04)
     #exclude all events that are outside observation period of interest
     mig_dt[,diff:=event_date-start_preg]
     #remove all records with date before start date pregnancy+lookback
@@ -298,6 +298,9 @@ rm(mig_med)
 saveRDS(pregnancy_d3_mig, paste0(projectFolder,"/g_intermediate/migraine_algorithm_sensitivity/pregnancy_D3_sensitivity/final_d3/MIG_Pregnancy_D3_S.rds"))
 #### Apply the algorithm ####
 source(paste0(projectFolder,"/p_steps/Step_05_a_migraine_algorithms_sensitivity.R"))
+
+saveRDS(pregnancy_d3_mig, paste0(projectFolder,"/g_intermediate/migraine_algorithm_sensitivity/pregnancy_D3_sensitivity/final_d3/MIG_Pregnancy_D3_S2.rds"))
+
 date_running_end_05<-Sys.Date()
 end_time_05<-Sys.time()
 

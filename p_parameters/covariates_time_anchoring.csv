@@ -1,0 +1,17 @@
+DAP_NAME,variable_name,time_zero,time_end,before_start,after_start
+UOSL,BLHT_diagnoses,pregnancy_start_date,pregnancy_start_date,365.25,0
+UOSL,BLDM_diagnoses,pregnancy_start_date,pregnancy_start_date,365.25,0
+UOSL,BLDEP_diagnoses,pregnancy_start_date,pregnancy_start_date,365.25,0
+UOSL,OW_diagnoses,pregnancy_start_date,pregnancy_start_date,365.25,0
+UOSL,BLHT_checkbox,pregnancy_start_date,pregnancy_end_date,0,0
+UOSL,BLDM_checkbox,pregnancy_start_date,pregnancy_end_date,0,0
+UOSL,BLDEP_checkbox,pregnancy_start_date,pregnancy_end_date,0,0
+UOSL,PARITY_checkbox,pregnancy_start_date,pregnancy_end_date,0,0
+UOSL,OW_checkbox,pregnancy_start_date,pregnancy_end_date,0,0
+UOSL,BLHT_fixed,pregnancy_start_date,pregnancy_end_date,0,0
+UOSL,BLDM_fixed,pregnancy_start_date,pregnancy_end_date,0,0
+UOSL,BLDEP_fixed,pregnancy_start_date,pregnancy_end_date,0,0
+UOSL,PARITY_fixed,pregnancy_start_date,pregnancy_end_date,0,0
+UOSL,OW_fixed,pregnancy_start_date,pregnancy_end_date,0,0
+UOSL,PBMI_h_fixed,pregnancy_start_date,pregnancy_end_date,0,0
+UOSL,PBMI_w_fixed,pregnancy_start_date,pregnancy_end_date,0,0

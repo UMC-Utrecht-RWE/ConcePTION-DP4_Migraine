@@ -4,7 +4,7 @@ date_running_start_04_c<-Sys.Date()
 orig_mig<-pregnancy_d3_mig[,.N]
 
 #### Load data from additional conceptsets for triptan injection identification ####
-additional_concepts_file<-list.files(paste0(projectFolder,"/p_parameters/"), "additional_concepts")
+additional_concepts_file<-list.files(paste0(projectFolder,"/p_parameters/"), "^additional_concepts")
 additional_concepts<-read_excel(paste0(projectFolder,"/p_parameters/",additional_concepts_file),col_types = "text")
 additional_concepts<-as.data.table(additional_concepts)
 #Keep only needed information based on the DAP
@@ -77,7 +77,7 @@ trimester_timepoint<-data.table(Indicator=c("first","second","third"),
 #end: pregnancy start date + start will give the previous window
 #example second trimester: start=pregnancy start date + 98 -1 end=pregnancy start date + end
 #mig files
-mig_files<-list.files(paste0(projectFolder,"/g_intermediate/migraine_algorithm/"))
+mig_files<-list.files(paste0(projectFolder,"/g_intermediate/migraine_algorithm/"), pattern = ".rds")
 mig_files<-mig_files[!mig_files %in% "Migraine_medicines.rds"]
 names_events<-list()
 for(i in 1:length(mig_files)){
@@ -607,11 +607,11 @@ if(sum(length(removed_rec),length(after))>0){
 }
 
 #Pregnancies that had the event of interest not in the timeframe of study were excluded, this is why the number of pregnancies is different between different events
-sum_mig<-as.data.table(do.call(rbind,sum))
-rm(original,before,after,sum)
-rm(mig_files)
-fwrite(sum_mig,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_summary_included_records_migraine.csv"),row.names = F)
-rm(sum_mig)
+# sum_mig<-as.data.table(do.call(rbind,sum))
+# rm(original,before,after,sum)
+# rm(mig_files)
+# fwrite(sum_mig,paste0(projectFolder,"/g_output/Migraine algorithm/Step_04_summary_included_records_migraine.csv"),row.names = F)
+# rm(sum_mig)
 
 names_migraine<-c(paste0(names(conditions_migraine),"_baseline"),paste0(names(conditions_migraine),"_baseline_2"),paste0(names(conditions_migraine),"_during"),paste0(names(conditions_migraine),"_first"),paste0(names(conditions_migraine),"_second"),paste0(names(conditions_migraine),"_third"))
 #identify events that are not present from conditions_migraine

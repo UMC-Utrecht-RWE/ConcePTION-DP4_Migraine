@@ -10,196 +10,105 @@ date_running_start_04_f<-Sys.Date()
 #MIG_S4: MG or Migraine_medicines and Migraine_med_profilactic,during pregnancy
 
 ####APPLY Migraine ALGORITHM####
-algorithm_template<-fread(paste0(projectFolder, "/p_steps/parameters/algorithms.csv"))
-#### MIG_S1_a:Prevalence of Mild migraine at baseline when lookback==12 months(3 months) ####
-print("Create algorithm MIG_S1_a")
-MIG_S1_a<-algorithm_template[NEW_STUDY_VARIABLES=="MIG_S1_a"]
-inc_col<-MIG_S1_a[TYPE=="AND",STUDY_VARIABLES]
-excl_col<-MIG_S1_a[TYPE=="AND_NOT",STUDY_VARIABLES]
 
-if(length(inc_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("&" , lapply(.SD,`>=`, 1)),.SDcols=inc_col],include:=1]}else{pregnancy_d3_mig[,include:=NA]}
-if(length(excl_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("|" , lapply(.SD,`>=`, 1)),.SDcols=excl_col],exclude:=1]}else{pregnancy_d3_mig[,exclude:=NA]}
+################################
+### MIG_S[1-3]_a ###############
+################################
 
-#Update include comun based on exclude
-pregnancy_d3_mig[exclude==1, include:=NA]
-pregnancy_d3_mig[,exclude:=NULL]
-setnames(pregnancy_d3_mig, "include", "MIG_S1_a")
+pregnancy_d3_mig[, MIG_S3_a:=0][, MIG_S2_a:=0][, MIG_S1_a:=0]#[, MIG_DxRx_a := 0]
+#pregnancy_d3_mig[, MIG_DxRx_a:= fifelse(Migraine_medicines_baseline>0 | MG_baseline>0, 1, 0)]
 
-#saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/MIG_S1_a_D3.rds"))
+pregnancy_d3_mig[, MIG_S3_a:=fifelse((Migraine_injections_baseline>0) &  MG_baseline > 0, 1, 0)]
 
-#### MIG_S1_b:Prevalence of Mild migraine at baseline when lookback==3 months####
-print("Create algorithm MIG_S1_b")
-MIG_S1_b<-algorithm_template[NEW_STUDY_VARIABLES=="MIG_S1_b"]
-inc_col<-MIG_S1_b[TYPE=="AND",STUDY_VARIABLES]
-excl_col<-MIG_S1_b[TYPE=="AND_NOT",STUDY_VARIABLES]
+pregnancy_d3_mig[, MIG_S2_a:=fifelse(MIG_S3_a == 0 & Migraine_medicines_baseline>0, 1, 0)]
 
-if(length(inc_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("&" , lapply(.SD,`>=`, 1)),.SDcols=inc_col],include:=1]}else{pregnancy_d3_mig[,include:=NA]}
-if(length(excl_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("|" , lapply(.SD,`>=`, 1)),.SDcols=excl_col],exclude:=1]}else{pregnancy_d3_mig[,exclude:=NA]}
+pregnancy_d3_mig[, MIG_S1_a:=fifelse(MIG_S3_a == 0  & MIG_S2_a == 0 & MG_baseline>0, 1, 0)]
 
-#Update include comun based on exclude
-pregnancy_d3_mig[exclude==1, include:=NA]
-pregnancy_d3_mig[,exclude:=NULL]
-setnames(pregnancy_d3_mig, "include", "MIG_S1_b")
+################################
+### MIG_S[1-3]_b ###############
+################################
 
-#saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/MIG_S1_b_D3.rds"))
+pregnancy_d3_mig[, MIG_S3_b:=0][, MIG_S2_b:=0][, MIG_S1_b:=0]#[, MIG_DxRx_a := 0]
+#pregnancy_d3_mig[, MIG_DxRx_b:= fifelse(Migraine_medicines_baseline>0 | MG_baseline>0, 1, 0)]
 
-#### MIG_S1_during:Prevalence of Mild migraine during pregnancy when lookback==12 months(3 months) ####
-print("Create algorithm MIG_S1_during")
-MIG_S1_during<-algorithm_template[NEW_STUDY_VARIABLES=="MIG_S1_during"]
-inc_col<-MIG_S1_during[TYPE=="AND",STUDY_VARIABLES]
-excl_col<-MIG_S1_during[TYPE=="AND_NOT",STUDY_VARIABLES]
+pregnancy_d3_mig[, MIG_S3_b:=fifelse((Migraine_med_profilactic_baseline>0 | Migraine_injections_baseline>0) &  MG_baseline > 0, 1, 0)]
 
-if(length(inc_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("&" , lapply(.SD,`>=`, 1)),.SDcols=inc_col],include:=1]}else{pregnancy_d3_mig[,include:=NA]}
-if(length(excl_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("|" , lapply(.SD,`>=`, 1)),.SDcols=excl_col],exclude:=1]}else{pregnancy_d3_mig[,exclude:=NA]}
+pregnancy_d3_mig[, MIG_S2_b:=fifelse(MIG_S3_b == 0 & Migraine_medicines_baseline>0, 1, 0)]
 
-#Update include comun based on exclude
-pregnancy_d3_mig[exclude==1, include:=NA]
-pregnancy_d3_mig[,exclude:=NULL]
-setnames(pregnancy_d3_mig, "include", "MIG_S1_during")
+pregnancy_d3_mig[, MIG_S1_b:=fifelse(MIG_S3_b == 0  & MIG_S2_b == 0 & MG_baseline>0, 1, 0)]
 
-#saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/MIG_S1_during_D3.rds"))
+################################
+### MIG_S[1-4]_during ##########
+################################
 
-#### MIG_S2_a:Prevalence of Moderate migraine at baseline when lookback==12 months(3 months) ####
-print("Create algorithm MIG_S2_a")
-MIG_S2_a<-algorithm_template[NEW_STUDY_VARIABLES=="MIG_S2_a"]
-inc_col<-MIG_S2_a[TYPE=="AND",STUDY_VARIABLES]
-excl_col<-MIG_S2_a[TYPE=="AND_NOT",STUDY_VARIABLES]
+pregnancy_d3_mig[, MIG_S4_during:=0][, MIG_S3_during:=0][, MIG_S2_during:=0][, MIG_S1_during:=0]#[, MIG_DxRx_during := 0]
+#pregnancy_d3_mig[, MIG_DxRx_during:= fifelse(Migraine_medicines_during>0 | MG_during>0, 1, 0)]
 
-if(length(inc_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("&" , lapply(.SD,`>=`, 1)),.SDcols=inc_col],include:=1]}else{pregnancy_d3_mig[,include:=NA]}
-if(length(excl_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("|" , lapply(.SD,`>=`, 1)),.SDcols=excl_col],exclude:=1]}else{pregnancy_d3_mig[,exclude:=NA]}
+pregnancy_d3_mig[, MIG_S4_during:=fifelse(Migraine_med_profilactic_during>0 & MG_during>0, 1, 0)]
 
-#Update include comun based on exclude
-pregnancy_d3_mig[exclude==1, include:=NA]
-pregnancy_d3_mig[,exclude:=NULL]
-setnames(pregnancy_d3_mig, "include", "MIG_S2_a")
-#saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/MIG_S2_a_D3.rds"))
+pregnancy_d3_mig[, MIG_S3_during:=fifelse(MIG_S4_during == 0 & 
+                                        (Migraine_med_profilactic_baseline>0 | Migraine_injections_during>0) & MG_during > 0, 
+                                      1, 0)]
 
-#### MIG_S2_b:Prevalence of Moderate migraine at baseline when lookback==3 months ####
-print("Create algorithm MIG_S2_b")
-MIG_S2_b<-algorithm_template[NEW_STUDY_VARIABLES=="MIG_S2_b"]
-inc_col<-MIG_S2_b[TYPE=="AND",STUDY_VARIABLES]
-excl_col<-MIG_S2_b[TYPE=="AND_NOT",STUDY_VARIABLES]
+pregnancy_d3_mig[, MIG_S2_during:=fifelse(MIG_S4_during == 0 & MIG_S3_during == 0 &
+                              Migraine_medicines_during>0 ,
+                            1, 0)]
 
-if(length(inc_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("&" , lapply(.SD,`>=`, 1)),.SDcols=inc_col],include:=1]}else{pregnancy_d3_mig[,include:=NA]}
-if(length(excl_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("|" , lapply(.SD,`>=`, 1)),.SDcols=excl_col],exclude:=1]}else{pregnancy_d3_mig[,exclude:=NA]}
+pregnancy_d3_mig[, MIG_S1_during:=fifelse(MIG_S4_during == 0 & MIG_S3_during == 0  & MIG_S2_during == 0 &
+                              MG_during>0,
+                            1, 0)]
 
-#Update include comun based on exclude
-pregnancy_d3_mig[exclude==1, include:=NA]
-pregnancy_d3_mig[,exclude:=NULL]
-setnames(pregnancy_d3_mig, "include", "MIG_S2_b")
+################################
+### MIG_S[1-4]_during2##########
+################################
 
-#saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/MIG_S2_b_D3.rds"))
+pregnancy_d3_mig[, MIG_S4_during2:=0][, MIG_S3_during2:=0][, MIG_S2_during2:=0][, MIG_S1_during2:=0]#[, MIG_DxRx_during := 0]
+#pregnancy_d3_mig[, MIG_DxRx_during:= fifelse(Migraine_medicines_during>0 | MG_during>0, 1, 0)]
 
-#### MIG_S2_during:Prevalence of Moderate migrain during pregnancy when lookback==12 months(3 months) ####
-print("Create algorithm MIG_S2_during")
-MIG_S2_during<-algorithm_template[NEW_STUDY_VARIABLES=="MIG_S2_during"]
-inc_col<-MIG_S2_during[TYPE=="AND",STUDY_VARIABLES]
-excl_col<-MIG_S2_during[TYPE=="AND_NOT",STUDY_VARIABLES]
+pregnancy_d3_mig[, MIG_S4_during2:=fifelse(Migraine_med_profilactic_during>0 & (MG_during>0 | MG_baseline>0), 1, 0)]
 
-if(length(inc_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("&" , lapply(.SD,`>=`, 1)),.SDcols=inc_col],include:=1]}else{pregnancy_d3_mig[,include:=NA]}
-if(length(excl_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("|" , lapply(.SD,`>=`, 1)),.SDcols=excl_col],exclude:=1]}else{pregnancy_d3_mig[,exclude:=NA]}
+pregnancy_d3_mig[, MIG_S3_during2:=fifelse(MIG_S4_during2 == 0 & 
+                                             (Migraine_med_profilactic_baseline>0 | (Migraine_injections_during>0 | Migraine_injections_baseline>0) & (MG_during>0 | MG_baseline>0)), 
+                                           1, 0)]
 
-#Update include comun based on exclude
-pregnancy_d3_mig[exclude==1, include:=NA]
-pregnancy_d3_mig[,exclude:=NULL]
-setnames(pregnancy_d3_mig, "include", "MIG_S2_during")
+pregnancy_d3_mig[, MIG_S2_during2:=fifelse(MIG_S4_during2 == 0 & MIG_S3_during2 == 0 &
+                                             (Migraine_medicines_during>0 | Migraine_medicines_baseline>0),
+                                           1, 0)]
 
-#saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/MIG_S2_during_D3.rds"))
+pregnancy_d3_mig[, MIG_S1_during2:=fifelse(MIG_S4_during2 == 0 & MIG_S3_during2 == 0  & MIG_S2_during2 == 0 &
+                                             (MG_during>0 | MG_baseline>0),
+                                           1, 0)]
 
-#### MIG_S3_a:Prevalence of Severe migraine at baseline when lookback==12 months(3 months) ####
-print("Create algorithm MIG_S3_a")
-MIG_S3_a<-algorithm_template[NEW_STUDY_VARIABLES=="MIG_S3_a"]
-inc_col<-MIG_S3_a[TYPE=="AND",STUDY_VARIABLES]
-excl_col<-MIG_S3_a[TYPE=="AND_NOT",STUDY_VARIABLES]
-
-if(length(inc_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("&" , lapply(.SD,`>=`, 1)),.SDcols=inc_col],include:=1]}else{pregnancy_d3_mig[,include:=NA]}
-if(length(excl_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("|" , lapply(.SD,`>=`, 1)),.SDcols=excl_col],exclude:=1]}else{pregnancy_d3_mig[,exclude:=NA]}
-
-#Update include comun based on exclude
-pregnancy_d3_mig[exclude==1, include:=NA]
-pregnancy_d3_mig[,exclude:=NULL]
-setnames(pregnancy_d3_mig, "include", "MIG_S3_a")
-
-#saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/MIG_S3_a_D3.rds"))
-
-#### MIG_S3_b:Prevalence of Severe migraine at baseline when lookback==3 months ####
-print("Create algorithm MIG_S3_b")
-MIG_S3_b<-algorithm_template[NEW_STUDY_VARIABLES=="MIG_S3_b"]
-inc_col<-MIG_S3_b[TYPE=="AND",STUDY_VARIABLES]
-excl_col<-MIG_S3_b[TYPE=="AND_NOT",STUDY_VARIABLES]
-
-if(length(inc_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("&" , lapply(.SD,`>=`, 1)),.SDcols=inc_col],include:=1]}else{pregnancy_d3_mig[,include:=NA]}
-if(length(excl_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("|" , lapply(.SD,`>=`, 1)),.SDcols=excl_col],exclude:=1]}else{pregnancy_d3_mig[,exclude:=NA]}
-
-#Update include comun based on exclude
-pregnancy_d3_mig[exclude==1, include:=NA]
-pregnancy_d3_mig[,exclude:=NULL]
-setnames(pregnancy_d3_mig, "include", "MIG_S3_b")
-
-#saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/MIG_S3_b_D3.rds"))
-
-#### MIG_S3_during:Prevalence of Severe migraine during pregnancy when lookback==12 months(3 months) ####
-print("Create algorithm MIG_S3_during")
-MIG_S3_during<-algorithm_template[NEW_STUDY_VARIABLES=="MIG_S3_during"]
-inc_col<-MIG_S3_during[TYPE=="AND",STUDY_VARIABLES]
-excl_col<-MIG_S3_during[TYPE=="AND_NOT",STUDY_VARIABLES]
-
-if(length(inc_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("&" , lapply(.SD,`>=`, 1)),.SDcols=inc_col],include:=1]}else{pregnancy_d3_mig[,include:=NA]}
-if(length(excl_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("|" , lapply(.SD,`>=`, 1)),.SDcols=excl_col],exclude:=1]}else{pregnancy_d3_mig[,exclude:=NA]}
-
-#Update include comun based on exclude
-pregnancy_d3_mig[exclude==1, include:=NA]
-pregnancy_d3_mig[,exclude:=NULL]
-setnames(pregnancy_d3_mig, "include", "MIG_S3_during")
-
-#saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/MIG_S3_during_D3.rds"))
-
-#### MIG_S4_during:Prevalence of Very severe migraine during pregnancy when lookback==12 months(3 months) ####
-print("Create algorithm MIG_S4_during")
-MIG_S4_during<-algorithm_template[NEW_STUDY_VARIABLES=="MIG_S4_during"]
-inc_col<-MIG_S4_during[TYPE=="AND",STUDY_VARIABLES]
-alt_col<-MIG_S4_during[TYPE=="OR",STUDY_VARIABLES]
-
-if(length(alt_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("|" , lapply(.SD,`>=`, 1)),.SDcols=alt_col],alternative:=1]}else{pregnancy_d3_mig[,alternative:=NA]}
-if(length(inc_col)>0){pregnancy_d3_mig[pregnancy_d3_mig[,Reduce("&" , lapply(.SD,`>=`, 1)),.SDcols=inc_col],include:=1]}else{pregnancy_d3_mig[,include:=NA]}
-
-#Update include comun based on exclude
-pregnancy_d3_mig[is.na(alternative), include:=NA]
-pregnancy_d3_mig[,alternative:=NULL]
-setnames(pregnancy_d3_mig, "include", "MIG_S4_during")
-
-#saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/MIG_S4_during_D3.rds"))
-
-
+################################
 #### Add severity hierarchy ####
 cols_to_update <- c("MIG_S1_a", "MIG_S1_b", "MIG_S1_during", "MIG_S2_a", "MIG_S2_b", "MIG_S2_during", "MIG_S3_a", "MIG_S3_b", "MIG_S3_during", "MIG_S4_during")  
 
 # Replace NA with 0 in the specified columns
 pregnancy_d3_mig[, (cols_to_update) := lapply(.SD, function(x) { ifelse(is.na(x), 0, x) }), .SDcols = cols_to_update]
 
-#During
-cols_to_change <- c("MIG_S1_during", "MIG_S2_during", "MIG_S3_during")  
-pregnancy_d3_mig[MIG_S4_during==1, (cols_to_change) := 0]
-
-cols_to_change <- c("MIG_S1_during", "MIG_S2_during") 
-pregnancy_d3_mig[MIG_S3_during==1, (cols_to_change) := 0]
-
-cols_to_change <- c("MIG_S1_during") 
-pregnancy_d3_mig[MIG_S2_during==1, (cols_to_change) := 0]
-
-#Baseline a
-cols_to_change <- c("MIG_S1_a", "MIG_S2_a") 
-pregnancy_d3_mig[MIG_S3_a==1, (cols_to_change) := 0]
-
-cols_to_change <- c("MIG_S1_a") 
-pregnancy_d3_mig[MIG_S2_a==1, (cols_to_change) := 0]
-
-#Baseline b
-cols_to_change <- c("MIG_S1_b", "MIG_S2_b") 
-pregnancy_d3_mig[MIG_S3_b==1, (cols_to_change) := 0]
-
-cols_to_change <- c("MIG_S1_b") 
-pregnancy_d3_mig[MIG_S2_b==1, (cols_to_change) := 0]
+# #During
+# cols_to_change <- c("MIG_S1_during", "MIG_S2_during", "MIG_S3_during")  
+# pregnancy_d3_mig[MIG_S4_during==1, (cols_to_change) := 0]
+# 
+# cols_to_change <- c("MIG_S1_during", "MIG_S2_during") 
+# pregnancy_d3_mig[MIG_S3_during==1, (cols_to_change) := 0]
+# 
+# cols_to_change <- c("MIG_S1_during") 
+# pregnancy_d3_mig[MIG_S2_during==1, (cols_to_change) := 0]
+# 
+# #Baseline a
+# cols_to_change <- c("MIG_S1_a", "MIG_S2_a") 
+# pregnancy_d3_mig[MIG_S3_a==1, (cols_to_change) := 0]
+# 
+# cols_to_change <- c("MIG_S1_a") 
+# pregnancy_d3_mig[MIG_S2_a==1, (cols_to_change) := 0]
+# 
+# #Baseline b
+# cols_to_change <- c("MIG_S1_b", "MIG_S2_b") 
+# pregnancy_d3_mig[MIG_S3_b==1, (cols_to_change) := 0]
+# 
+# cols_to_change <- c("MIG_S1_b") 
+# pregnancy_d3_mig[MIG_S2_b==1, (cols_to_change) := 0]
 
 #### Export MIG_S1_a ####
 #export MIG_S1_a
@@ -1239,6 +1148,22 @@ setnames(pregnancy_d3_mig, "MIG_S4_during", "include")
 saveRDS(pregnancy_d3_mig[,cols, with=F],paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/MIG_S4_during_D3.rds"))
 pregnancy_d3_mig[,include:=NULL]
 
+####
+setnames(pregnancy_d3_mig, "MIG_S1_during2", "include")
+saveRDS(pregnancy_d3_mig[,cols, with=F],paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/MIG_S1_during2_D3.rds"))
+pregnancy_d3_mig[,include:=NULL]
+
+setnames(pregnancy_d3_mig, "MIG_S2_during2", "include")
+saveRDS(pregnancy_d3_mig[,cols, with=F],paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/MIG_S2_during2_D3.rds"))
+pregnancy_d3_mig[,include:=NULL]
+
+setnames(pregnancy_d3_mig, "MIG_S3_during2", "include")
+saveRDS(pregnancy_d3_mig[,cols, with=F],paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/MIG_S3_during2_D3.rds"))
+pregnancy_d3_mig[,include:=NULL]
+
+setnames(pregnancy_d3_mig, "MIG_S4_during2", "include")
+saveRDS(pregnancy_d3_mig[,cols, with=F],paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3/MIG_S4_during2_D3.rds"))
+pregnancy_d3_mig[,include:=NULL]
 
 #### Migraine severity proportions ####
 #Type a baseline
@@ -1294,7 +1219,6 @@ time_log_04_f<-data.table(DAP=data_access_provider_name,
                           Time_elaspsed=format(end_time_04_f-initial_time_04_f, digits=2))
 fwrite(time_log_04_f,paste0(output_dir,"/Time log/Step_04_f_time_log.csv"),row.names = F)
 rm(time_log_04_f)
-
 
 
 

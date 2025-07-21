@@ -35,6 +35,11 @@ source(paste0(projectFolder,"/p_steps/Step_04_a_gdm_algorithms.R"))
 if("final_d3" %in% list.files(paste0(projectFolder,"/g_intermediate/pe_algorithm/"))){
   unlink(paste0(projectFolder,"/g_intermediate/pe_algorithm/final_d3"), recursive = T)
 }
+
+if("final_d3" %in% list.files(paste0(projectFolder,"/g_intermediate/migraine_algorithm_sensitivity/"))){
+  unlink(paste0(projectFolder,"/g_intermediate/migraine_algorithm_sensitivity/final_d3"), recursive = T)
+}
+
 source(paste0(projectFolder,"/p_steps/Step_04_b_pe_algorithms.R"))
 
 #removed rec
@@ -51,6 +56,7 @@ gc()
 
 #### Migraine ####
 #Load all migraine_algorithm file and combine with the pregnancy D3
+file.copy(paste0(projectFolder,"/g_intermediate/pregnancy_d3/MIG_Pregnancy_D3.rds"),paste0(projectFolder,"/g_intermediate/pregnancy_d3/MIG_Pregnancy_D3_backup.rds"))
 pregnancy_d3_mig<-readRDS(paste0(projectFolder,"/g_intermediate/pregnancy_d3/MIG_Pregnancy_D3.rds"))
 pregnancy_d3_mig[,pregnancy_start_date:=as.IDate(pregnancy_start_date)][,pregnancy_end_date:=as.IDate(pregnancy_end_date)][,birth_date:=as.IDate(birth_date)][,death_date:=as.IDate(death_date)][,op_start_date_mig:=as.IDate(op_start_date_mig)][,op_end_date_mig:=as.IDate(op_end_date_mig)]
 pregnancy_d3_mig[,age:=floor((pregnancy_start_date-birth_date)/365.25)]
@@ -75,16 +81,36 @@ if("final_d3" %in% list.files(paste0(projectFolder,"/g_intermediate/migraine_alg
  unlink(paste0(projectFolder,"/g_intermediate/migraine_algorithm/final_d3"), recursive = T)
 }
 
+if("final_d3" %in% list.files(paste0(projectFolder,"/g_intermediate/migraine_algorithm_sensitivity/"))){
+  unlink(paste0(projectFolder,"/g_intermediate/migraine_algorithm_sensitivity/final_d3"), recursive = T)
+}
+
+
 dir.create(paste0(projectFolder,"/g_intermediate/migraine_algorithm_sensitivity/migraine_diagnoses/"))
 dir.create(paste0(projectFolder,"/g_intermediate/migraine_algorithm_sensitivity/migraine_medicines/"))
 dir.create(paste0(projectFolder,"/g_intermediate/migraine_algorithm_sensitivity/pregnancy_D3_sensitivity/"))
 
-saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorithm_sensitivity/pregnancy_D3_sensitivity/MIG_Pregnancy_D3_S.rds"))
 
+saveRDS(pregnancy_d3_mig,paste0(projectFolder,"/g_intermediate/migraine_algorithm_sensitivity/pregnancy_D3_sensitivity/MIG_Pregnancy_D3_S.rds"))
+save.image(file=paste0(g_intermediate, "environment_4.RData"))
+
+# #Retry for the bigger population (sensitivity Analysis)
+# if(!dir.exists("g_intermediate/migraine_algorithm_sensitivity/final_d3")) dir.create("g_intermediate/migraine_algorithm_sensitivity/final_d3")
+# source(paste0(projectFolder,"/p_steps/Step_04_c_migraine_algorithms_prepare_S.R"))
+# source(paste0(projectFolder,"/p_steps/Step_04_d_migraine_algorithms_S.R"))
+# source(paste0(projectFolder,"/p_steps/Step_04_e_migraine_algorithms_type_S.R"))
+# source(paste0(projectFolder,"/p_steps/Step_04_f_migraine_algorithms_severity_S.R"))
+# 
+# base::load(file=paste0(g_intermediate, "environment_4.RData"))
+
+if(!dir.exists("g_intermediate/migraine_algorithm/final_d3")) dir.create("g_intermediate/migraine_algorithm/final_d3")
 source(paste0(projectFolder,"/p_steps/Step_04_c_migraine_algorithms_prepare.R"))
 source(paste0(projectFolder,"/p_steps/Step_04_d_migraine_algorithms.R"))
 source(paste0(projectFolder,"/p_steps/Step_04_e_migraine_algorithms_type.R"))
 source(paste0(projectFolder,"/p_steps/Step_04_f_migraine_algorithms_severity.R"))
+
+unlink(paste0(g_intermediate, "environment_4.RData"))
+
 
 date_running_end_04<-Sys.Date()
 end_time_04<-Sys.time()

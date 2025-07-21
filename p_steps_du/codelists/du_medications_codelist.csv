@@ -1,0 +1,37 @@
+medicinal_product_group;atc_code;mechanism;comment;label
+Triptans;N02CC;start;;TRIPTANS
+Other acute migraine treatment ;N02BE01;exact;;OTHER_MIG_TREAT
+Other acute migraine treatment ;N02AJ06;exact;;OTHER_MIG_TREAT
+Other acute migraine treatment ;M01A;start;;OTHER_MIG_TREAT
+Other acute migraine treatment ;A03FA01;exact;;OTHER_MIG_TREAT
+Other acute migraine treatment ;R06AA09;exact;;OTHER_MIG_TREAT
+Other acute migraine treatment ;R06AA59;exact;;OTHER_MIG_TREAT
+Other acute migraine treatment ;R06AE05;exact;;OTHER_MIG_TREAT
+Other acute migraine treatment ;N05AB04;exact;;OTHER_MIG_TREAT
+Other acute migraine treatment ;R06AD02;exact;;OTHER_MIG_TREAT
+Other acute migraine treatment ;A04AA;start;;OTHER_MIG_TREAT
+Paracetamol;N02BE01;exact;;PARACETAMOL
+Codeine and paracetamol;N02AJ06;exact;;CODEINE_PARACETAMOL
+NSAIDs;M01A;start;;NSAID
+Antinauseants;A03FA01;exact;;ANTI_NAUSEA
+Antinauseants;R06AA09;exact;;ANTI_NAUSEA
+Antinauseants;R06AA59;exact;;ANTI_NAUSEA
+Antinauseants;R06AE05;exact;;ANTI_NAUSEA
+Antinauseants;N05AB04;exact;;ANTI_NAUSEA
+Antinauseants;R06AD02;exact;;ANTI_NAUSEA
+Antinauseants;A04AA;start;;ANTI_NAUSEA
+Metoprolol;C07AB02;exact;;PREV_MIG_MED
+Propranolol;C07AA05;exact;;PREV_MIG_MED
+Amytriptyline;N06AA09;exact;;PREV_MIG_MED
+Candesartan;C09CA06;exact;;PREV_MIG_MED
+Lisinopril;C09AA03;exact;;PREV_MIG_MED
+Verapamil;C08DA01;exact;;PREV_MIG_MED
+Topiramate;N03AX11;exact;;PREV_MIG_MED
+Valproic acid;N03AG01;exact;;PREV_MIG_MED
+Botulinum toxin;M03AX01;exact;;PREV_MIG_MED
+Pizotifen;N02CX02;exact;;PREV_MIG_MED
+Clonidine;N02CX01;exact;;PREV_MIG_MED
+Calcitonin gene-related peptide (CGRP) antagonists;N02CD;start;;PREV_MIG_MED
+Erenumab;N02CD01;exact;;CGRP_MED
+Galkanezumab;N02CD02;exact;;CGRP_MED
+Fremanezumab;N02CD03;exact;;CGRP_MED

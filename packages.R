@@ -30,3 +30,8 @@ if(!require(readxl)){install.packages("readxl")}
 suppressPackageStartupMessages(library(readxl))
 if(!require(scales)){install.packages("scales")}
 suppressPackageStartupMessages(library(scales))
+if(!require(collapse)){install.packages("collapse")}
+suppressPackageStartupMessages(library(collapse))
+if(!require(tidyverse)){install.packages("tidyverse")}
+suppressPackageStartupMessages(library(tidyverse))
+

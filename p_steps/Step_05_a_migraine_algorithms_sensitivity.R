@@ -2,9 +2,13 @@ initial_time_05_a<-Sys.time()
 date_running_start_05_a<-Sys.Date()
 
 ####APPLY Migraine ALGORITHM####
+
+source(paste0(projectFolder,"/p_steps/Step_04_c_migraine_algorithms_prepare_S.R"))
+source(paste0(projectFolder,"/p_steps/Step_04_d_migraine_algorithms_S.R"))
+source(paste0(projectFolder,"/p_steps/Step_04_e_migraine_algorithms_type_S.R"))
+source(paste0(projectFolder,"/p_steps/Step_04_f_migraine_algorithms_severity_S.R"))
+
 algorithm_template<-fread(paste0(projectFolder, "/p_steps/parameters/algorithms.csv"))
-
-
 
 #### MIG_DxRx_a:Prevalence of migraine at baseline when lookback==12 months(3 months) ####
 print("Create algorithm MIG_DxRx_a_S")
