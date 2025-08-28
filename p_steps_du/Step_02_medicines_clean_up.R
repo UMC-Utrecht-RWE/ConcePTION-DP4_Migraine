@@ -43,7 +43,7 @@ du_exact[,condition:="DU_medicines"]
 #Migraine
 du_start[,remove:=1]
 du_start[,check:=atc_code]
-for (du_start_ind in 1:length(du_start)){
+for (du_start_ind in 1:nrow(du_start)){
   length_var<-nchar(du_start[du_start_ind,atc_code])
   du_exact[,check:=substr(atc_code,1,length_var)]
   du_exact<-merge.data.table(du_exact,du_start[,c("check","remove")], all.x = T, by="check")
