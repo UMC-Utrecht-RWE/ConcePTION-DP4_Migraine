@@ -41,7 +41,15 @@ replace_na = function(x,val) ifelse(is.na(x),val,x)
 load_cov <- function(cov_name, medicine = NULL){
   
   if(!is.null(medicine)){
-    return(readRDS(file.path(projectFolder, "g_intermediate", "medicines_d3", paste0(medicine, ".rds"))))
+    fname = file.path(projectFolder, "g_intermediate", "medicines_d3", paste0(medicine, ".rds"))
+    if(file.exists(fname)){
+      ds = readRDS(fname)
+    }else{
+      ds = data.table(atc_code = as.character(), person_id = as.character(), medicine_date = as.Date(NULL),
+                      year = as.numeric(), medicinal_product_group = as.character(), label = as.character())
+      #add_log(paste0("Medicine '",medicine,"' Not found!"))
+    }
+    return(ds)
   }
 
   
