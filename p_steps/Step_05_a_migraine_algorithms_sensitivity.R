@@ -273,8 +273,8 @@ rm(MIG_DxRx_during_3)
 pregnancy_d3_mig[,dif:=pregnancy_end_date-pregnancy_start_date]
 pregnancy_d3_mig[dif<97, trimester:=0]
 pregnancy_d3_mig[dif>=97, trimester:=1]
-pregnancy_d3_mig[dif>=195, trimester:=2]
-pregnancy_d3_mig[dif>=280, trimester:=3]
+pregnancy_d3_mig[dif>=195, trimester:=2] #T2: every pregnancy that survived until the end of the second trimester
+pregnancy_d3_mig[dif>=196, trimester:=3] #T3: every pregnancy that started the third trimester
 pregnancy_d3_mig[,dif:=NULL]
 #### MIG_DxRx_first:Prevalence of migraine at baseline when lookback==12 months(3 months) ####
 print("Create algorithm MIG_DxRx_first")
