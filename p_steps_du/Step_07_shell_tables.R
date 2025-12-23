@@ -40,6 +40,10 @@ replace_na = function(x,val) ifelse(is.na(x),val,x)
 
 load_cov <- function(cov_name, medicine = NULL){
   
+  # if(!is.null(medicine)){
+  #   return(readRDS(file.path(projectFolder, "g_intermediate", "medicines_d3", paste0(medicine, ".rds"))))
+  # }
+  
   if(!is.null(medicine)){
     fname = file.path(projectFolder, "g_intermediate", "medicines_d3", paste0(medicine, ".rds"))
     if(file.exists(fname)){
@@ -51,6 +55,7 @@ load_cov <- function(cov_name, medicine = NULL){
     }
     return(ds)
   }
+  
 
   
   fixed_file = file.path(projectFolder, "g_intermediate", "diagnoses_d3", paste0(cov_name, "_fixed", ".rds"))
@@ -205,33 +210,33 @@ rm(triptans)
 
 #Set denominators for trimesters in pregnancy
 DUS_all$gest_age <- difftime(DUS_all$pregnancy_end_date, DUS_all$pregnancy_start_date, units = "days")
-DUS_all$denom_T1 <- ifelse((DUS_all$gest_age >= 97), 1, 0)
-DUS_all$denom_T2 <- ifelse((DUS_all$gest_age >= 195), 1, 0)
-DUS_all$denom_T3 <- ifelse((DUS_all$gest_age >= 196), 1, 0)
+DUS_all$denom_T1 <- fifelse((DUS_all$gest_age >= 97), 1, 0, 0)
+DUS_all$denom_T2 <- fifelse((DUS_all$gest_age >= 195), 1, 0, 0)
+DUS_all$denom_T3 <- fifelse((DUS_all$gest_age >= 196), 1, 0, 0)
 
 #Dichotomized exposure per period: Primary exposure definition
-DUS_all$trip_prior_0_12 <- ifelse((DUS_all$trip_prior_0_12_n >= 1), 1, 0)
-DUS_all$trip_prior_0_3 <- ifelse((DUS_all$trip_prior_0_3_n >= 1), 1, 0)
-DUS_all$trip_preg <- ifelse((DUS_all$trip_preg_n >= 1), 1, 0)
-DUS_all$trip_T1 <- ifelse((DUS_all$trip_T1_n >= 1), 1, 0)
+DUS_all$trip_prior_0_12 <- fifelse((DUS_all$trip_prior_0_12_n >= 1), 1, 0, 0)
+DUS_all$trip_prior_0_3 <- fifelse((DUS_all$trip_prior_0_3_n >= 1), 1, 0)
+DUS_all$trip_preg <- fifelse((DUS_all$trip_preg_n >= 1), 1, 0, 0)
+DUS_all$trip_T1 <- fifelse((DUS_all$trip_T1_n >= 1), 1, 0, 0)
 DUS_all[(denom_T1 == 0), trip_T1 := NA]
-DUS_all$trip_T2 <- ifelse((DUS_all$trip_T2_n >= 1), 1, 0)
+DUS_all$trip_T2 <- fifelse((DUS_all$trip_T2_n >= 1), 1, 0, 0)
 DUS_all[(denom_T2 == 0), trip_T2 := NA]
-DUS_all$trip_T3 <- ifelse((DUS_all$trip_T3_n >= 1), 1, 0)
+DUS_all$trip_T3 <- fifelse((DUS_all$trip_T3_n >= 1), 1, 0, 0)
 DUS_all[(denom_T3 == 0), trip_T3 := NA]
-DUS_all$trip_post <- ifelse((DUS_all$trip_post_n >= 1), 1, 0)
+DUS_all$trip_post <- fifelse((DUS_all$trip_post_n >= 1), 1, 0, 0)
 
 #Dichotomized exposure per period: Conservative exposure definition
-DUS_all$trip_prior_0_12_c <- ifelse((DUS_all$trip_prior_0_12_n >= 2), 1, 0)
-DUS_all$trip_prior_0_3_c <- ifelse((DUS_all$trip_prior_0_3_n >= 2), 1, 0)
-DUS_all$trip_preg_c <- ifelse((DUS_all$trip_preg_n >= 2), 1, 0)
-DUS_all$trip_T1_c <- ifelse((DUS_all$trip_T1_n >= 2), 1, 0)
+DUS_all$trip_prior_0_12_c <- fifelse((DUS_all$trip_prior_0_12_n >= 2), 1, 0, 0)
+DUS_all$trip_prior_0_3_c <- fifelse((DUS_all$trip_prior_0_3_n >= 2), 1, 0, 0)
+DUS_all$trip_preg_c <- fifelse((DUS_all$trip_preg_n >= 2), 1, 0, 0)
+DUS_all$trip_T1_c <- fifelse((DUS_all$trip_T1_n >= 2), 1, 0, 0)
 DUS_all[(denom_T1 == 0), trip_T1_c := NA]
-DUS_all$trip_T2_c <- ifelse((DUS_all$trip_T2_n >= 2), 1, 0)
+DUS_all$trip_T2_c <- fifelse((DUS_all$trip_T2_n >= 2), 1, 0, 0)
 DUS_all[(denom_T2 == 0), trip_T2_c := NA]
-DUS_all$trip_T3_c <- ifelse((DUS_all$trip_T3_n >= 2), 1, 0)
+DUS_all$trip_T3_c <- fifelse((DUS_all$trip_T3_n >= 2), 1, 0, 0)
 DUS_all[(denom_T3 == 0), trip_T3_c := NA]
-DUS_all$trip_post_c <- ifelse((DUS_all$trip_post_n >= 2), 1, 0)
+DUS_all$trip_post_c <- fifelse((DUS_all$trip_post_n >= 2), 1, 0, 0)
 
 #Triptan use groups
 DUS_all[is.na(trip_prior_0_12), trip_prior_0_12:=0]
@@ -708,11 +713,11 @@ cat("\nCreating Table 4 ...\n")
 DUS_PCM <- merge(DUS_all, paracetamol, by = "person_id", all.x = TRUE, allow.cartesian = TRUE) #many-to-many relationship
 DUS_PCM$gap_LMP <- difftime(DUS_PCM$medicine_date, DUS_PCM$pregnancy_start_date, units = "days")
 DUS_PCM$gap_del <- difftime(DUS_PCM$medicine_date, DUS_PCM$pregnancy_end_date, units = "days")
-DUS_PCM$PCM_prior_a <- ifelse((DUS_PCM$gap_LMP >= -365 & DUS_PCM$gap_LMP <= -1), 1, 0)
-DUS_PCM$PCM_preg_a <- ifelse((DUS_PCM$gap_LMP >= 0 & DUS_PCM$gap_del <= 0), 1, 0)
-DUS_PCM$PCM_T1_a <- ifelse((DUS_PCM$gap_LMP >= 0 & DUS_PCM$gap_LMP <= 97 & DUS_PCM$gap_del<=0), 1, 0)
-DUS_PCM$PCM_T2_a <- ifelse((DUS_PCM$gap_LMP >= 98 & DUS_PCM$gap_LMP <= 195 & DUS_PCM$gap_del<=0), 1, 0)
-DUS_PCM$PCM_T3_a <- ifelse((DUS_PCM$gap_LMP >= 196 & DUS_PCM$gap_del <= 0), 1, 0)
+DUS_PCM$PCM_prior_a <- fifelse((DUS_PCM$gap_LMP >= -365 & DUS_PCM$gap_LMP <= -1), 1, 0, 0)
+DUS_PCM$PCM_preg_a <- fifelse((DUS_PCM$gap_LMP >= 0 & DUS_PCM$gap_del <= 0), 1, 0, 0)
+DUS_PCM$PCM_T1_a <- fifelse((DUS_PCM$gap_LMP >= 0 & DUS_PCM$gap_LMP <= 97 & DUS_PCM$gap_del<=0), 1, 0, 0)
+DUS_PCM$PCM_T2_a <- fifelse((DUS_PCM$gap_LMP >= 98 & DUS_PCM$gap_LMP <= 195 & DUS_PCM$gap_del<=0), 1, 0, 0)
+DUS_PCM$PCM_T3_a <- fifelse((DUS_PCM$gap_LMP >= 196 & DUS_PCM$gap_del <= 0), 1, 0, 0)
 
 DUS_PCM1 = DUS_PCM %>%
   group_by(pregnancy_id) %>%
@@ -745,11 +750,11 @@ rm(DUS_PCM, DUS_PCM1, paracetamol)
 DUS_COD <- merge(DUS_all, codeine, by = "person_id", all.x = TRUE, allow.cartesian = TRUE) #many-to-many relationship
 DUS_COD$gap_LMP <- difftime(DUS_COD$medicine_date, DUS_COD$pregnancy_start_date, units = "days")
 DUS_COD$gap_del <- difftime(DUS_COD$medicine_date, DUS_COD$pregnancy_end_date, units = "days")
-DUS_COD$COD_prior_a <- ifelse((DUS_COD$gap_LMP >= -365 & DUS_COD$gap_LMP <= -1), 1, 0)
-DUS_COD$COD_preg_a <- ifelse((DUS_COD$gap_LMP >= 0 & DUS_COD$gap_del <= 0), 1, 0)
-DUS_COD$COD_T1_a <- ifelse((DUS_COD$gap_LMP >= 0 & DUS_COD$gap_LMP <= 97 & DUS_COD$gap_del<=0), 1, 0)
-DUS_COD$COD_T2_a <- ifelse((DUS_COD$gap_LMP >= 98 & DUS_COD$gap_LMP <= 195 & DUS_COD$gap_del<=0), 1, 0)
-DUS_COD$COD_T3_a <- ifelse((DUS_COD$gap_LMP >= 196 & DUS_COD$gap_del <= 0), 1, 0)
+DUS_COD$COD_prior_a <- fifelse((DUS_COD$gap_LMP >= -365 & DUS_COD$gap_LMP <= -1), 1, 0, 0)
+DUS_COD$COD_preg_a <- fifelse((DUS_COD$gap_LMP >= 0 & DUS_COD$gap_del <= 0), 1, 0, 0)
+DUS_COD$COD_T1_a <- fifelse((DUS_COD$gap_LMP >= 0 & DUS_COD$gap_LMP <= 97 & DUS_COD$gap_del<=0), 1, 0, 0)
+DUS_COD$COD_T2_a <- fifelse((DUS_COD$gap_LMP >= 98 & DUS_COD$gap_LMP <= 195 & DUS_COD$gap_del<=0), 1, 0, 0)
+DUS_COD$COD_T3_a <- fifelse((DUS_COD$gap_LMP >= 196 & DUS_COD$gap_del <= 0), 1, 0, 0)
 
 DUS_COD1 = DUS_COD %>%
   group_by(pregnancy_id) %>%
@@ -783,11 +788,11 @@ DUS_NSAID <- merge(DUS_all, nsaid, by = "person_id", all.x = TRUE, allow.cartesi
 DUS_NSAID$gap_LMP <- difftime(DUS_NSAID$medicine_date, DUS_NSAID$pregnancy_start_date, units = "days")
 DUS_NSAID$gap_del <- difftime(DUS_NSAID$medicine_date, DUS_NSAID$pregnancy_end_date, units = "days")
 
-DUS_NSAID$NSAID_prior_a <- ifelse((DUS_NSAID$gap_LMP >= -365 & DUS_NSAID$gap_LMP <= -1), 1, 0)
-DUS_NSAID$NSAID_preg_a <- ifelse((DUS_NSAID$gap_LMP >= 0 & DUS_NSAID$gap_del <= 0), 1, 0)
-DUS_NSAID$NSAID_T1_a <- ifelse((DUS_NSAID$gap_LMP >= 0 & DUS_NSAID$gap_LMP <= 97 & DUS_NSAID$gap_del<=0), 1, 0)
-DUS_NSAID$NSAID_T2_a <- ifelse((DUS_NSAID$gap_LMP >= 98 & DUS_NSAID$gap_LMP <= 195 & DUS_NSAID$gap_del<=0), 1, 0)
-DUS_NSAID$NSAID_T3_a <- ifelse((DUS_NSAID$gap_LMP >= 196 & DUS_NSAID$gap_del <= 0), 1, 0)
+DUS_NSAID$NSAID_prior_a <- fifelse((DUS_NSAID$gap_LMP >= -365 & DUS_NSAID$gap_LMP <= -1), 1, 0, 0)
+DUS_NSAID$NSAID_preg_a <- fifelse((DUS_NSAID$gap_LMP >= 0 & DUS_NSAID$gap_del <= 0), 1, 0, 0)
+DUS_NSAID$NSAID_T1_a <- fifelse((DUS_NSAID$gap_LMP >= 0 & DUS_NSAID$gap_LMP <= 97 & DUS_NSAID$gap_del<=0), 1, 0, 0)
+DUS_NSAID$NSAID_T2_a <- fifelse((DUS_NSAID$gap_LMP >= 98 & DUS_NSAID$gap_LMP <= 195 & DUS_NSAID$gap_del<=0), 1, 0, 0)
+DUS_NSAID$NSAID_T3_a <- fifelse((DUS_NSAID$gap_LMP >= 196 & DUS_NSAID$gap_del <= 0), 1, 0, 0)
 
 DUS_NSAID1 = DUS_NSAID %>%
   group_by(pregnancy_id) %>%
@@ -820,11 +825,11 @@ rm(DUS_NSAID, DUS_NSAID1, nsaid)
 DUS_antinausea <- merge(DUS_all, antinausea, by = "person_id", all.x = TRUE, allow.cartesian = TRUE) #many-to-many relationship
 DUS_antinausea$gap_LMP <- difftime(DUS_antinausea$medicine_date, DUS_antinausea$pregnancy_start_date, units = "days")
 DUS_antinausea$gap_del <- difftime(DUS_antinausea$medicine_date, DUS_antinausea$pregnancy_end_date, units = "days")
-DUS_antinausea$antinausea_prior_a <- ifelse((DUS_antinausea$gap_LMP >= -365 & DUS_antinausea$gap_LMP <= -1), 1, 0)
-DUS_antinausea$antinausea_preg_a <- ifelse((DUS_antinausea$gap_LMP >= 0 & DUS_antinausea$gap_del <= 0), 1, 0)
-DUS_antinausea$antinausea_T1_a <- ifelse((DUS_antinausea$gap_LMP >= 0 & DUS_antinausea$gap_LMP <= 97 & DUS_antinausea$gap_del<=0), 1, 0)
-DUS_antinausea$antinausea_T2_a <- ifelse((DUS_antinausea$gap_LMP >= 98 & DUS_antinausea$gap_LMP <= 195 & DUS_antinausea$gap_del<=0), 1, 0)
-DUS_antinausea$antinausea_T3_a <- ifelse((DUS_antinausea$gap_LMP >= 196 & DUS_antinausea$gap_del <= 0), 1, 0)
+DUS_antinausea$antinausea_prior_a <- fifelse((DUS_antinausea$gap_LMP >= -365 & DUS_antinausea$gap_LMP <= -1), 1, 0, 0)
+DUS_antinausea$antinausea_preg_a <- fifelse((DUS_antinausea$gap_LMP >= 0 & DUS_antinausea$gap_del <= 0), 1, 0, 0)
+DUS_antinausea$antinausea_T1_a <- fifelse((DUS_antinausea$gap_LMP >= 0 & DUS_antinausea$gap_LMP <= 97 & DUS_antinausea$gap_del<=0), 1, 0, 0)
+DUS_antinausea$antinausea_T2_a <- fifelse((DUS_antinausea$gap_LMP >= 98 & DUS_antinausea$gap_LMP <= 195 & DUS_antinausea$gap_del<=0), 1, 0, 0)
+DUS_antinausea$antinausea_T3_a <- fifelse((DUS_antinausea$gap_LMP >= 196 & DUS_antinausea$gap_del <= 0), 1, 0, 0)
 
 DUS_antinausea1 = DUS_antinausea %>%
   group_by(pregnancy_id) %>%
@@ -854,22 +859,22 @@ DUS_all$antinausea_T3 <- replace_na(DUS_all$antinausea_T3, 0)
 rm(DUS_antinausea, DUS_antinausea1, antinausea)
 
 #Acute migraine treatment
-DUS_all$acute_prior <- ifelse((DUS_all$PCM_prior == 1 | DUS_all$COD_prior == 1 | DUS_all$NSAID_prior == 1 | DUS_all$NSAID_prior == 1), 1, 0)
-DUS_all$acute_preg <- ifelse((DUS_all$PCM_preg == 1 | DUS_all$COD_preg == 1 | DUS_all$NSAID_preg == 1 | DUS_all$NSAID_preg == 1), 1, 0)
-DUS_all$acute_T1 <- ifelse((DUS_all$PCM_T1 == 1 | DUS_all$COD_T1 == 1 | DUS_all$NSAID_T1 == 1 | DUS_all$NSAID_T1 == 1), 1, 0)
-DUS_all$acute_T2 <- ifelse((DUS_all$PCM_T2 == 1 | DUS_all$COD_T2 == 1 | DUS_all$NSAID_T2 == 1 | DUS_all$NSAID_T2 == 1), 1, 0)
-DUS_all$acute_T3 <- ifelse((DUS_all$PCM_T3 == 1 | DUS_all$COD_T3 == 1 | DUS_all$NSAID_T3 == 1 | DUS_all$NSAID_T3 == 1), 1, 0)
+DUS_all$acute_prior <- fifelse((DUS_all$PCM_prior == 1 | DUS_all$COD_prior == 1 | DUS_all$NSAID_prior == 1 | DUS_all$NSAID_prior == 1), 1, 0, 0)
+DUS_all$acute_preg <- fifelse((DUS_all$PCM_preg == 1 | DUS_all$COD_preg == 1 | DUS_all$NSAID_preg == 1 | DUS_all$NSAID_preg == 1), 1, 0, 0)
+DUS_all$acute_T1 <- fifelse((DUS_all$PCM_T1 == 1 | DUS_all$COD_T1 == 1 | DUS_all$NSAID_T1 == 1 | DUS_all$NSAID_T1 == 1), 1, 0, 0)
+DUS_all$acute_T2 <- fifelse((DUS_all$PCM_T2 == 1 | DUS_all$COD_T2 == 1 | DUS_all$NSAID_T2 == 1 | DUS_all$NSAID_T2 == 1), 1, 0, 0)
+DUS_all$acute_T3 <- fifelse((DUS_all$PCM_T3 == 1 | DUS_all$COD_T3 == 1 | DUS_all$NSAID_T3 == 1 | DUS_all$NSAID_T3 == 1), 1, 0, 0)
 
 #Metoprolol/propranolol
 meto_prop <- prev_med[prev_med$atc_code == "C07AA05" | prev_med$atc_code == "C07AB02", ]
 DUS_meto_prop <- merge(DUS_all, meto_prop, by = "person_id", all.x = TRUE, allow.cartesian = TRUE) #many-to-many relationship
 DUS_meto_prop$gap_LMP <- difftime(DUS_meto_prop$medicine_date, DUS_meto_prop$pregnancy_start_date, units = "days")
 DUS_meto_prop$gap_del <- difftime(DUS_meto_prop$medicine_date, DUS_meto_prop$pregnancy_end_date, units = "days")
-DUS_meto_prop$meto_prop_prior_a <- ifelse((DUS_meto_prop$gap_LMP >= -365 & DUS_meto_prop$gap_LMP <= -1), 1, 0)
-DUS_meto_prop$meto_prop_preg_a <- ifelse((DUS_meto_prop$gap_LMP >= 0 & DUS_meto_prop$gap_del <= 0), 1, 0)
-DUS_meto_prop$meto_prop_T1_a <- ifelse((DUS_meto_prop$gap_LMP >= 0 & DUS_meto_prop$gap_LMP <= 97 & DUS_meto_prop$gap_del<=0), 1, 0)
-DUS_meto_prop$meto_prop_T2_a <- ifelse((DUS_meto_prop$gap_LMP >= 98 & DUS_meto_prop$gap_LMP <= 195 & DUS_meto_prop$gap_del<=0), 1, 0)
-DUS_meto_prop$meto_prop_T3_a <- ifelse((DUS_meto_prop$gap_LMP >= 196 & DUS_meto_prop$gap_del <= 0), 1, 0)
+DUS_meto_prop$meto_prop_prior_a <- fifelse((DUS_meto_prop$gap_LMP >= -365 & DUS_meto_prop$gap_LMP <= -1), 1, 0, 0)
+DUS_meto_prop$meto_prop_preg_a <- fifelse((DUS_meto_prop$gap_LMP >= 0 & DUS_meto_prop$gap_del <= 0), 1, 0, 0)
+DUS_meto_prop$meto_prop_T1_a <- fifelse((DUS_meto_prop$gap_LMP >= 0 & DUS_meto_prop$gap_LMP <= 97 & DUS_meto_prop$gap_del<=0), 1, 0, 0)
+DUS_meto_prop$meto_prop_T2_a <- fifelse((DUS_meto_prop$gap_LMP >= 98 & DUS_meto_prop$gap_LMP <= 195 & DUS_meto_prop$gap_del<=0), 1, 0, 0)
+DUS_meto_prop$meto_prop_T3_a <- fifelse((DUS_meto_prop$gap_LMP >= 196 & DUS_meto_prop$gap_del <= 0), 1, 0, 0)
 
 DUS_meto_prop1 = DUS_meto_prop %>%
   group_by(pregnancy_id) %>%
@@ -903,11 +908,11 @@ ami <- prev_med[prev_med$atc_code == "N06AA09", ]
 DUS_ami <- merge(DUS_all, ami, by = "person_id", all.x = TRUE, allow.cartesian = TRUE) #many-to-many relationship
 DUS_ami$gap_LMP <- difftime(DUS_ami$medicine_date, DUS_ami$pregnancy_start_date, units = "days")
 DUS_ami$gap_del <- difftime(DUS_ami$medicine_date, DUS_ami$pregnancy_end_date, units = "days")
-DUS_ami$ami_prior_a <- ifelse((DUS_ami$gap_LMP >= -365 & DUS_ami$gap_LMP <= -1), 1, 0)
-DUS_ami$ami_preg_a <- ifelse((DUS_ami$gap_LMP >= 0 & DUS_ami$gap_del <= 0), 1, 0)
-DUS_ami$ami_T1_a <- ifelse((DUS_ami$gap_LMP >= 0 & DUS_ami$gap_LMP <= 97 & DUS_ami$gap_del<=0), 1, 0)
-DUS_ami$ami_T2_a <- ifelse((DUS_ami$gap_LMP >= 98 & DUS_ami$gap_LMP <= 195 & DUS_ami$gap_del<=0), 1, 0)
-DUS_ami$ami_T3_a <- ifelse((DUS_ami$gap_LMP >= 196 & DUS_ami$gap_del <= 0), 1, 0)
+DUS_ami$ami_prior_a <- fifelse((DUS_ami$gap_LMP >= -365 & DUS_ami$gap_LMP <= -1), 1, 0, 0)
+DUS_ami$ami_preg_a <- fifelse((DUS_ami$gap_LMP >= 0 & DUS_ami$gap_del <= 0), 1, 0, 0)
+DUS_ami$ami_T1_a <- fifelse((DUS_ami$gap_LMP >= 0 & DUS_ami$gap_LMP <= 97 & DUS_ami$gap_del<=0), 1, 0, 0)
+DUS_ami$ami_T2_a <- fifelse((DUS_ami$gap_LMP >= 98 & DUS_ami$gap_LMP <= 195 & DUS_ami$gap_del<=0), 1, 0, 0)
+DUS_ami$ami_T3_a <- fifelse((DUS_ami$gap_LMP >= 196 & DUS_ami$gap_del <= 0), 1, 0, 0)
 
 DUS_ami1 = DUS_ami %>%
   group_by(pregnancy_id) %>%
@@ -941,11 +946,11 @@ c_l_v <- prev_med[prev_med$atc_code == "C09CA06" | prev_med$atc_code == "C09AA03
 DUS_c_l_v <- merge(DUS_all, c_l_v, by = "person_id", all.x = TRUE, allow.cartesian = TRUE) #many-to-many relationship
 DUS_c_l_v$gap_LMP <- difftime(DUS_c_l_v$medicine_date, DUS_c_l_v$pregnancy_start_date, units = "days")
 DUS_c_l_v$gap_del <- difftime(DUS_c_l_v$medicine_date, DUS_c_l_v$pregnancy_end_date, units = "days")
-DUS_c_l_v$c_l_v_prior_a <- ifelse((DUS_c_l_v$gap_LMP >= -365 & DUS_c_l_v$gap_LMP <= -1), 1, 0)
-DUS_c_l_v$c_l_v_preg_a <- ifelse((DUS_c_l_v$gap_LMP >= 0 & DUS_c_l_v$gap_del <= 0), 1, 0)
-DUS_c_l_v$c_l_v_T1_a <- ifelse((DUS_c_l_v$gap_LMP >= 0 & DUS_c_l_v$gap_LMP <= 97 & DUS_c_l_v$gap_del<=0), 1, 0)
-DUS_c_l_v$c_l_v_T2_a <- ifelse((DUS_c_l_v$gap_LMP >= 98 & DUS_c_l_v$gap_LMP <= 195 & DUS_c_l_v$gap_del<=0), 1, 0)
-DUS_c_l_v$c_l_v_T3_a <- ifelse((DUS_c_l_v$gap_LMP >= 196 & DUS_c_l_v$gap_del <= 0), 1, 0)
+DUS_c_l_v$c_l_v_prior_a <- fifelse((DUS_c_l_v$gap_LMP >= -365 & DUS_c_l_v$gap_LMP <= -1), 1, 0, 0)
+DUS_c_l_v$c_l_v_preg_a <- fifelse((DUS_c_l_v$gap_LMP >= 0 & DUS_c_l_v$gap_del <= 0), 1, 0, 0)
+DUS_c_l_v$c_l_v_T1_a <- fifelse((DUS_c_l_v$gap_LMP >= 0 & DUS_c_l_v$gap_LMP <= 97 & DUS_c_l_v$gap_del<=0), 1, 0, 0)
+DUS_c_l_v$c_l_v_T2_a <- fifelse((DUS_c_l_v$gap_LMP >= 98 & DUS_c_l_v$gap_LMP <= 195 & DUS_c_l_v$gap_del<=0), 1, 0, 0)
+DUS_c_l_v$c_l_v_T3_a <- fifelse((DUS_c_l_v$gap_LMP >= 196 & DUS_c_l_v$gap_del <= 0), 1, 0, 0)
 
 DUS_c_l_v1 = DUS_c_l_v %>%
   group_by(pregnancy_id) %>%
@@ -979,11 +984,11 @@ top_val <- prev_med[prev_med$atc_code == "N03AX11" | prev_med$atc_code == "N03AG
 DUS_top_val <- merge(DUS_all, top_val, by = "person_id", all.x = TRUE, allow.cartesian = TRUE) #many-to-many relationship
 DUS_top_val$gap_LMP <- difftime(DUS_top_val$medicine_date, DUS_top_val$pregnancy_start_date, units = "days")
 DUS_top_val$gap_del <- difftime(DUS_top_val$medicine_date, DUS_top_val$pregnancy_end_date, units = "days")
-DUS_top_val$top_val_prior_a <- ifelse((DUS_top_val$gap_LMP >= -365 & DUS_top_val$gap_LMP <= -1), 1, 0)
-DUS_top_val$top_val_preg_a <- ifelse((DUS_top_val$gap_LMP >= 0 & DUS_top_val$gap_del <= 0), 1, 0)
-DUS_top_val$top_val_T1_a <- ifelse((DUS_top_val$gap_LMP >= 0 & DUS_top_val$gap_LMP <= 97 & DUS_top_val$gap_del<=0), 1, 0)
-DUS_top_val$top_val_T2_a <- ifelse((DUS_top_val$gap_LMP >= 98 & DUS_top_val$gap_LMP <= 195 & DUS_top_val$gap_del<=0), 1, 0)
-DUS_top_val$top_val_T3_a <- ifelse((DUS_top_val$gap_LMP >= 196 & DUS_top_val$gap_del <= 0), 1, 0)
+DUS_top_val$top_val_prior_a <- fifelse((DUS_top_val$gap_LMP >= -365 & DUS_top_val$gap_LMP <= -1), 1, 0, 0)
+DUS_top_val$top_val_preg_a <- fifelse((DUS_top_val$gap_LMP >= 0 & DUS_top_val$gap_del <= 0), 1, 0, 0)
+DUS_top_val$top_val_T1_a <- fifelse((DUS_top_val$gap_LMP >= 0 & DUS_top_val$gap_LMP <= 97 & DUS_top_val$gap_del<=0), 1, 0, 0)
+DUS_top_val$top_val_T2_a <- fifelse((DUS_top_val$gap_LMP >= 98 & DUS_top_val$gap_LMP <= 195 & DUS_top_val$gap_del<=0), 1, 0, 0)
+DUS_top_val$top_val_T3_a <- fifelse((DUS_top_val$gap_LMP >= 196 & DUS_top_val$gap_del <= 0), 1, 0, 0)
 
 DUS_top_val1 = DUS_top_val %>%
   group_by(pregnancy_id) %>%
@@ -1017,11 +1022,11 @@ bot <- prev_med[prev_med$atc_code == "M03AX01", ]
 DUS_bot <- merge(DUS_all, bot, by = "person_id", all.x = TRUE, allow.cartesian = TRUE) #many-to-many relationship
 DUS_bot$gap_LMP <- difftime(DUS_bot$medicine_date, DUS_bot$pregnancy_start_date, units = "days")
 DUS_bot$gap_del <- difftime(DUS_bot$medicine_date, DUS_bot$pregnancy_end_date, units = "days")
-DUS_bot$bot_prior_a <- ifelse((DUS_bot$gap_LMP >= -365 & DUS_bot$gap_LMP <= -1), 1, 0)
-DUS_bot$bot_preg_a <- ifelse((DUS_bot$gap_LMP >= 0 & DUS_bot$gap_del <= 0), 1, 0)
-DUS_bot$bot_T1_a <- ifelse((DUS_bot$gap_LMP >= 0 & DUS_bot$gap_LMP <= 97 & DUS_bot$gap_del<=0), 1, 0)
-DUS_bot$bot_T2_a <- ifelse((DUS_bot$gap_LMP >= 98 & DUS_bot$gap_LMP <= 195 & DUS_bot$gap_del<=0), 1, 0)
-DUS_bot$bot_T3_a <- ifelse((DUS_bot$gap_LMP >= 196 & DUS_bot$gap_del <= 0), 1, 0)
+DUS_bot$bot_prior_a <- fifelse((DUS_bot$gap_LMP >= -365 & DUS_bot$gap_LMP <= -1), 1, 0, 0)
+DUS_bot$bot_preg_a <- fifelse((DUS_bot$gap_LMP >= 0 & DUS_bot$gap_del <= 0), 1, 0, 0)
+DUS_bot$bot_T1_a <- fifelse((DUS_bot$gap_LMP >= 0 & DUS_bot$gap_LMP <= 97 & DUS_bot$gap_del<=0), 1, 0, 0)
+DUS_bot$bot_T2_a <- fifelse((DUS_bot$gap_LMP >= 98 & DUS_bot$gap_LMP <= 195 & DUS_bot$gap_del<=0), 1, 0, 0)
+DUS_bot$bot_T3_a <- fifelse((DUS_bot$gap_LMP >= 196 & DUS_bot$gap_del <= 0), 1, 0, 0)
 
 DUS_bot1 = DUS_bot %>%
   group_by(pregnancy_id) %>%
@@ -1055,11 +1060,11 @@ piz_clo <- prev_med[prev_med$atc_code == "N02CX02" | prev_med$atc_code == "N02CX
 DUS_piz_clo <- merge(DUS_all, piz_clo, by = "person_id", all.x = TRUE, allow.cartesian = TRUE) #many-to-many relationship
 DUS_piz_clo$gap_LMP <- difftime(DUS_piz_clo$medicine_date, DUS_piz_clo$pregnancy_start_date, units = "days")
 DUS_piz_clo$gap_del <- difftime(DUS_piz_clo$medicine_date, DUS_piz_clo$pregnancy_end_date, units = "days")
-DUS_piz_clo$piz_clo_prior_a <- ifelse((DUS_piz_clo$gap_LMP >= -365 & DUS_piz_clo$gap_LMP <= -1), 1, 0)
-DUS_piz_clo$piz_clo_preg_a <- ifelse((DUS_piz_clo$gap_LMP >= 0 & DUS_piz_clo$gap_del <= 0), 1, 0)
-DUS_piz_clo$piz_clo_T1_a <- ifelse((DUS_piz_clo$gap_LMP >= 0 & DUS_piz_clo$gap_LMP <= 97 & DUS_piz_clo$gap_del<=0), 1, 0)
-DUS_piz_clo$piz_clo_T2_a <- ifelse((DUS_piz_clo$gap_LMP >= 98 & DUS_piz_clo$gap_LMP <= 195 & DUS_piz_clo$gap_del<=0), 1, 0)
-DUS_piz_clo$piz_clo_T3_a <- ifelse((DUS_piz_clo$gap_LMP >= 196 & DUS_piz_clo$gap_del <= 0), 1, 0)
+DUS_piz_clo$piz_clo_prior_a <- fifelse((DUS_piz_clo$gap_LMP >= -365 & DUS_piz_clo$gap_LMP <= -1), 1, 0, 0)
+DUS_piz_clo$piz_clo_preg_a <- fifelse((DUS_piz_clo$gap_LMP >= 0 & DUS_piz_clo$gap_del <= 0), 1, 0, 0)
+DUS_piz_clo$piz_clo_T1_a <- fifelse((DUS_piz_clo$gap_LMP >= 0 & DUS_piz_clo$gap_LMP <= 97 & DUS_piz_clo$gap_del<=0), 1, 0, 0)
+DUS_piz_clo$piz_clo_T2_a <- fifelse((DUS_piz_clo$gap_LMP >= 98 & DUS_piz_clo$gap_LMP <= 195 & DUS_piz_clo$gap_del<=0), 1, 0, 0)
+DUS_piz_clo$piz_clo_T3_a <- fifelse((DUS_piz_clo$gap_LMP >= 196 & DUS_piz_clo$gap_del <= 0), 1, 0, 0)
 
 DUS_piz_clo1 = DUS_piz_clo %>%
   group_by(pregnancy_id) %>%
@@ -1092,11 +1097,11 @@ rm(DUS_piz_clo, DUS_piz_clo1, piz_clo)
 DUS_prev_med <- merge(DUS_all, prev_med, by = "person_id", all.x = TRUE, allow.cartesian = TRUE) #many-to-many relationship
 DUS_prev_med$gap_LMP <- difftime(DUS_prev_med$medicine_date, DUS_prev_med$pregnancy_start_date, units = "days")
 DUS_prev_med$gap_del <- difftime(DUS_prev_med$medicine_date, DUS_prev_med$pregnancy_end_date, units = "days")
-DUS_prev_med$prev_med_prior_a <- ifelse((DUS_prev_med$gap_LMP >= -365 & DUS_prev_med$gap_LMP <= -1), 1, 0)
-DUS_prev_med$prev_med_preg_a <- ifelse((DUS_prev_med$gap_LMP >= 0 & DUS_prev_med$gap_del <= 0), 1, 0)
-DUS_prev_med$prev_med_T1_a <- ifelse((DUS_prev_med$gap_LMP >= 0 & DUS_prev_med$gap_LMP <= 97 & DUS_prev_med$gap_del<=0), 1, 0)
-DUS_prev_med$prev_med_T2_a <- ifelse((DUS_prev_med$gap_LMP >= 98 & DUS_prev_med$gap_LMP <= 195 & DUS_prev_med$gap_del<=0), 1, 0)
-DUS_prev_med$prev_med_T3_a <- ifelse((DUS_prev_med$gap_LMP >= 196 & DUS_prev_med$gap_del <= 0), 1, 0)
+DUS_prev_med$prev_med_prior_a <- fifelse((DUS_prev_med$gap_LMP >= -365 & DUS_prev_med$gap_LMP <= -1), 1, 0, 0)
+DUS_prev_med$prev_med_preg_a <- fifelse((DUS_prev_med$gap_LMP >= 0 & DUS_prev_med$gap_del <= 0), 1, 0, 0)
+DUS_prev_med$prev_med_T1_a <- fifelse((DUS_prev_med$gap_LMP >= 0 & DUS_prev_med$gap_LMP <= 97 & DUS_prev_med$gap_del<=0), 1, 0, 0)
+DUS_prev_med$prev_med_T2_a <- fifelse((DUS_prev_med$gap_LMP >= 98 & DUS_prev_med$gap_LMP <= 195 & DUS_prev_med$gap_del<=0), 1, 0, 0)
+DUS_prev_med$prev_med_T3_a <- fifelse((DUS_prev_med$gap_LMP >= 196 & DUS_prev_med$gap_del <= 0), 1, 0, 0)
 
 DUS_prev_med1 = DUS_prev_med %>%
   group_by(pregnancy_id) %>%
@@ -1130,11 +1135,11 @@ ere <- cgrp[cgrp$atc_code == "N02CD01", ]
 DUS_ere <- merge(DUS_all, ere, by = "person_id", all.x = TRUE, allow.cartesian = TRUE) #many-to-many relationship
 DUS_ere$gap_LMP <- difftime(DUS_ere$medicine_date, DUS_ere$pregnancy_start_date, units = "days")
 DUS_ere$gap_del <- difftime(DUS_ere$medicine_date, DUS_ere$pregnancy_end_date, units = "days")
-DUS_ere$ere_prior_a <- ifelse((DUS_ere$gap_LMP >= -365 & DUS_ere$gap_LMP <= -1), 1, 0)
-DUS_ere$ere_preg_a <- ifelse((DUS_ere$gap_LMP >= 0 & DUS_ere$gap_del <= 0), 1, 0)
-DUS_ere$ere_T1_a <- ifelse((DUS_ere$gap_LMP >= 0 & DUS_ere$gap_LMP <= 97 & DUS_ere$gap_del<=0), 1, 0)
-DUS_ere$ere_T2_a <- ifelse((DUS_ere$gap_LMP >= 98 & DUS_ere$gap_LMP <= 195 & DUS_ere$gap_del<=0), 1, 0)
-DUS_ere$ere_T3_a <- ifelse((DUS_ere$gap_LMP >= 196 & DUS_ere$gap_del <= 0), 1, 0)
+DUS_ere$ere_prior_a <- fifelse((DUS_ere$gap_LMP >= -365 & DUS_ere$gap_LMP <= -1), 1, 0, 0)
+DUS_ere$ere_preg_a <- fifelse((DUS_ere$gap_LMP >= 0 & DUS_ere$gap_del <= 0), 1, 0, 0)
+DUS_ere$ere_T1_a <- fifelse((DUS_ere$gap_LMP >= 0 & DUS_ere$gap_LMP <= 97 & DUS_ere$gap_del<=0), 1, 0, 0)
+DUS_ere$ere_T2_a <- fifelse((DUS_ere$gap_LMP >= 98 & DUS_ere$gap_LMP <= 195 & DUS_ere$gap_del<=0), 1, 0, 0)
+DUS_ere$ere_T3_a <- fifelse((DUS_ere$gap_LMP >= 196 & DUS_ere$gap_del <= 0), 1, 0, 0)
 
 DUS_ere1 = DUS_ere %>%
   group_by(pregnancy_id) %>%
@@ -1168,11 +1173,11 @@ gal <- cgrp[cgrp$atc_code == "N02CD02", ]
 DUS_gal <- merge(DUS_all, gal, by = "person_id", all.x = TRUE, allow.cartesian = TRUE) #many-to-many relationship
 DUS_gal$gap_LMP <- difftime(DUS_gal$medicine_date, DUS_gal$pregnancy_start_date, units = "days")
 DUS_gal$gap_del <- difftime(DUS_gal$medicine_date, DUS_gal$pregnancy_end_date, units = "days")
-DUS_gal$gal_prior_a <- ifelse((DUS_gal$gap_LMP >= -365 & DUS_gal$gap_LMP <= -1), 1, 0)
-DUS_gal$gal_preg_a <- ifelse((DUS_gal$gap_LMP >= 0 & DUS_gal$gap_del <= 0), 1, 0)
-DUS_gal$gal_T1_a <- ifelse((DUS_gal$gap_LMP >= 0 & DUS_gal$gap_LMP <= 97 & DUS_gal$gap_del<=0), 1, 0)
-DUS_gal$gal_T2_a <- ifelse((DUS_gal$gap_LMP >= 98 & DUS_gal$gap_LMP <= 195 & DUS_gal$gap_del<=0), 1, 0)
-DUS_gal$gal_T3_a <- ifelse((DUS_gal$gap_LMP >= 196 & DUS_gal$gap_del <= 0), 1, 0)
+DUS_gal$gal_prior_a <- fifelse((DUS_gal$gap_LMP >= -365 & DUS_gal$gap_LMP <= -1), 1, 0, 0)
+DUS_gal$gal_preg_a <- fifelse((DUS_gal$gap_LMP >= 0 & DUS_gal$gap_del <= 0), 1, 0, 0)
+DUS_gal$gal_T1_a <- fifelse((DUS_gal$gap_LMP >= 0 & DUS_gal$gap_LMP <= 97 & DUS_gal$gap_del<=0), 1, 0, 0)
+DUS_gal$gal_T2_a <- fifelse((DUS_gal$gap_LMP >= 98 & DUS_gal$gap_LMP <= 195 & DUS_gal$gap_del<=0), 1, 0, 0)
+DUS_gal$gal_T3_a <- fifelse((DUS_gal$gap_LMP >= 196 & DUS_gal$gap_del <= 0), 1, 0, 0)
 
 DUS_gal1 = DUS_gal %>%
   group_by(pregnancy_id) %>%
@@ -1206,11 +1211,11 @@ fre <- cgrp[cgrp$atc_code == "N02CD03", ]
 DUS_fre <- merge(DUS_all, fre, by = "person_id", all.x = TRUE, allow.cartesian = TRUE) #many-to-many relationship
 DUS_fre$gap_LMP <- difftime(DUS_fre$medicine_date, DUS_fre$pregnancy_start_date, units = "days")
 DUS_fre$gap_del <- difftime(DUS_fre$medicine_date, DUS_fre$pregnancy_end_date, units = "days")
-DUS_fre$fre_prior_a <- ifelse((DUS_fre$gap_LMP >= -365 & DUS_fre$gap_LMP <= -1), 1, 0)
-DUS_fre$fre_preg_a <- ifelse((DUS_fre$gap_LMP >= 0 & DUS_fre$gap_del <= 0), 1, 0)
-DUS_fre$fre_T1_a <- ifelse((DUS_fre$gap_LMP >= 0 & DUS_fre$gap_LMP <= 97  & DUS_fre$gap_del<=0), 1, 0)
-DUS_fre$fre_T2_a <- ifelse((DUS_fre$gap_LMP >= 98 & DUS_fre$gap_LMP <= 195  & DUS_fre$gap_del<=0), 1, 0)
-DUS_fre$fre_T3_a <- ifelse((DUS_fre$gap_LMP >= 196 & DUS_fre$gap_del <= 0), 1, 0)
+DUS_fre$fre_prior_a <- fifelse((DUS_fre$gap_LMP >= -365 & DUS_fre$gap_LMP <= -1), 1, 0, 0)
+DUS_fre$fre_preg_a <- fifelse((DUS_fre$gap_LMP >= 0 & DUS_fre$gap_del <= 0), 1, 0, 0)
+DUS_fre$fre_T1_a <- fifelse((DUS_fre$gap_LMP >= 0 & DUS_fre$gap_LMP <= 97  & DUS_fre$gap_del<=0), 1, 0, 0)
+DUS_fre$fre_T2_a <- fifelse((DUS_fre$gap_LMP >= 98 & DUS_fre$gap_LMP <= 195  & DUS_fre$gap_del<=0), 1, 0, 0)
+DUS_fre$fre_T3_a <- fifelse((DUS_fre$gap_LMP >= 196 & DUS_fre$gap_del <= 0), 1, 0, 0)
 
 DUS_fre1 = DUS_fre %>%
   group_by(pregnancy_id) %>%
@@ -1243,11 +1248,11 @@ rm(DUS_fre, DUS_fre1, fre)
 DUS_cgrp <- merge(DUS_all, cgrp, by = "person_id", all.x = TRUE, allow.cartesian = TRUE) #many-to-many relationship
 DUS_cgrp$gap_LMP <- difftime(DUS_cgrp$medicine_date, DUS_cgrp$pregnancy_start_date, units = "days")
 DUS_cgrp$gap_del <- difftime(DUS_cgrp$medicine_date, DUS_cgrp$pregnancy_end_date, units = "days")
-DUS_cgrp$cgrp_prior_a <- ifelse((DUS_cgrp$gap_LMP >= -365 & DUS_cgrp$gap_LMP <= -1), 1, 0)
-DUS_cgrp$cgrp_preg_a <- ifelse((DUS_cgrp$gap_LMP >= 0 & DUS_cgrp$gap_del <= 0), 1, 0)
-DUS_cgrp$cgrp_T1_a <- ifelse((DUS_cgrp$gap_LMP >= 0 & DUS_cgrp$gap_LMP <= 97  & DUS_cgrp$gap_del<=0), 1, 0)
-DUS_cgrp$cgrp_T2_a <- ifelse((DUS_cgrp$gap_LMP >= 98 & DUS_cgrp$gap_LMP <= 195  & DUS_cgrp$gap_del<=0), 1, 0)
-DUS_cgrp$cgrp_T3_a <- ifelse((DUS_cgrp$gap_LMP >= 196 & DUS_cgrp$gap_del <= 0), 1, 0)
+DUS_cgrp$cgrp_prior_a <- fifelse((DUS_cgrp$gap_LMP >= -365 & DUS_cgrp$gap_LMP <= -1), 1, 0, 0)
+DUS_cgrp$cgrp_preg_a <- fifelse((DUS_cgrp$gap_LMP >= 0 & DUS_cgrp$gap_del <= 0), 1, 0, 0)
+DUS_cgrp$cgrp_T1_a <- fifelse((DUS_cgrp$gap_LMP >= 0 & DUS_cgrp$gap_LMP <= 97  & DUS_cgrp$gap_del<=0), 1, 0, 0)
+DUS_cgrp$cgrp_T2_a <- fifelse((DUS_cgrp$gap_LMP >= 98 & DUS_cgrp$gap_LMP <= 195  & DUS_cgrp$gap_del<=0), 1, 0, 0)
+DUS_cgrp$cgrp_T3_a <- fifelse((DUS_cgrp$gap_LMP >= 196 & DUS_cgrp$gap_del <= 0), 1, 0, 0)
 
 DUS_cgrp1 = DUS_cgrp %>%
   group_by(pregnancy_id) %>%
@@ -2694,7 +2699,7 @@ rm("obesity", "DUS_obesity", "DUS_obesity1")
 # HT <- subset(HT, select = -c(pregnancy_id))
 DUS_HT <- merge(DUS_all, HT, by = c("person_id", "pregnancy_id"), all.x = TRUE, allow.cartesian = TRUE) #many-to-many relationship
 DUS_HT$gap_LMP <- difftime(DUS_HT$event_date, DUS_HT$pregnancy_start_date, units = "days")
-DUS_HT$HT_a <- ifelse((DUS_HT$gap_LMP >= -365 & DUS_HT$gap_LMP <= -1), 1, 0)
+DUS_HT$HT_a <- fifelse((DUS_HT$gap_LMP >= -365 & DUS_HT$gap_LMP <= -1), 1, 0, 0)
 DUS_HT1 = DUS_HT %>%
   group_by(pregnancy_id) %>%
   summarize(HT = max(HT_a), HT_chk = any(chk))
@@ -2707,7 +2712,7 @@ rm("HT", "DUS_HT", "DUS_HT1")
 # diab <- subset(diab, select = -c(pregnancy_id))
 DUS_diab <- merge(DUS_all, diab, by = c("person_id", "pregnancy_id"), all.x = TRUE, allow.cartesian = TRUE) #many-to-many relationship
 DUS_diab$gap_LMP <- difftime(DUS_diab$event_date, DUS_diab$pregnancy_start_date, units = "days")
-DUS_diab$diab_a <- ifelse((DUS_diab$gap_LMP >= -365 & DUS_diab$gap_LMP <= -1), 1, 0)
+DUS_diab$diab_a <- fifelse((DUS_diab$gap_LMP >= -365 & DUS_diab$gap_LMP <= -1), 1, 0, 0)
 DUS_diab1 = DUS_diab %>%
   group_by(pregnancy_id) %>%
   summarize(diab = max(diab_a), diab_chk = any(chk))
@@ -2720,7 +2725,7 @@ rm("diab", "DUS_diab", "DUS_diab1")
 # dep <- subset(dep, select = -c(pregnancy_id))
 DUS_dep <- merge(DUS_all, dep, by = c("person_id", "pregnancy_id"), all.x = TRUE, allow.cartesian = TRUE) #many-to-many relationship
 DUS_dep$gap_LMP <- difftime(DUS_dep$event_date, DUS_dep$pregnancy_start_date, units = "days")
-DUS_dep$dep_a <- ifelse((DUS_dep$gap_LMP >= -365 & DUS_dep$gap_LMP <= -1), 1, 0)
+DUS_dep$dep_a <- fifelse((DUS_dep$gap_LMP >= -365 & DUS_dep$gap_LMP <= -1), 1, 0, 0)
 DUS_dep1 = DUS_dep %>%
   group_by(pregnancy_id) %>%
   summarize(dep = max(dep_a), dep_chk = any(chk))
@@ -3028,7 +3033,7 @@ con_MIG_S4_p <- round((con_MIG_S4_n / denom_con)*100, 1)
 
 #Make table 8
 table8 <- data.frame(
-  Migraine_type_severity = c("TOTAL N", "Migraine type prior to LMP", "Migraine with aura", "Migraine without aura", "Status migrainosus", "Complicated migraine", "Other migraine", "Unspecified migraine", "Migraine severity prior to LMP", "Mild", "Moderate", "Severe", "Very severe"),
+  Migraine_type_severity = c("TOTAL N", "Migraine type prior to LMP", "Migraine without aura", "Migraine with aura", "Status migrainosus", "Complicated migraine", "Other migraine", "Unspecified migraine", "Migraine severity prior to LMP", "Mild", "Moderate", "Severe", "Very severe"),
   Total_n = c(denom_all, "", MIG_T1_n, MIG_T2_n, MIG_T3_n, MIG_T4_n, MIG_T5_n, MIG_T6_n, "", MIG_S1_n, MIG_S2_n, MIG_S3_n, MIG_S4_n),
   Total_p = c("", "", MIG_T1_p, MIG_T2_p, MIG_T3_p, MIG_T4_p, MIG_T5_p, MIG_T6_p, "", MIG_S1_p, MIG_S2_p, MIG_S3_p, MIG_S4_p),
   Nonusers_n = c(denom_non, "", non_MIG_T1_n, non_MIG_T2_n, non_MIG_T3_n, non_MIG_T4_n, non_MIG_T5_n, non_MIG_T6_n, "", non_MIG_S1_n, non_MIG_S2_n, non_MIG_S3_n, non_MIG_S4_n),
